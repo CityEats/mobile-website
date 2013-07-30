@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8" />
+        <title>City Eats</title>
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <link rel="stylesheet" href="css/normalize.min.css" />
+        <link rel="stylesheet" href="css/mobile.css" />
+    </head>
+    <body>
+        <div class="wrapper">
+            <!-- Top Bar -->
+            <nav class="topBar">
+                <div class="topBarInner">
+                    <a class="topBarLink" href="#">Cancel</a>
+                    <a class="topBarLink red" href="#">Reset</a>
+                    <div class="topBarHolder">
+                        <h1 class="topBarTitle">Filter</h1>
+                    </div>
+                </div>
+            </nav>
+            <!-- Content -->
+            <div class="content">
+                <!-- Filter -->
+                <section class="filter">
+                    <form action="#">
+                        <div class="row">
+                            <div class="roundedBox">
+                                <div class="roundedBoxRow">
+                                    <div class="filterByItems byCuisines updated">American (New), Argentine, Afgan</div>
+                                </div>
+                                <div class="roundedBoxRow">
+                                    <div class="filterByItems byNeighborhoods">By Neighborhood</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <ul class="radiosLine">
+                                <li class="radiosLineItem">
+                                    <input id="price_$" type="radio" class="radiosLineInput" name="levelPrice" />
+                                    <label for="price_$" class="radiosLineLabel">$</label>
+                                </li>
+                                <li class="radiosLineItem">
+                                    <input id="price_$$" type="radio" class="radiosLineInput" name="levelPrice" />
+                                    <label for="price_$$" class="radiosLineLabel">$$</label>
+                                </li>
+                                <li class="radiosLineItem">
+                                    <input id="price_$$$" type="radio" class="radiosLineInput" name="levelPrice" />
+                                    <label for="price_$$$" class="radiosLineLabel">$$$</label>
+                                </li>
+                                <li class="radiosLineItem">
+                                    <input id="price_$$$$" type="radio" class="radiosLineInput" name="levelPrice" />
+                                    <label for="price_$$$$" class="radiosLineLabel">$$$$</label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="sortBy">
+                            <h2 class="sortByHeader">Sort results by:</h2>
+                            <div class="row">
+                                <ul class="radiosLine">
+                                    <li class="radiosLineItem">
+                                        <input id="price_Distance" type="radio" class="radiosLineInput" name="sort" checked />
+                                        <label for="price_Distance" class="radiosLineLabel">Distance</label>
+                                    </li>
+                                    <li class="radiosLineItem">
+                                        <input id="price_Popular" type="radio" class="radiosLineInput" name="sort" />
+                                        <label for="price_Popular" class="radiosLineLabel">Popular</label>
+                                    </li>
+                                    <li class="radiosLineItem">
+                                        <input id="price_AZ" type="radio" class="radiosLineInput" name="sort" />
+                                        <label for="price_AZ" class="radiosLineLabel">A - Z</label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input class="btn" type="submit" value="Apply" />
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </body>
+</html>
