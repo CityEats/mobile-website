@@ -136,12 +136,22 @@ img {
 ul {
     margin: 0;
     padding: 0;
+    list-style-type: none;
 }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: normal;
+}
+
 
 .title {
     margin: 0 0 4px;
     font-size: 16px;
-    font-weight: normal;
     text-align: center;
     font-family: $ProximaSemiBold;
     &.grey {
@@ -470,14 +480,19 @@ p {
         -webkit-box-shadow: none;
         box-shadow: none;
         font-family: $ProximaSemiBold;
-        .text {
+        .btnText {
             color: #999;
             opacity: 1;
             font-family: $Proxima;
         }
     }
-
-    .text {
+    &.tiny {
+        height: 32px;
+        line-height: 28px;
+        font-size: 12px;
+        border-radius: 3px;
+    }
+    .btnText {
         opacity: 0.4;
     }
 }
@@ -488,9 +503,9 @@ p {
 .column2 {
     @extend .clearfix;
     .column {
-        width: 48%;
+        width: 44%;
         float: left;
-        margin-left: 4%;
+        margin-left: 12%;
         &:first-child {
             margin-left: 0;
         }
@@ -520,6 +535,117 @@ p {
     &:first-child {
         border: none;
     }
+}
+
+.mainBox {
+    background: #fff;
+    border-radius: 1px;
+    -webkit-box-shadow: 0 0 5px rgba(0,0,0,.3);
+    box-shadow: 0 0 5px rgba(0,0,0,.3);
+    margin: 12px 0 20px;
+    padding: 4px;
+    &.img {
+        text-align: center;
+        img {
+            max-width: 100%;
+        }
+    }
+    &.text {
+        padding: 10px;
+        font-family: $Proxima;
+        color: #000;
+        font-size: 14px;
+        p {
+            margin: 0 0 12px;
+        }
+        strong {
+            font-family: $ProximaBold;
+            font-weight: normal;
+        }
+    }
+}
+.mainBoxTitle {
+    color: #cd3c3b;
+    font-size: 18px;
+    margin: 4px 0 12px;
+    font-family: $ProximaSemiBold;
+}
+.mainBoxDetails {
+    font-size: 16px;
+}
+.mainBoxInfoList {
+    margin-bottom: 12px;
+}
+.mainBoxInfoListName {
+    color: #808080;
+}
+.mainBoxTextList {
+    margin-bottom: 12px;
+}
+.mainBoxTextListItem {
+    padding-left: 8px;
+    background: url(../img/bullet.png) 0 6px no-repeat;
+}
+.mainBoxButton {
+    width: 40%;
+    margin: 0 auto;
+}
+
+.schedule {
+    font-size: 0;
+    line-height: 0;
+}
+.scheduleItem {
+    font-size: 16px;
+    display: inline-block;
+    vertical-align: top;
+    width: 22%;
+    margin: 0 0 10px 4%;
+    text-align: center;
+    line-height: 40px;
+    height: 38px;
+    &:nth-child(4n + 1) {
+        margin-left: 0;
+    }
+}
+.scheduleCanceled {
+    text-decoration: line-through;
+    height: 100%;
+    color: #a8a8a8;
+}
+.scheduleLink {
+    display: block;
+    background: #fff;
+    height: 100%;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,.4);
+    box-shadow: 0 1px 4px rgba(0,0,0,.4);
+    font-family: $ProximaBold;
+}
+.scheduleText {
+    opacity: 0.6;
+}
+.scheduleMoreOptions {
+    line-height: 1;
+    display: block;
+    font-size: 14px;
+    font-family: $Proxima;
+    height: 100%;
+    padding: 5px 0 0;
+}
+
+.chooseMeals {
+    @extend .clearfix;
+    .selectForm {
+        overflow: hidden;
+    }
+}
+.chooseMealsLabel {
+    float: left;
+    margin: 0 5px 0 0;
+    font-family: $ProximaBold;
+    line-height: 32px;
+    font-size: 16px;
 }
 
 .wrapper {
@@ -627,10 +753,9 @@ p {
     font-size: 16px;
     color: #fff;
     line-height: 44px;
-    font-weight: normal;
     @extend .textEllipsis;
 }
-.topBarTitleGrey {
+.topBarTitleText {
     color: #999;
 }
 
@@ -910,18 +1035,11 @@ p {
 }
 .resultsListItemMeals {
     padding: 5px 0 0;
-    @extend .clearfix;
     clear: both;
-    .selectForm {
-        overflow: hidden;
-    }
 }
-.resultsListItemMealsLabel {
-    float: left;
-    margin: 0 5px 0 0;
-    min-width: 38px;
+.resultsListItemMeals .chooseMealsLabel {
     line-height: 25px;
-    font-family: $ProximaBold;
+    font-size: 12px;
 }
 .resultsListItemOffer {
     height: 26px;
@@ -1036,7 +1154,46 @@ p {
     font-size: 12px;
     font-family: $Proxima;
     color: #a5a5a5;
-    font-weight: normal;
+}
+
+/* Choose Time */
+.chooseTimeSelect {
+    margin: 0 0 12px;
+}
+.chooseTimeHeader {
+    margin: 20px 0 15px;
+    text-align: center;
+    font-size: 14px;
+    color: #a5a5a5;
+    text-transform: uppercase;
+    font-family: $Proxima;
+}
+.chooseTimeHeaderButtons {
+    text-align: center;
+    margin: 0 0 10px;
+    font-size: 15px;
+    color: #919191;
+}
+.chooseTimeSchedule {
+    margin: 0 0 40px;
+}
+
+/* Exclusive Eats */
+.exclusiveEatsHeader {
+    font-family: $ProximaSemiBold;
+    font-size: 18px;
+    margin: 0 0 12px;
+}
+.exclusiveEatsSelect {
+    margin: 0 0 15px;
+}
+.bookBoxHeader {
+    margin: 0 0 4px;
+    text-align: center;
+    font-family: $ProximaSemiBold;
+}
+.faqQuestion {
+    display: block;
 }
 
 /* Footer */
@@ -1113,5 +1270,9 @@ only screen and (min-resolution: 192dpi) {
     .filterByItems:after {
         background-image: url(../img/arrow-filterByItems@2.png);
         background-size: 15px 18px;
+    }
+    .mainBoxTextListItem {
+        background-image: url(../img/bullet@2.png);
+        background-size: 3px 3px;
     }
 }

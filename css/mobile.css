@@ -61,23 +61,31 @@ a {
 img {
   vertical-align: top; }
 
-.clearfix, .column2, .column3, .resultsListItem, .resultsListItemMeals {
+.clearfix, .column2, .column3, .chooseMeals, .resultsListItem {
   *zoom: 1; }
-  .clearfix:before, .column2:before, .column3:before, .resultsListItem:before, .resultsListItemMeals:before, .clearfix:after, .column2:after, .column3:after, .resultsListItem:after, .resultsListItemMeals:after {
+  .clearfix:before, .column2:before, .column3:before, .chooseMeals:before, .resultsListItem:before, .clearfix:after, .column2:after, .column3:after, .chooseMeals:after, .resultsListItem:after {
     display: table;
     line-height: 0;
     content: ""; }
-  .clearfix:after, .column2:after, .column3:after, .resultsListItem:after, .resultsListItemMeals:after {
+  .clearfix:after, .column2:after, .column3:after, .chooseMeals:after, .resultsListItem:after {
     clear: both; }
 
 ul {
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  list-style-type: none; }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal; }
 
 .title {
   margin: 0 0 4px;
   font-size: 16px;
-  font-weight: normal;
   text-align: center;
   font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
   .title.grey {
@@ -390,20 +398,25 @@ p {
     -webkit-box-shadow: none;
     box-shadow: none;
     font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
-    .btn.pale .text {
+    .btn.pale .btnText {
       color: #999;
       opacity: 1;
       font-family: Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif; }
-  .btn .text {
+  .btn.tiny {
+    height: 32px;
+    line-height: 28px;
+    font-size: 12px;
+    border-radius: 3px; }
+  .btn .btnText {
     opacity: 0.4; }
 
 .btnHolder {
   margin-bottom: 12px; }
 
 .column2 .column {
-  width: 48%;
+  width: 44%;
   float: left;
-  margin-left: 4%; }
+  margin-left: 12%; }
   .column2 .column:first-child {
     margin-left: 0; }
 
@@ -425,6 +438,105 @@ p {
   border-top: 1px solid #b3b3b3; }
   .roundedBoxRow:first-child {
     border: none; }
+
+.mainBox {
+  background: #fff;
+  border-radius: 1px;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  margin: 12px 0 20px;
+  padding: 4px; }
+  .mainBox.img {
+    text-align: center; }
+    .mainBox.img img {
+      max-width: 100%; }
+  .mainBox.text {
+    padding: 10px;
+    font-family: Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif;
+    color: #000;
+    font-size: 14px; }
+    .mainBox.text p {
+      margin: 0 0 12px; }
+    .mainBox.text strong {
+      font-family: ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+      font-weight: normal; }
+
+.mainBoxTitle {
+  color: #cd3c3b;
+  font-size: 18px;
+  margin: 4px 0 12px;
+  font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.mainBoxDetails {
+  font-size: 16px; }
+
+.mainBoxInfoList {
+  margin-bottom: 12px; }
+
+.mainBoxInfoListName {
+  color: #808080; }
+
+.mainBoxTextList {
+  margin-bottom: 12px; }
+
+.mainBoxTextListItem {
+  padding-left: 8px;
+  background: url(../img/bullet.png) 0 6px no-repeat; }
+
+.mainBoxButton {
+  width: 40%;
+  margin: 0 auto; }
+
+.schedule {
+  font-size: 0;
+  line-height: 0; }
+
+.scheduleItem {
+  font-size: 16px;
+  display: inline-block;
+  vertical-align: top;
+  width: 22%;
+  margin: 0 0 10px 4%;
+  text-align: center;
+  line-height: 40px;
+  height: 38px; }
+  .scheduleItem:nth-child(4n + 1) {
+    margin-left: 0; }
+
+.scheduleCanceled {
+  text-decoration: line-through;
+  height: 100%;
+  color: #a8a8a8; }
+
+.scheduleLink {
+  display: block;
+  background: #fff;
+  height: 100%;
+  border-radius: 6px;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  font-family: ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.scheduleText {
+  opacity: 0.6; }
+
+.scheduleMoreOptions {
+  line-height: 1;
+  display: block;
+  font-size: 14px;
+  font-family: Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  height: 100%;
+  padding: 5px 0 0; }
+
+.chooseMeals .selectForm {
+  overflow: hidden; }
+
+.chooseMealsLabel {
+  float: left;
+  margin: 0 5px 0 0;
+  font-family: ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  line-height: 32px;
+  font-size: 16px; }
 
 .wrapper {
   min-height: 100%; }
@@ -492,10 +604,9 @@ p {
   margin: 0;
   font-size: 16px;
   color: #fff;
-  line-height: 44px;
-  font-weight: normal; }
+  line-height: 44px; }
 
-.topBarTitleGrey {
+.topBarTitleText {
   color: #999; }
 
 /* Content */
@@ -779,15 +890,10 @@ p {
 .resultsListItemMeals {
   padding: 5px 0 0;
   clear: both; }
-  .resultsListItemMeals .selectForm {
-    overflow: hidden; }
 
-.resultsListItemMealsLabel {
-  float: left;
-  margin: 0 5px 0 0;
-  min-width: 38px;
+.resultsListItemMeals .chooseMealsLabel {
   line-height: 25px;
-  font-family: ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+  font-size: 12px; }
 
 .resultsListItemOffer {
   height: 26px;
@@ -898,8 +1004,45 @@ p {
   margin: 0 0 2px;
   font-size: 12px;
   font-family: Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  color: #a5a5a5; }
+
+/* Choose Time */
+.chooseTimeSelect {
+  margin: 0 0 12px; }
+
+.chooseTimeHeader {
+  margin: 20px 0 15px;
+  text-align: center;
+  font-size: 14px;
   color: #a5a5a5;
-  font-weight: normal; }
+  text-transform: uppercase;
+  font-family: Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.chooseTimeHeaderButtons {
+  text-align: center;
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: #919191; }
+
+.chooseTimeSchedule {
+  margin: 0 0 40px; }
+
+/* Exclusive Eats */
+.exclusiveEatsHeader {
+  font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 18px;
+  margin: 0 0 12px; }
+
+.exclusiveEatsSelect {
+  margin: 0 0 15px; }
+
+.bookBoxHeader {
+  margin: 0 0 4px;
+  text-align: center;
+  font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.faqQuestion {
+  display: block; }
 
 /* Footer */
 .footer {
@@ -981,4 +1124,8 @@ p {
 
   .filterByItems:after {
     background-image: url(../img/arrow-filterByItems@2.png);
-    background-size: 15px 18px; } }
+    background-size: 15px 18px; }
+
+  .mainBoxTextListItem {
+    background-image: url(../img/bullet@2.png);
+    background-size: 3px 3px; } }
