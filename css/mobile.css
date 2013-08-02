@@ -1,7 +1,7 @@
 /* Mixins */
 /* Variables */
 /* Extends */
-.textEllipsis, .checkboxesListLabel, .topBarSubTitle, .topBarTitle, .resultsListItemOfferText, .filterByItems {
+.textEllipsis, .checkboxesListLabel, .topBarSubTitle, .topBarTitle, .resultsListItemOfferText, .filterByItems, .menuName {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; }
@@ -32,8 +32,14 @@
   font-style: normal; }
 
 @font-face {
-  font-family: 'OpenSansSemibold';
+  font-family: 'OpenSansSemiBold';
   src: url("../fonts/opensans-semibold-webfont.ttf") format("truetype"), url("../fonts/opensans-semibold-webfont.svg#open_sanssemibold") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'OpenSansBold';
+  src: url("../fonts/opensans-bold-webfont.ttf") format("truetype"), url("../fonts/opensans-bold-webfont.svg#open_sansbold") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -61,13 +67,13 @@ a {
 img {
   vertical-align: top; }
 
-.clearfix, .column2, .column3, .chooseMeals, .resultsListItem {
+.clearfix, .column2, .column3, .chooseMeals, .resultsListItem, .exclusiveEatsOfferInner, .accountAboutUser, .reservationButtons, .reservationPoints, .reminder {
   *zoom: 1; }
-  .clearfix:before, .column2:before, .column3:before, .chooseMeals:before, .resultsListItem:before, .clearfix:after, .column2:after, .column3:after, .chooseMeals:after, .resultsListItem:after {
+  .clearfix:before, .column2:before, .column3:before, .chooseMeals:before, .resultsListItem:before, .exclusiveEatsOfferInner:before, .accountAboutUser:before, .reservationButtons:before, .reservationPoints:before, .reminder:before, .clearfix:after, .column2:after, .column3:after, .chooseMeals:after, .resultsListItem:after, .exclusiveEatsOfferInner:after, .accountAboutUser:after, .reservationButtons:after, .reservationPoints:after, .reminder:after {
     display: table;
     line-height: 0;
     content: ""; }
-  .clearfix:after, .column2:after, .column3:after, .chooseMeals:after, .resultsListItem:after {
+  .clearfix:after, .column2:after, .column3:after, .chooseMeals:after, .resultsListItem:after, .exclusiveEatsOfferInner:after, .accountAboutUser:after, .reservationButtons:after, .reservationPoints:after, .reminder:after {
     clear: both; }
 
 ul {
@@ -81,7 +87,8 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: normal; }
+  font-weight: normal;
+  margin: 0; }
 
 .title {
   margin: 0 0 4px;
@@ -150,7 +157,7 @@ p {
 .textField,
 .textArea,
 .select,
-.checkboxForm,
+.checkbox,
 .datePicker {
   border: 1px solid #a5a3a2;
   border-bottom-color: #888582;
@@ -228,15 +235,23 @@ p {
   padding-right: 4px; }
 
 .checkboxForm {
-  -webkit-box-shadow: none;
-  box-shadow: none;
-  background: none;
+  display: inline-block;
   width: 26px;
   height: 26px;
-  padding: 0;
   background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 85%, rgba(0, 0, 0, 0.15) 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(255, 255, 255, 0.5)), color-stop(0.3, rgba(255, 255, 255, 0)), color-stop(0.85, rgba(0, 0, 0, 0)), color-stop(1, rgba(0, 0, 0, 0.15)));
-  background-image: linear-gradient(top, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 85%, rgba(0, 0, 0, 0.15) 100%); }
+  background-image: linear-gradient(top, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 85%, rgba(0, 0, 0, 0.15) 100%);
+  border-radius: 6px; }
+
+.checkbox {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  background: url(../img/icon-checkGrey.png) -9999px no-repeat;
+  width: 26px;
+  height: 26px;
+  padding: 0; }
+  .checkbox:checked {
+    background-position: -2px -2px; }
 
 .searchForm {
   border: 1px solid #a5a3a2;
@@ -355,6 +370,74 @@ p {
     color: #fff;
     text-shadow: 0 -1px 1px #666; }
 
+.switcher {
+  width: 68px;
+  height: 30px;
+  display: inline-block;
+  position: relative;
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 16px;
+  -webkit-box-shadow: 0 0 4px #999 inset;
+  box-shadow: 0 0 4px #999 inset; }
+  .switcher input {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0; }
+    .switcher input:before {
+      content: attr(data-off);
+      color: #838483;
+      font-size: 17px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 8px;
+      line-height: 30px;
+      font-weight: bold;
+      width: 35px;
+      text-align: center;
+      color: #333; }
+    .switcher input:after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 5px;
+      width: 20px;
+      height: 20px;
+      border: 1px solid #fff;
+      border-radius: 10px;
+      background-image: -webkit-linear-gradient(top, #bababa 0%, white 60%);
+      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #bababa), color-stop(0.6, white));
+      background-image: linear-gradient(top, #bababa 0%, white 60%);
+      -webkit-box-shadow: 0 2px 1px #666;
+      box-shadow: 0 2px 1px #666; }
+    .switcher input:checked {
+      background: none; }
+      .switcher input:checked:before {
+        content: attr(data-on);
+        left: 5px;
+        right: auto;
+        color: #c33; }
+      .switcher input:checked:after {
+        left: auto;
+        right: 5px; }
+
+.hasError {
+  background: rgba(205, 60, 59, 0.4);
+  border-color: #cd3c3b;
+  color: #cd3c3b; }
+
+.textError {
+  font-size: 12px;
+  color: #cd3c3b; }
+
+.row .textError {
+  margin: 5px 0 -15px;
+  min-height: 18px; }
+
 ::-webkit-input-placeholder {
   color: #808080; }
 
@@ -370,23 +453,30 @@ p {
 .btn {
   display: inline-block;
   height: 45px;
-  line-height: 43px;
   border: 1px solid #72171d;
   background: url(../img/bg-btn.jpg);
   border-radius: 5px;
   width: 100%;
-  font-size: 16px;
   color: #fff;
   position: relative;
   text-align: center;
   -webkit-appearance: none;
-  font-family: OpenSans, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font: 16px/43px OpenSans, Arial, "Helvetica Neue", Helvetica, sans-serif;
   text-shadow: 0 -1px rgba(0, 0, 0, 0.3);
   -webkit-box-shadow: 0 1px 6px -2px #fff inset, 0 -1px 6px -2px  #000 inset;
   box-shadow: 0 1px 6px -2px #fff inset, 0 -1px 6px -2px  #000 inset; }
+  .btn.grey {
+    border-color: #b3b3b3;
+    background-image: -webkit-linear-gradient(top, #c2c2c2 0%, #aeaeae 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #c2c2c2), color-stop(1, #aeaeae));
+    background-image: linear-gradient(top, #c2c2c2 0%, #aeaeae 100%);
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 -1px 0 rgba(0, 0, 0, 0.2) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 -1px 0 rgba(0, 0, 0, 0.2) inset; }
   .btn.small {
     height: 32px;
-    line-height: 28px; }
+    line-height: 28px;
+    font-size: 12px;
+    border-radius: 3px; }
   .btn.pale {
     border-color: #aca4ac;
     border-bottom-color: #858589;
@@ -403,20 +493,56 @@ p {
       opacity: 1;
       font-family: Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif; }
   .btn.tiny {
-    height: 32px;
-    line-height: 28px;
+    height: 25px;
+    line-height: 22px;
     font-size: 12px;
     border-radius: 3px; }
+  .btn.iconAdd, .btn.iconTick {
+    position: relative;
+    padding-left: 30px;
+    padding-right: 10px; }
+    .btn.iconAdd:before, .btn.iconTick:before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      position: absolute;
+      top: 50%;
+      margin: -6px 0 0;
+      left: 10px;
+      background: url(../img/icon-btnAdd.png) no-repeat; }
+  .btn.iconTick:before {
+    width: 13px;
+    height: 14px;
+    background: url(../img/icon-btnTick.png) no-repeat; }
   .btn .btnText {
     opacity: 0.4; }
 
 .btnHolder {
   margin-bottom: 12px; }
 
+.btnSoft {
+  display: inline-block;
+  height: 40px;
+  border: 1px solid #ababab;
+  border-radius: 5px;
+  width: 100%;
+  color: #0b5e9d;
+  position: relative;
+  text-align: center;
+  -webkit-appearance: none;
+  font: 13px/38px ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  background-color: #fff;
+  background-image: -webkit-linear-gradient(top, white 50%, #cfcfcf 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.5, white), color-stop(1, #cfcfcf));
+  background-image: linear-gradient(top, white 50%, #cfcfcf 100%); }
+  .btnSoft.red {
+    color: #c33;
+    font-family: ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
 .column2 .column {
-  width: 44%;
+  width: 47%;
   float: left;
-  margin-left: 12%; }
+  margin-left: 6%; }
   .column2 .column:first-child {
     margin-left: 0; }
 
@@ -432,12 +558,18 @@ p {
   border: 1px solid #b3b3b3;
   border-radius: 6px;
   -webkit-box-shadow: 0 0 3px #a6a6a6;
-  box-shadow: 0 0 3px #a6a6a6; }
+  box-shadow: 0 0 3px #a6a6a6;
+  margin: 0 0 15px; }
 
 .roundedBoxRow {
   border-top: 1px solid #b3b3b3; }
   .roundedBoxRow:first-child {
     border: none; }
+
+.emptyBox {
+  border: 1px solid #b3b3b3;
+  border-radius: 6px;
+  margin: 0 0 15px; }
 
 .mainBox {
   background: #fff;
@@ -478,6 +610,10 @@ p {
 
 .mainBoxTextList {
   margin-bottom: 12px; }
+  .mainBoxTextList.indent {
+    margin-bottom: -6px; }
+  .mainBoxTextList.indent .mainBoxTextListItem {
+    margin: 10px 0 16px; }
 
 .mainBoxTextListItem {
   padding-left: 8px;
@@ -486,6 +622,23 @@ p {
 .mainBoxButton {
   width: 40%;
   margin: 0 auto; }
+
+.mainBoxContactMap {
+  font-size: 14px;
+  font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  color: #424242;
+  margin: 2px 6px 4px; }
+
+.mainBoxContactMapState {
+  font-size: 12px;
+  color: #a8a8a8; }
+
+.mainBoxMeta {
+  color: #919191;
+  margin: 0 0 12px; }
+
+.mainBox.text .mainBoxMeta p {
+  margin: 0; }
 
 .schedule {
   font-size: 0;
@@ -521,22 +674,134 @@ p {
   opacity: 0.6; }
 
 .scheduleMoreOptions {
-  line-height: 1;
   display: block;
-  font-size: 14px;
-  font-family: Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font: 14px/1 Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif;
   height: 100%;
   padding: 5px 0 0; }
 
-.chooseMeals .selectForm {
-  overflow: hidden; }
+.chooseMeals {
+  margin: 0 0 20px; }
+  .chooseMeals .selectForm {
+    overflow: hidden; }
 
 .chooseMealsLabel {
   float: left;
   margin: 0 5px 0 0;
-  font-family: ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
-  line-height: 32px;
-  font-size: 16px; }
+  font: 16px/32px ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.subNav {
+  height: 46px;
+  margin: -10px -10px 0;
+  background: url(../img/bg-subNav.jpg) repeat-x;
+  border-top: 1px solid #000; }
+
+.subNavItem {
+  float: left;
+  width: 25%; }
+
+.subNavLink {
+  display: block;
+  height: 45px;
+  text-align: center;
+  position: relative;
+  color: #a8a8a8;
+  font: 13px/45px OpenSansSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.2) 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(255, 255, 255, 0.05)), color-stop(0.2, rgba(255, 255, 255, 0)), color-stop(0.7, rgba(0, 0, 0, 0)), color-stop(1, rgba(0, 0, 0, 0.2)));
+  background-image: linear-gradient(top, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.2) 100%);
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.5); }
+  .subNavLink.bookIt {
+    background-color: rgba(185, 42, 39, 0.65);
+    color: #fff; }
+  .subNavLink.active {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(0, 0, 0, 0.15)), color-stop(1, rgba(255, 255, 255, 0.05)));
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%); }
+  .subNavLink:before, .subNavLink:after {
+    content: '';
+    width: 1px;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    left: 0; }
+  .subNavLink:after {
+    left: auto;
+    right: 0;
+    background: rgba(0, 0, 0, 0.1); }
+
+.carouselHolder {
+  width: 100%;
+  overflow: hidden;
+  position: relative; }
+
+.carousel {
+  width: 9999px;
+  overflow: hidden; }
+
+.carouselItem {
+  float: left;
+  width: 292px; }
+
+.carouselPrev,
+.carouselNext {
+  width: 26px;
+  height: 26px;
+  text-indent: -9999px;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  margin: -13px 0 0;
+  background: url(../img/btns-carousel.png) -5px -5px no-repeat;
+  z-index: 2; }
+
+.carouselNext {
+  left: auto;
+  right: 5px;
+  background-position: -36px -5px; }
+
+.tabs {
+  height: 35px; }
+
+.tabsItem {
+  float: left;
+  margin: 0 0 0 6px; }
+
+.tabsLink {
+  display: block;
+  height: 35px;
+  padding: 0 25px;
+  background: url(../img/bg-btn.jpg);
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  font: 14px/35px OpenSans, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.3);
+  color: #fff; }
+
+.tabsLink.active {
+  background: #fff;
+  color: #333;
+  text-shadow: none;
+  position: relative;
+  z-index: 2; }
+
+.tabsContent {
+  border-radius: 3px;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  position: relative; }
+
+.tabsContentInner {
+  border-radius: 3px;
+  padding: 4px 0 0;
+  background: #fff;
+  position: relative;
+  z-index: 3; }
 
 .wrapper {
   min-height: 100%; }
@@ -552,7 +817,7 @@ p {
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(255, 255, 255, 0.15)), color-stop(0.45, rgba(255, 255, 255, 0)), color-stop(0.55, rgba(0, 0, 0, 0)), color-stop(1, rgba(0, 0, 0, 0.15)));
   background-image: linear-gradient(top, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.15) 100%);
   text-align: center;
-  font-family: OpenSansSemibold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+  font-family: OpenSansSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
 
 .topBarLink {
   float: right;
@@ -601,7 +866,6 @@ p {
     line-height: 1.25; }
 
 .topBarTitle {
-  margin: 0;
   font-size: 16px;
   color: #fff;
   line-height: 44px; }
@@ -698,15 +962,13 @@ p {
 .fbLoginBtn {
   background: #2c5892;
   height: 45px;
-  line-height: 45px;
   display: inline-block;
   width: 100%;
   border-radius: 5px;
   color: #fff;
   padding: 0 10px 0 50px;
   text-align: center;
-  font-size: 17px;
-  font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font: 17px/45px ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
   position: relative;
   margin: 0 0 20px;
   text-shadow: 0 -1px rgba(0, 0, 0, 0.3); }
@@ -720,7 +982,7 @@ p {
     border-right: 1px solid #96acc9;
     background: url(../img/icon-fb.png) 50% 50% no-repeat; }
 
-.helpFormLink {
+.helpLink {
   text-align: center;
   font-size: 16px;
   margin: 25px 0; }
@@ -865,7 +1127,6 @@ p {
   line-height: 1.1; }
 
 .resultsListTitle {
-  margin: 0;
   font-size: 16px;
   font-family: ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
 
@@ -883,13 +1144,12 @@ p {
   width: 30%;
   text-align: right;
   color: #919191;
-  font-size: 11px;
-  font-family: OpenSans, Arial, "Helvetica Neue", Helvetica, sans-serif;
-  line-height: 1.4; }
+  font: 11px/1.4 OpenSans, Arial, "Helvetica Neue", Helvetica, sans-serif; }
 
 .resultsListItemMeals {
   padding: 5px 0 0;
-  clear: both; }
+  clear: both;
+  margin: 0; }
 
 .resultsListItemMeals .chooseMealsLabel {
   line-height: 25px;
@@ -903,10 +1163,8 @@ p {
 
 .resultsListItemOfferText {
   height: 100%;
-  font-size: 14px;
-  line-height: 26px;
   padding: 0 10px;
-  font-family: OpenSans, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font: 14px/26px OpenSans, Arial, "Helvetica Neue", Helvetica, sans-serif;
   background: url(../img/bg-body.jpg); }
 
 .btn.small.resultsListItemOfferBtn {
@@ -922,20 +1180,34 @@ p {
   border-left: 0; }
 
 .rating {
-  width: 50px;
-  height: 10px;
-  background: url(../img/rating.png) -6px -5px no-repeat;
-  margin: 2px 0 0 auto; }
+  width: 71px;
+  height: 14px;
+  background: url(../img/rating.png) -5px -5px no-repeat; }
   .rating.one {
-    background-position: -6px -20px; }
+    background-position: -5px -24px; }
   .rating.two {
-    background-position: -6px -35px; }
+    background-position: -5px -43px; }
   .rating.three {
-    background-position: -6px -50px; }
+    background-position: -5px -62px; }
   .rating.four {
-    background-position: -6px -65px; }
+    background-position: -5px -81px; }
   .rating.five {
-    background-position: -6px -80px; }
+    background-position: -5px -100px; }
+  .rating.small {
+    width: 50px;
+    height: 10px;
+    background: url(../img/ratingSmall.png) -6px -5px no-repeat;
+    margin: 2px 0 0 auto; }
+    .rating.small.one {
+      background-position: -6px -20px; }
+    .rating.small.two {
+      background-position: -6px -35px; }
+    .rating.small.three {
+      background-position: -6px -50px; }
+    .rating.small.four {
+      background-position: -6px -65px; }
+    .rating.small.five {
+      background-position: -6px -80px; }
 
 /* Cuisines */
 .cuisines {
@@ -950,6 +1222,7 @@ p {
   font-size: 17px;
   color: #808080;
   padding: 16px 40px;
+  position: relative;
   position: relative; }
   .filterByItems.updated {
     color: #000; }
@@ -974,7 +1247,11 @@ p {
     margin: -4px 0 0;
     width: 5px;
     height: 8px;
-    background: url(../img/arrow-filterByItems.png) -5px -5px no-repeat; }
+    background: url(../img/arrow.png) -5px -5px no-repeat; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi) {
+    .filterByItems:after {
+      background-image: url(../img/arrow@2.png);
+      background-size: 15px 18px; } }
 
 /* Filter */
 .filter {
@@ -998,7 +1275,7 @@ p {
   margin: 0 -10px;
   padding: 12px 10px 0; }
 
-.sortByHeader {
+.sortByTitle {
   text-align: center;
   text-transform: uppercase;
   margin: 0 0 2px;
@@ -1028,7 +1305,7 @@ p {
   margin: 0 0 40px; }
 
 /* Exclusive Eats */
-.exclusiveEatsHeader {
+.exclusiveEatsTitle {
   font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-size: 18px;
   margin: 0 0 12px; }
@@ -1036,7 +1313,7 @@ p {
 .exclusiveEatsSelect {
   margin: 0 0 15px; }
 
-.bookBoxHeader {
+.bookBoxTitle {
   margin: 0 0 4px;
   text-align: center;
   font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
@@ -1044,13 +1321,318 @@ p {
 .faqQuestion {
   display: block; }
 
+/* Restaurant Info */
+.restaurantInfoSchedule {
+  margin-bottom: 10px; }
+
+.exclusiveEatsOffer {
+  background: url(../img/bg-topBar.jpg); }
+
+.exclusiveEatsOfferInner {
+  padding: 6px 12px 12px;
+  background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0.4) 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(255, 255, 255, 0.1)), color-stop(0.4, rgba(255, 255, 255, 0)), color-stop(0.8, rgba(0, 0, 0, 0)), color-stop(1, rgba(0, 0, 0, 0.4)));
+  background-image: linear-gradient(top, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0.4) 100%); }
+
+.exclusiveEatsOfferPhoto {
+  float: right;
+  margin: 6px 0 0; }
+
+.exclusiveEatsOfferInfo {
+  overflow: hidden; }
+
+.exclusiveEatsOfferTitle {
+  color: #fff;
+  margin: 0 0 4px;
+  font: 16px/1.2 OpenSansSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.exclusiveEatsOfferDetails {
+  width: 90px; }
+
+.restaurantInfoButtons {
+  margin: 0 0 20px; }
+
+.restaurantInfoMain {
+  padding: 11px; }
+
+.restaurantInfoList {
+  margin: 20px 0 0;
+  font-size: 13px;
+  font-family: OpenSans, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.restaurantInfoList dt {
+  font-family: OpenSansBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  margin: 15px 0 0; }
+
+.restaurantInfoList dd {
+  margin: 0; }
+
+.restaurantInfoPrice {
+  font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 14px;
+  color: #a8a8a8;
+  letter-spacing: 4px; }
+
+.restaurantInfoPriceActive {
+  color: #424242; }
+
+/* Restaurant Reviews */
+.restaurantReviewsTitle {
+  text-align: center;
+  margin: 15px 0 0;
+  font-size: 20px;
+  font-family: ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.review {
+  padding: 14px 10px;
+  color: #000;
+  font-size: 13px;
+  font-family: OpenSans, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  border-top: 1px solid #eaeaea;
+  margin: 0 -4px; }
+  .review .rating {
+    margin: 0 0 6px; }
+  .review:first-child {
+    padding-top: 10px;
+    border: none; }
+
+.reviewTitle {
+  margin: 0 0 4px;
+  font-family: OpenSansBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  color: #919191;
+  font-size: 16px; }
+
+.reviewMeta {
+  color: #919191; }
+
+/* Restaurant Menus */
+.restaurantMenusHeader {
+  padding: 0 20px;
+  position: relative; }
+
+.restaurantMenusTitle {
+  text-align: center;
+  margin: 15px 0 0;
+  font-size: 20px;
+  font-family: ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.restaurantReviewsPrev,
+.restaurantReviewsNext {
+  width: 9px;
+  height: 14px;
+  position: absolute;
+  top: 50%;
+  margin: -7px 0 0;
+  left: 4px;
+  background: url(../img/btns-menus.png) -5px -5px no-repeat;
+  text-indent: -9999px;
+  overflow: hidden; }
+
+.restaurantReviewsNext {
+  left: auto;
+  right: 4px;
+  background-position: -20px -5px; }
+
+.menu {
+  margin: 0 0 10px; }
+
+.menuTitle {
+  margin: 10px 6px;
+  color: #cd3c3b;
+  font-size: 13px;
+  font-family: OpenSansSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  text-transform: uppercase; }
+
+.menuList {
+  margin: 0 -4px;
+  border-bottom: 1px solid #eaeaea; }
+
+.menuListItem {
+  border-top: 1px solid #eaeaea;
+  padding: 10px;
+  font-size: 13px;
+  color: gray; }
+
+.menuPrice {
+  float: right;
+  margin: 0 0 0 10px;
+  color: #333;
+  font-family: OpenSansSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.menuName {
+  font-size: 16px;
+  color: #333;
+  font-family: OpenSansBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+/* Account */
+.account {
+  margin: 20px 0 25px; }
+
+.accountAbout {
+  font: 14px/1.4 ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  color: #808080;
+  padding: 6px 12px 12px; }
+
+.accountAboutUser {
+  margin: 0 0 12px; }
+
+.accountAboutUserPhoto {
+  float: left;
+  margin: 2px 10px 0 0; }
+
+.accountAboutUserInfo {
+  overflow: hidden;
+  line-height: 20px; }
+
+.accountAboutUserName {
+  font-size: 16px;
+  color: #333;
+  margin: 0; }
+
+.accountAboutBox {
+  margin: 0 0 12px; }
+
+.accountAboutTitle {
+  font-size: 14px;
+  color: #333; }
+
+.accountReservationTitle {
+  text-align: center;
+  color: #999;
+  font-size: 15px;
+  margin: 20px 0; }
+
+.accountReservationList {
+  border-bottom: 1px solid #b3b3b3; }
+
+.accountReservationItem {
+  border-top: 1px solid #b3b3b3; }
+
+.accountReservationLink {
+  display: block;
+  padding: 15px 25px 15px 15px;
+  color: #808080;
+  font-size: 14px;
+  font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  position: relative; }
+  .accountReservationLink:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    margin: -4px 0 0;
+    width: 5px;
+    height: 8px;
+    background: url(../img/arrow.png) -5px -5px no-repeat; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi) {
+    .accountReservationLink:after {
+      background-image: url(../img/arrow@2.png);
+      background-size: 15px 18px; } }
+
+.accountReservation.upcoming .accountReservationSubTitle {
+  color: #cd3c3b; }
+
+.accountReservationSubTitle {
+  font-size: 20px;
+  color: #333; }
+
+/* Reservation */
+.reservationHeader {
+  font-size: 14px;
+  color: #808080;
+  text-align: center;
+  margin: 15px 0 12px; }
+
+.reservationTitle {
+  font-size: 25px;
+  color: #333;
+  font-family: ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  margin: 0 0 2px; }
+
+.reservationData {
+  color: #333;
+  font-size: 17px;
+  font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  padding: 15px;
+  display: block; }
+
+a.reservationData {
+  position: relative; }
+  a.reservationData:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    margin: -4px 0 0;
+    width: 5px;
+    height: 8px;
+    background: url(../img/arrow.png) -5px -5px no-repeat; }
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi) {
+    a.reservationData:after {
+      background-image: url(../img/arrow@2.png);
+      background-size: 15px 18px; } }
+
+.reservationDataTitle {
+  font-size: 20px;
+  margin: 0 0 8px; }
+  .reservationDataTitle.canceled {
+    color: #666; }
+  .reservationDataTitle.confirmed {
+    color: #c33; }
+
+.reservationGreyText {
+  color: #808080; }
+
+.reservationDataSubTitle {
+  font-size: 12px;
+  color: #a5a5a5;
+  text-transform: uppercase;
+  font-family: Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  margin: 0 0 6px; }
+
+.reservationButtons {
+  padding: 10px; }
+  .reservationButtons .reservationButtonHolder {
+    width: 48%;
+    float: left;
+    margin-left: 4%; }
+    .reservationButtons .reservationButtonHolder:first-child {
+      margin-left: 0; }
+
+.reservationPoints {
+  color: #808080;
+  font: 15px/1.1 ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  padding: 10px 20px 6px; }
+
+.reservationPointsNumber {
+  float: left;
+  font-size: 37px;
+  color: #333;
+  margin: 0 10px 0 0; }
+
+.reservationPointsHolder {
+  overflow: hidden;
+  margin: 3px 0 0; }
+
+.emptyBoxReminder {
+  padding: 12px 10px; }
+
+.reminder {
+  min-height: 30px; }
+
+.reminderLabel {
+  float: left;
+  margin: 6px 10px 0 0;
+  font: 16px ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+.reminderSwitcher {
+  float: right; }
+
 /* Footer */
 .footer {
   height: 60px;
   margin: -60px 0 0;
-  font-size: 16px;
-  font-family: ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
-  line-height: 60px;
+  font: 16px/60px ProximaSemiBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
   padding: 0 10px; }
 
 .footer {
@@ -1111,6 +1693,10 @@ p {
 
   .rating {
     background-image: url(../img/rating@2.png);
+    background-size: 81px 119px; }
+
+  .rating.small {
+    background-image: url(../img/ratingSmall@2.png);
     background-size: 61px 95px; }
 
   .checkboxesListInput {
@@ -1122,10 +1708,28 @@ p {
     background-image: url(../img/icon-filterByItems@2.png);
     background-size: 38px 27px; }
 
-  .filterByItems:after {
-    background-image: url(../img/arrow-filterByItems@2.png);
-    background-size: 15px 18px; }
-
   .mainBoxTextListItem {
     background-image: url(../img/bullet@2.png);
-    background-size: 3px 3px; } }
+    background-size: 3px 3px; }
+
+  .carouselPrev,
+  .carouselNext {
+    background-image: url(../img/btns-carousel@2.png);
+    background-size: 67px 36px; }
+
+  .btn.iconAdd:before {
+    background-image: url(../img/icon-btnAdd@2.png);
+    background-size: 12px 12px; }
+
+  .btn.iconTick:before {
+    background-image: url(../img/icon-btnTick@2.png);
+    background-size: 13px 14px; }
+
+  .checkbox {
+    background-image: url(../img/icon-checkGrey@2.png);
+    background-size: 26px 27px; }
+
+  .restaurantReviewsPrev,
+  .restaurantReviewsNext {
+    background-image: url(../img/btns-menus@2.png);
+    background-size: 34px 24px; } }
