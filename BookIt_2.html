@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>City Eats</title>
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <link rel="stylesheet" href="css/normalize.min.css" />
+        <link rel="stylesheet" href="css/mobile.css" />
+    </head>
+    <body>
+        <div class="wrapper">
+            <!-- Top Bar -->
+            <nav class="topBar">
+                <div class="topBarInner">
+                    <a class="topBarLink" href="#">Back</a>
+                    <div class="topBarHolder">
+                        <h1 class="topBarTitle">Book It</h1>
+                    </div>
+                </div>
+            </nav>
+            <!-- Content -->
+            <div class="content">
+                <!-- Reservation -->
+                <div class="reservationHeader">
+                    <h2 class="reservationTitle">Complete Reservation</h2>
+                </div>
+                <div class="roundedBox">
+                    <div class="roundedBoxRow">
+                        <div class="reservationData reservationDataEdit">
+                            <h3 class="reservationDataTitle confirmed">Joe’s Crab Shack</h3>
+                            <p>Sun,Sept 16th</p>
+                            <p><span class="reservationGreyText">for</span> 2 people <span class="reservationGreyText">at</span> 6:30pm</p>
+                            <a href="#" class="btnSoft small">Edit</a>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="reservationSubTitle">Your account info</h4>
+                <div class="roundedBox">
+                    <div class="roundedBoxRow">
+                        <div class="reservationData">
+                            <p>Jonathan Smithertonson</p>
+                            <p class="reservationGreyText">jon@radmail.com</p>
+                            <p class="reservationGreyText">(405) 689-9876</p>
+                            <div class="reservationDataButtons">
+                                <div class="reservationDataButtonLeft">
+                                    <a href="#" class="btnSoft small">Reserving for someone else?</a>
+                                </div>
+                                <div class="reservationDataButtonRight">
+                                    <a href="#" class="btnSoft small">Edit Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="reservationSubTitle">Special requests</h4>
+                <div class="roundedBox">
+                    <div class="roundedBoxRow">
+                        <input class="textField blank" type="text" value="I have a penut allergy" placeholder="e.g. Table with View, Shellfish allergy" />
+                    </div>
+                </div>
+                <h4 class="reservationSubTitle">Promo code</h4>
+                <div class="roundedBox">
+                    <div class="roundedBoxRow">
+                        <input class="textField blank" type="text" placeholder="Promo Code (optional)" />
+                    </div>
+                </div>
+                <div class="roundedBox">
+                    <div class="roundedBoxRow">
+                        <div class="reminder reminderBookIt">
+                            <p class="reminderLabel">SMS Reminder</p>
+                            <label class="switcher reminderSwitcher">
+                                <input type="checkbox" data-on="on" data-off="off" checked />
+                            </label>
+                        </div>
+                    </div>
+                    <div class="roundedBoxRow">
+                        <div class="reminder reminderBookIt">
+                            <p class="reminderLabel">Email Reminder</p>
+                            <label class="switcher reminderSwitcher">
+                                <input type="checkbox" data-on="on" data-off="off" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="btnHolder">
+                    <input class="btn" type="submit" value="Next Step" />
+                </div>
+                <div class="termsText">By completing the reservation you are agreeing to the <a href="#">terms of service</a></div>
+            </div>
+        </div>
+    </body>
+</html>

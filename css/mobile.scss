@@ -50,15 +50,15 @@
         margin: -4px 0 0;
         width: 5px;
         height: 8px;
-        background: url(../img/arrow.png) -5px -5px no-repeat;
+        background: url(../img/sprite.png) -5px -5px no-repeat;
     }
     @media
     only screen and (-webkit-min-device-pixel-ratio: 2),
     only screen and (min-device-pixel-ratio: 2),
     only screen and (min-resolution: 192dpi) {
         &:after {
-            background-image: url(../img/arrow@2.png);
-            background-size: 15px 18px;
+            background-image: url(../img/sprite@2.png);
+            background-size: 368px 55px;
         }
     }
 }
@@ -268,6 +268,16 @@ p {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+.textField.blank,
+.textArea.blank{
+    border-radius: 0;
+    border: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background: none;
+    padding-left: 15px;
+    padding-right: 15px;
+}
 .selectForm {
     position: relative;
     &:before {
@@ -278,7 +288,7 @@ p {
         margin: -3px 0 0;
         width: 10px;
         height: 6px;
-        background: url(../img/arrow-select.png) no-repeat;
+        background: url(../img/sprite.png) -15px -5px no-repeat;
     }
 }
 .select.updated {
@@ -306,7 +316,7 @@ p {
         margin: -8px 0 0;
         width: 16px;
         height: 16px;
-        background: url(../img/icon-datepicker.png) no-repeat;
+        background: url(../img/sprite.png) -196px -5px no-repeat;
     }
 }
 .selectForm.small .select {
@@ -327,12 +337,12 @@ p {
 .checkbox {
     -webkit-box-shadow: none;
     box-shadow: none;
-    background: url(../img/icon-checkGrey.png) -9999px no-repeat;
+    background: url(../img/sprite.png) -9999px no-repeat;
     width: 26px;
     height: 26px;
     padding: 0;
     &:checked {
-        background-position: -2px -2px;
+        background-position: -172px -2px;
     }
 }
 .searchForm {
@@ -352,7 +362,7 @@ p {
         margin: -7px 0 0;
         width: 15px;
         height: 16px;
-        background: url(../img/icon-search.png) no-repeat;
+        background: url(../img/sprite.png) -325px -5px no-repeat;
     }
 }
 .searchField {
@@ -374,7 +384,7 @@ p {
     right: 8px;
     text-indent: -9999px;
     overflow: hidden;
-    background: url(../img/icon-searchClear.png) no-repeat;
+    background: url(../img/sprite.png) -344px -5px no-repeat;
 }
 
 .checkboxesListItem {
@@ -406,9 +416,9 @@ p {
     margin: 0;
     border: 0;
     margin: -9px 0 0;
-    background: url(../img/icon-check.png) -9999px no-repeat;
+    background: url(../img/sprite.png) -9999px no-repeat;
     &:checked {
-        background-position: -5px -5px;
+        background-position: -154px -5px;
     }
     &:checked + .checkboxesListLabel {
         color: #0b5e9d;
@@ -544,14 +554,30 @@ p {
     }
 }
 
-.hasError {
+.hasError,
+.blank.hasError {
     background: rgba(205,60,59,.4);
-    border-color: #cd3c3b;
+    border: 1px solid #cd3c3b;
     color: #cd3c3b;
+    &::-webkit-input-placeholder {
+        color: #cd3c3b;
+    }
+    &:-moz-placeholder {
+        color: #cd3c3b;
+    }
+    &::-moz-placeholder {
+        color: #cd3c3b;
+    }
+    &:-ms-input-placeholder {
+        color: #cd3c3b;
+    }
 }
 .textError {
     font-size: 12px;
     color: #cd3c3b;
+}
+.roundedBoxRow .textError {
+    margin: 6px 15px 5px;
 }
 .row .textError {
     margin: 5px 0 -15px;
@@ -560,15 +586,19 @@ p {
 
 ::-webkit-input-placeholder {
    color: #808080;
+   font-family: $Proxima;
 }
 :-moz-placeholder {
    color: #808080;
+   font-family: $Proxima;
 }
 ::-moz-placeholder {
    color: #808080;
+   font-family: $Proxima;
 }
 :-ms-input-placeholder {  
    color: #808080;
+   font-family: $Proxima;
 }
 
 .btn {
@@ -644,13 +674,13 @@ p {
             top: 50%;
             margin: -6px 0 0;
             left: 10px;
-            background: url(../img/icon-btnAdd.png) no-repeat;
+            background: url(../img/sprite.png) -120px -5px no-repeat;
         }
     }
     &.iconTick:before {
         width: 13px;
         height: 14px;
-        background: url(../img/icon-btnTick.png) no-repeat;
+        background: url(../img/sprite.png) -137px -5px no-repeat;
     }
     .btnText {
         opacity: 0.4;
@@ -680,6 +710,10 @@ p {
         color-stop(1, #cfcfcf)
     );
     background-image: linear-gradient(top, #fff 50%, #cfcfcf 100%);
+    &.small {
+        height: 30px;
+        line-height: 30px;
+    }
     &.red {
         color: #c33;
         font-family: $ProximaBold;
@@ -710,17 +744,23 @@ p {
 }
 
 .roundedBox {
-    background: #fff;
-    border: 1px solid #b3b3b3;
-    border-radius: 6px;
     -webkit-box-shadow: 0 0 3px #a6a6a6;
     box-shadow: 0 0 3px #a6a6a6;
     margin: 0 0 15px;
+    border-radius: 6px;
 }
 .roundedBoxRow {
-    border-top: 1px solid #b3b3b3;
+    border: solid #b3b3b3;
+    background: #fff;
+    border-width: 0 1px 1px;
     &:first-child {
-        border: none;
+        border-top-width: 1px;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    &:last-child {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
     }
 }
 
@@ -947,13 +987,13 @@ p {
     top: 50%;
     left: 5px;
     margin: -13px 0 0;
-    background: url(../img/btns-carousel.png) -5px -5px no-repeat;
+    background: url(../img/sprite.png) -30px -5px no-repeat;
     z-index: 2;
 }
 .carouselNext {
     left: auto;
     right: 5px;
-    background-position: -36px -5px;
+    background-position: -61px -5px;
 }
 
 .tabs {
@@ -1188,12 +1228,12 @@ p {
     &:before {
         content: '';
         width: 50px;
+        height: 45px;
         position: absolute;
         top: 0;
         left: 0;
-        bottom: 0;
         border-right: 1px solid #96acc9;
-        background: url(../img/icon-fb.png) 50% 50% no-repeat;
+        background: url(../img/sprite.png) -217px -5px no-repeat;
     }
 }
 .helpLink {
@@ -1324,14 +1364,24 @@ p {
     margin: 0 0 4px;
     font-family: $ProximaBold;
     &.pick {
+        position: relative;
         color: #cd3c3b;
-        background: url(../img/icon-pick.png) no-repeat;
-        padding-left: 20px
+        padding-left: 20px;
+        &:before {
+            content: '';
+            width: 15px;
+            height: 16px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: url(../img/sprite.png) -305px -5px no-repeat;
+        }
     }
 }
 .resultsList {
     margin: 0 -10px 15px;
-    border: 1px solid #949a90;
+    border-top: 1px solid #949a90;
+    border-bottom: 1px solid #949a90;
     background: #fff;
 }
 .resultsListItem {
@@ -1481,12 +1531,12 @@ p {
         margin: -9px 0 0;
         width: 11px;
         height: 17px;
-        background: url(../img/icon-filterByItems.png) -5px -5px no-repeat;
+        background: url(../img/sprite.png) -272px -5px no-repeat;
     }
     &.byNeighborhoods:before {
         width: 12px;
         height: 17px;
-        background-position: -21px -5px;
+        background-position: -288px -5px;
     }
     @include arrow;
 }
@@ -1665,14 +1715,14 @@ p {
     top: 50%;
     margin: -7px 0 0;
     left: 4px;
-    background: url(../img/btns-menus.png) -5px -5px no-repeat;
+    background: url(../img/sprite.png) -91px -5px no-repeat;
     text-indent: -9999px;
     overflow: hidden;
 }
 .restaurantReviewsNext {
     left: auto;
     right: 4px;
-    background-position: -20px -5px;
+    background-position: -106px -5px;
 }
 .menu {
     margin: 0 0 10px;
@@ -1787,6 +1837,19 @@ p {
     font-family: $ProximaSemiBold;
     padding: 15px;
     display: block;
+    .reservationSubTitle {
+        text-align: left;
+    }
+    &.reservationDataEdit {
+        position: relative;
+        padding-right: 70px;
+        .btnSoft {
+            position: absolute;
+            bottom: 20px;
+            right: 10px;
+            width: 50px;
+        }
+    }
 }
 a.reservationData {
     @include arrow;
@@ -1804,12 +1867,13 @@ a.reservationData {
 .reservationGreyText {
     color: #808080;
 }
-.reservationDataSubTitle {
+.reservationSubTitle {
     font-size: 12px;
     color: #a5a5a5;
     text-transform: uppercase;
     font-family: $Proxima;
     margin: 0 0 6px;
+    text-align: center;
 }
 .reservationButtons {
     padding: 10px;
@@ -1823,11 +1887,24 @@ a.reservationData {
         }
     }
 }
+.reservationDataButtons {
+    padding: 10px 0 0;
+    margin: 0 -5px;
+    @extend .clearfix;
+    .reservationDataButtonLeft {
+        width: 68%;
+        float: left;
+    }
+    .reservationDataButtonRight {
+        width: 28%;
+        float: right;
+    }
+}
 .reservationPoints {
     @extend .clearfix;
     color: #808080;
     font: 15px/1.1 $ProximaSemiBold;
-    padding: 10px 20px 6px;
+    padding: 10px 15px 6px;
 }
 .reservationPointsNumber {
     float: left;
@@ -1839,12 +1916,12 @@ a.reservationData {
     overflow: hidden;
     margin: 3px 0 0;
 }
-.emptyBoxReminder {
-    padding: 12px 10px;
-}
 .reminder {
-    min-height: 30px;
     @extend .clearfix;
+    padding: 12px 10px;
+    &.reminderBookIt {
+        padding-left: 15px;
+    }
 }
 .reminderLabel {
     float: left;
@@ -1853,6 +1930,102 @@ a.reservationData {
 }
 .reminderSwitcher {
     float: right;
+}
+.termsText {
+    text-align: center;
+    color: #a5a5a5;
+    a {
+        color: #333;
+        text-decoration: underline;
+    }
+}
+.cardRow {
+    @extend .clearfix;
+    .textField {
+        font-family: $Proxima;
+    }
+}
+.cardRowLabel {
+    float: left;
+    line-height: 50px;
+    padding: 0 5px 0 15px;
+    color: #808080;
+    font-size: 16px; 
+}
+.cardRowLabelName {
+    font-size: 13px;
+}
+.cardRowHolder {
+    overflow: hidden;
+    position: relative;
+    .textField {
+        padding-left: 5px;
+    }
+}
+.roundedBoxRow .cardRowHolder .textError {
+    margin-left: 5px;
+}
+.cardRowHolderSecurityNumber {
+    padding-right: 58px ;
+}
+.questionHint {
+    width: 34px;
+    height: 30px;
+    border: 1px solid #c2c2c2;
+    background-color: rgba(0,0,0,.5);
+    color: #0b5e9d;
+    font: 14px/28px $ProximaBold;
+    text-align: center;
+    position: absolute;
+    top: 11px;
+    right: 12px;
+    border-radius: 4px;
+    background-image: -webkit-linear-gradient(top, #f2f2f2 0%, #eaeaea 70%, #cacaca 100%);
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, #f2f2f2),
+        color-stop(0.7, #eaeaea),
+        color-stop(1, #cacaca)
+    );
+    background-image: linear-gradient(top, #f2f2f2 0%, #eaeaea 70%, #cacaca 100%);
+}
+.cards {
+    padding: 15px;
+    @extend .clearfix;
+}
+.cardsItem {
+    float: left;
+    width: 48px;
+    margin: 0 0 0 25px;
+    &:first-child {
+        margin-left: 0;
+    }
+}
+.radioCard {
+    -webkit-appearance: none;
+    border: 0;
+    border-radius: 0;
+    width: 48px;
+    height: 31px;
+    background: url(../img/icon-cards.png) no-repeat;
+    opacity: 0.3;
+    &.americanExpress {
+        background-position: -5px -5px;
+    }
+    &.visa {
+        background-position: -58px -5px;
+    }
+    &.master {
+        background-position: -111px -5px;
+    }
+    &.discover {
+        background-position: -164px -5px;
+    }
+    &:checked {
+        opacity: 1;
+    }
 }
 
 /* Footer */
@@ -1883,33 +2056,28 @@ only screen and (min-resolution: 192dpi) {
         background-image: url(../img/logo@2.png);
         background-size: 85px 83px;
     }
-    .fbLoginBtn:before {
-        background-image: url(../img/icon-fb@2.png);
-        background-size: 16px 28px;
+    .selectForm:before,
+    .carouselPrev,
+    .carouselNext,
+    .restaurantReviewsPrev,
+    .restaurantReviewsNext,
+    .btn.iconAdd:before,
+    .btn.iconTick:before,
+    .checkboxesListInput,
+    .checkbox,
+    .datePicker:before,
+    .fbLoginBtn:before,
+    .filterByItems.byCuisines:before,
+    .filterByItems.byNeighborhoods:before,
+    .resultsTitle.pick:before,
+    .searchForm:before,
+    .searchFormClear {
+        background-image: url(../img/sprite@2.png);
+        background-size: 368px 55px;
     }
     .followUsLinksLink {
         background-image: url(../img/icon-followUs@2.png);
         background-size: 143px 51px;
-    }
-    .selectForm:before {
-        background-image: url(../img/arrow-select@2.png);
-        background-size: 10px 6px;
-    }
-    .datePicker:before {
-        background-image: url(../img/icon-datepicker@2.png);
-        background-size: 16px 16px;
-    }
-    .searchForm:before {
-        background-image: url(../img/icon-search@2.png);
-        background-size: 15px 16px;
-    }
-    .searchFormClear {
-        background-image: url(../img/icon-searchClear@2.png);
-        background-size: 18px 18px;
-    }
-    .resultsTitle.pick {
-        background-image: url(../img/icon-pick@2.png);
-        background-size: 15px 16px;
     }
     .rating {
         background-image: url(../img/rating@2.png);
@@ -1919,39 +2087,12 @@ only screen and (min-resolution: 192dpi) {
         background-image: url(../img/ratingSmall@2.png);
         background-size: 61px 95px;
     }
-    .checkboxesListInput {
-        background-image: url(../img/icon-check@2.png);
-        background-size: 26px 27px;
-    }
-    .filterByItems.byCuisines:before,
-    .filterByItems.byNeighborhoods:before {
-        background-image: url(../img/icon-filterByItems@2.png);
-        background-size: 38px 27px;
-    }
     .mainBoxTextListItem {
         background-image: url(../img/bullet@2.png);
         background-size: 3px 3px;
     }
-    .carouselPrev,
-    .carouselNext {
-        background-image: url(../img/btns-carousel@2.png);
-        background-size: 67px 36px;
-    }
-    .btn.iconAdd:before {
-        background-image: url(../img/icon-btnAdd@2.png);
-        background-size: 12px 12px;
-    }
-    .btn.iconTick:before {
-        background-image: url(../img/icon-btnTick@2.png);
-        background-size: 13px 14px;
-    }
-    .checkbox {
-        background-image: url(../img/icon-checkGrey@2.png);
-        background-size: 26px 27px;
-    }
-    .restaurantReviewsPrev,
-    .restaurantReviewsNext {
-        background-image: url(../img/btns-menus@2.png);
-        background-size: 34px 24px;
+    .radioCard {
+        background-image: url(../img/icon-cards@2.png);
+        background-size: 217px 41px;
     }
 }
