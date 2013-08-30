@@ -1,6 +1,7 @@
 ﻿<div class="searchForm">
     <input class="searchField" type="text" placeholder="Search by name, cusine, etc" />
 </div>
+<% if (typeof(showTimingBar) != "undefined" && showTimingBar) { %>
 <div class="timing column3">
     <div class="selectForm column">
         <select class="select">
@@ -14,3 +15,4 @@
         </select>
     </div>
 </div>
+<% } %>

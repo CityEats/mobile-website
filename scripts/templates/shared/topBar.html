@@ -1,10 +1,13 @@
-﻿<div class="topBarInner">
+﻿<div class="topBarInner">    
     <% if (typeof(leftUrl) != "undefined") { %>    
-        <a class="topBarLink" href="#" data-url="<%= leftUrl %>"><%= leftText %></a>
+        <a class="topBarLink linkLeft <%= (typeof(leftCss) != 'undefined') ? rightCss : '' %>" href="#" data-url="<%= leftUrl %>"><%= leftText %></a>
     <%} if (typeof(rightUrl) != "undefined") {%>
-        <a class="topBarLink" href="#" data-url="<%= rightUrl %>"><%= rightText %></a>
+        <a class="topBarLink linkRight <%= (typeof(rightCss) != 'undefined') ? rightCss : '' %>" href="#" data-url="<%= rightUrl %>"><%= rightText %></a>
     <% }%>
     <div class="topBarHolder">
+        <% if (typeof(subTitle) != "undefined") { %>
+            <p class="topBarSubTitle"><%= subTitle %></p>
+        <% } %>
         <h1 class="topBarTitle"><%= title %></h1>
     </div>
 </div>

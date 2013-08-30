@@ -5,6 +5,7 @@
 	'app',
 	'models/restaurant',
     'models/topBar',
+    'models/searchBar',
     'views/shared/topBar',
 	'collections/restaurants',
     'views/searchResults/searchResults',
@@ -13,17 +14,20 @@
     'views/searchResults/searchBar'
 ],
 
-function ($, _, Backbone, app, Restaurant, TopBar, TopBarView, Restaurants, ContentLayout, RestaurantView, RestaurantsView, SearchBarView) {
+function ($, _, Backbone, app, Restaurant, TopBar, SearchBar, TopBarView, Restaurants, ContentLayout, RestaurantView, RestaurantsView, SearchBarView) {
     return app.module('SearchResults', function (SearchResults) {
         _.extend(SearchResults, {
             collection: new Restaurants([new Restaurant({ name: '111', id: 1 }), new Restaurant({ name: '2222', id: 2 })]),
             topBar: new TopBar({
                 leftText: 'Home',
                 leftUrl: '',
-                rightText: 'Log In',
-                rightUrl: 'login',
+                rightText: 'Filter',
+                rightUrl: 'filter',
                 title: 'Choose Your City'
-            }),            
+            }),
+            search: new SearchBar({
+                showTimingBar: true
+            }),
             ContentLayout: ContentLayout,
             RestaurantView: RestaurantView,
             RestaurantsView: RestaurantsView,

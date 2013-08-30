@@ -1,8 +1,8 @@
-﻿define(['backbone', 'models/restaurant'],
-	function (Backbone, Restaurant) {
-	    var Restaurants = Backbone.Collection.extend({
-	        model: Restaurant
+﻿define(['backbone', 'models/city'],
+	function (Backbone, City) {
+	    var Cities = Backbone.Collection.extend({
+	        model: City
 	    });
 
-	    return Restaurants;
+	    return Cities;
 	})

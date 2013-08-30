@@ -4,15 +4,15 @@
         template: _.template(restaurantHtml),
         tagName: 'article',
         className: 'resultsListItem',
-        //events: {
-        //    'click a.btn': 'goToFindTable'
-        //},
+        events: {
+            'click .resultsListTitle a': 'goToRestaurantInfo'
+        },
 
-        //goToFindTable: function (evt) {
-        //    var id = this.model.get("id")
-        //    app.router.navigate('find-table/' + id, { trigger: true });
-        //    evt.preventDefault();
-        //}
+        goToRestaurantInfo: function (evt) {
+            var id = this.model.get("id")
+            app.router.navigate('restaurans/' + id + '/info', { trigger: true });
+            evt.preventDefault();
+        }
     });
 
     return ItemView;

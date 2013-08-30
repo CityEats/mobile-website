@@ -7,7 +7,8 @@
             'click .btnLogIn': 'goToLogIn',
             'click .btnSignUp': 'goToSignUp',
             'click .btnChangeCity': 'goToChangeCity',
-            'click .btnFindTable': 'goToSearchResults'
+            'click .btnFindTable': 'goToSearchResults',
+            'click .btnBrowseAll': 'goToBrowseAll'
         },
 
         goToLogIn: function (evt) {
@@ -24,6 +25,10 @@
 
         goToSearchResults: function (evt) {
             this.goTo(evt, 'search-results');
+        },
+
+        goToBrowseAll: function (evt) {
+            this.goTo(evt, 'browse-all');
         },
 
         goTo: function (evt, url) {

@@ -844,6 +844,10 @@ p {
 .wrapper {
   min-height: 100%; }
 
+.hide {
+  display: none;
+}
+
 /* Top Bar */
 .topBar {
   background: url(../img/bg-topBar.jpg); }
