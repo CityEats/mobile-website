@@ -1,0 +1,52 @@
+﻿<!-- Reservation -->
+<div class="reservationHeader">
+    <h2 class="reservationTitle">Almost Done!</h2>
+    <p>Joe’s Crab Shack has a $17.00 cancelation fee. You will only be charged if you cancel less than 24 hours before your reservation.</p>
+</div>
+<div class="roundedBox">
+    <div class="roundedBoxRow">
+        <ul class="cards">
+            <li class="cardsItem"><input name="creditCard" class="radioCard americanExpress" type="radio" /></li>
+            <li class="cardsItem"><input name="creditCard" class="radioCard visa" type="radio" /></li>
+            <li class="cardsItem"><input name="creditCard" class="radioCard master" type="radio" /></li>
+            <li class="cardsItem"><input name="creditCard" class="radioCard discover" type="radio" /></li>
+        </ul>
+    </div>
+    <div class="roundedBoxRow">
+        <div class="cardRow">
+            <label for="LabelCCNumberCard" class="cardRowLabel">CC Number</label>
+            <div class="cardRowHolder">
+                <input id="LabelCCNumberCard" class="textField blank" type="text" />
+            </div>
+        </div>
+    </div>
+    <div class="roundedBoxRow">
+        <div class="cardRow">
+            <label for="LabelSecurityNumberCard" class="cardRowLabel">Security Number</label>
+            <div class="cardRowHolder cardRowHolderSecurityNumber">
+                <input id="LabelSecurityNumberCard" class="textField blank" type="text" />
+                <a href="#" class="questionHint">?</a>
+            </div>
+        </div>
+    </div>
+    <div class="roundedBoxRow">
+        <div class="cardRow">
+            <label for="LabelExpirationDateCard" class="cardRowLabel">Expiration Date</label>
+            <div class="cardRowHolder">
+                <input id="LabelExpirationDateCard" class="textField blank" type="text" />
+            </div>
+        </div>
+    </div>
+    <div class="roundedBoxRow">
+        <div class="cardRow">
+            <label for="LabelNameCard" class="cardRowLabel cardRowLabelName">Name on Card:</label>
+            <div class="cardRowHolder">
+                <input id="LabelNameCard" class="textField blank" type="text" value="Jonathan Smithertonson" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="btnHolder">
+    <input class="btn btnComplete" type="submit" value="Complete Reservation" />
+</div>
+<div class="termsText">By completing the reservation you are agreeing to the <a href="#">terms of service</a></div>

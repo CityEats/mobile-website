@@ -12,8 +12,12 @@ define([
     'modules/searchResults',
     'modules/browseAll',
     'modules/filter',
-    'modules/restaurantInfo',
-    'modules/restaurantBookIt'
+    'modules/restaurant/info',
+    'modules/restaurant/bookIt',
+    'modules/restaurant/exclusiveEats',
+    'modules/restaurant/completeReservation',
+    'modules/profile',
+    'modules/reservations'
 ],
 function (app, Marionette, FooterView, Data) {
     var Router = Marionette.AppRouter.extend({
@@ -33,7 +37,19 @@ function (app, Marionette, FooterView, Data) {
             'restaurans/:num/info': 'restauranInfo',
             'restaurans/:num/reviews': 'restauranReviews',
             'restaurans/:num/menus': 'restauranMenus',
-            'restaurans/:num/book-it': 'restauranBookIt'
+            'restaurans/:num/book-it': 'restauranBookIt',
+            'restaurans/:num/exclusive-eats': 'restaurantExclusiveEats',
+            'restaurans/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
+            'restaurans/:num/complete-reservation': 'completeReservation',
+            'restaurans/:num/reservation-card-info': 'reservationCardInfo',
+            'restaurans/:num/reservation-confirmed': 'reservationConfirmed',
+            'restaurans/:num/reservation-canceled': 'reservationCanceled',
+            'profile': 'profile',
+            'profile/edit': 'profileEdit',
+            'profile/reservations': 'profileReservations',
+            'profile/canceled': 'profileCanceled',
+            'profile/past': 'profilePast',
+            'profile/upcoming': 'profileupcoming',
         },
 
         setup: function () {
@@ -317,7 +333,7 @@ function (app, Marionette, FooterView, Data) {
         restauranInfo: function (num) {
             this.setup();
 
-            var module = require('modules/restaurantInfo');
+            var module = require('modules/restaurant/info');
 
             module.infoView = new module.info.InfoView;
 
@@ -355,7 +371,7 @@ function (app, Marionette, FooterView, Data) {
         restauranReviews: function (num) {
             this.setup();
 
-            var module = require('modules/restaurantInfo');
+            var module = require('modules/restaurant/info');
 
             module.reviewsView = new module.reviews.ReviewsView({
                 collection: module.reviews.reviews
@@ -369,7 +385,6 @@ function (app, Marionette, FooterView, Data) {
                 model: new module.KeyValue({ key: 1 })
             });
 
-
             module.contentLayout = new module.ContentLayout;
 
             app.topBar.show(module.topBarBlock);
@@ -382,7 +397,7 @@ function (app, Marionette, FooterView, Data) {
         restauranMenus: function (num) {
             this.setup();
 
-            var module = require('modules/restaurantInfo');
+            var module = require('modules/restaurant/info');
 
             module.reviewsView = new module.menus.MenusView({
                 collection: module.menus.menus
@@ -396,7 +411,6 @@ function (app, Marionette, FooterView, Data) {
                 model: new module.KeyValue({ key: 2 })
             });
 
-
             module.contentLayout = new module.ContentLayout;
 
             app.topBar.show(module.topBarBlock);
@@ -409,7 +423,7 @@ function (app, Marionette, FooterView, Data) {
         restauranBookIt: function (num) {
             this.setup();
 
-            var module = require('modules/restaurantBookIt');            
+            var module = require('modules/restaurant/bookIt');            
 
             module.topBarBlock = new module.TopBarView({
                 model: module.topBar
@@ -419,7 +433,6 @@ function (app, Marionette, FooterView, Data) {
             module.nextDaysView = new module.NextDaysView;
             module.scheduleItemsView = new module.ScheduleItemsView;
 
-
             module.contentLayout = new module.ContentLayout;
 
             app.topBar.show(module.topBarBlock);
@@ -428,6 +441,194 @@ function (app, Marionette, FooterView, Data) {
             module.contentLayout.chooseTime.show(module.chooseTimeView);
             module.contentLayout.schedule.show(module.scheduleItemsView);
             module.contentLayout.nextDays.show(module.nextDaysView);
+        },
+
+        restaurantExclusiveEats: function (num) {
+            this.setup();
+
+            var module = require('modules/restaurant/exclusiveEats');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar
+            });
+
+            module.aboutView = new module.AboutView;
+            module.bookView = new module.BookView;
+            module.selectView = new module.SelectView;
+
+            module.contentLayout = new module.ContentLayout;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+
+            module.contentLayout.about.show(module.aboutView);
+            module.contentLayout.select.show(module.selectView);
+            module.contentLayout.book.show(module.bookView);
+        },
+
+        restaurantExclusiveEatsFaq: function (num) {
+            this.setup();
+
+            var module = require('modules/restaurant/exclusiveEats');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.faqTopBar
+            });
+            
+            module.contentLayout = new module.FaqView;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+        },
+
+        completeReservation: function (num) {
+            this.setup();
+
+            var module = require('modules/restaurant/completeReservation');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar
+            });
+
+            module.contentLayout = new module.ContentLayout;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+        },
+
+        reservationCardInfo: function (num) {
+            this.setup();
+
+            var module = require('modules/restaurant/completeReservation');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar
+            });
+
+            module.contentLayout = new module.CardInfoView;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+        },
+
+        reservationConfirmed: function (num) {            
+            this.setup();
+
+            var module = require('modules/restaurant/completeReservation');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar
+            });
+
+            module.contentLayout = new module.ConfirmedView;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+        },
+
+        reservationCanceled: function (num) {            
+            this.setup();
+
+            var module = require('modules/restaurant/completeReservation');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar
+            });
+
+            module.contentLayout = new module.CanceledView;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+        },
+
+        profile: function () {
+            this.setup();
+
+            var module = require('modules/profile');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar
+            });
+
+            module.contentLayout = new module.ContentLayout;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+        },
+
+        profileEdit: function () {
+            this.setup();
+
+            var module = require('modules/profile');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBarEdit
+            });
+
+            module.contentLayout = new module.EditView;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+        },
+
+        profileReservations: function () {
+            this.setup();
+
+            var module = require('modules/reservations');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar
+            });
+
+            module.contentLayout = new module.ContentLayout;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+        },
+
+        profileCanceled: function () {
+            this.setup();
+
+            var module = require('modules/reservations');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar
+            });
+
+            module.contentLayout = new module.CanceledView;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+        },
+
+        profilePast: function () {
+            this.setup();
+
+            var module = require('modules/reservations');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar
+            });
+
+            module.contentLayout = new module.PastView;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
+        },
+
+        profileupcoming: function () {
+            this.setup();
+
+            var module = require('modules/reservations');
+
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar
+            });
+
+            module.contentLayout = new module.UpcomingView;
+
+            app.topBar.show(module.topBarBlock);
+            app.content.show(module.contentLayout);
         },
     });
 
