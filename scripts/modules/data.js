@@ -16,8 +16,8 @@ function ($, _, Backbone, app, FilterItem, KeyValue, Dictionary) {
             filter: new FilterItem({
                 sortBy: 2,
                 price: 3,
-                cuisines: ['test c1', 'test c2'],
-                neighborhoods: ['test n1', 'test n2']
+                cuisines: [],
+                neighborhoods: []
             }),
 
             getAllNeighborhoods: function (ckecked) {                

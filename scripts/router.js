@@ -1,8 +1,7 @@
 define([
 	'app',
 	'marionette',
-    'views/shared/footer',
-    'modules/data',
+    'views/shared/footer',    
 	'modules/cities',
     'modules/login',
     'modules/signUp',
@@ -17,9 +16,10 @@ define([
     'modules/restaurant/exclusiveEats',
     'modules/restaurant/completeReservation',
     'modules/profile',
-    'modules/reservations'
+    'modules/reservations',
+    'modules/messages'
 ],
-function (app, Marionette, FooterView, Data) {
+function (app, Marionette, FooterView) {
     var Router = Marionette.AppRouter.extend({
         routes: {
             '': 'index',
@@ -29,7 +29,7 @@ function (app, Marionette, FooterView, Data) {
             'contact-us' : 'contactUs',
             'forgot-password': 'forgotPassword',
             'find-table/:num': 'findTable',
-            'search-results': 'searchResults',
+            'search-results/:num/party/:num/date/:num/time/:num': 'searchResults',
             'browse-all': 'browseAll',
             'filter': 'filter',
             'favorite-cuisines': 'favoriteCuisines',
@@ -61,44 +61,7 @@ function (app, Marionette, FooterView, Data) {
             app.addRegions({ content: '#content' });
             app.addRegions({ footer: '#footer' });
 
-            app.footer.show(app.footerView);
-
-            //setup temporary DB logic
-            var data = {
-                allCuisines: Data.getAllCuisines(),
-                allNeighborhoods: Data.getAllNeighborhoods(),                
-                filter: Data.getFilter()
-            };           
-
-            app.commands.setHandler("FavCuisines:save", function (items) {
-                //data.favCuisines = items;
-                debugger
-                data.filter.set('cuisineIds', items);
-            });
-
-            app.commands.setHandler("FavNeighborhoods:save", function (items) {
-                //data.favNeighborhoods = items;
-                debugger
-                data.filter.set('neighborhoodIds', items);
-            });            
-
-            app.reqres.setHandler("FavCuisines:get", function (checked) {                
-                return Data.getAllCuisines(data.filter.get('cuisineIds'));
-            });
-
-            app.reqres.setHandler("FavNeighborhoods:get", function (checked) {
-                return Data.getAllNeighborhoods(data.filter.get('neighborhoodIds'));
-            });            
-
-            app.reqres.setHandler("Filter:get", function () {                
-                data.filter.set('cuisines', Data.getAllCuisines(data.filter.get('cuisineIds')));
-                data.filter.set('neighborhoods', Data.getAllNeighborhoods(data.filter.get('neighborhoodIds')));
-                return data.filter;
-            });
-
-            app.commands.setHandler("Filter:save", function (item) {
-                data.filter = item;
-            });
+            app.footer.show(app.footerView);            
         },
 
         index: function () {
@@ -107,29 +70,44 @@ function (app, Marionette, FooterView, Data) {
 
         chooseCity: function () {
             this.setup();
-
+            
             var module = require('modules/cities');
-            module.citiesView = new module.CitiesView({
-                collection: module.collection
-            });
-
+            
             module.topBarBlock = new module.TopBarView({
                 model: module.topBar
             });
 
-            module.hasCurrentCity = !!module.currentCity;
-            console.log(module.hasCurrentCity)
-
-            module.contentLayout = new module.ContentLayout({ hasCurrentCity: module.hasCurrentCity });
 
             app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
 
-            module.contentLayout.locationsButtons.show(module.citiesView);
-            module.contentLayout.findYourCity.show(new module.DontSeeCityView);
-            if (module.hasCurrentCity) {
-                module.contentLayout.currentCity.show(new module.CityView({ model: module.currentCity }));
-            }            
+            app.execute('Metros:get', function (err, data) {
+                if (err == null) {
+                    var cities = new module.Cities(data.metros),
+                        currentCity = app.request("CurrentCity:get");
+
+                    if (currentCity) {
+                        //currentCity = cities.get(currentCityId);
+                        module.contentLayout = new module.ContentLayout({ hasCurrentCity: !!currentCity });
+                        app.content.show(module.contentLayout);
+                        //if (currentCity) {
+                        currentCity.set('isCurrent', true);
+                        cities = new module.Cities(cities.without(currentCity));
+
+                        module.contentLayout.currentCity.show(new module.CityView({ model: currentCity }));
+                        //}
+                    } else {
+                        module.contentLayout = new module.ContentLayout;
+                        app.content.show(module.contentLayout);
+                    }
+
+                    module.citiesView = new module.CitiesView({
+                        collection: cities
+                    });
+
+                    module.contentLayout.findYourCity.show(new module.DontSeeCityView);
+                    module.contentLayout.locationsButtons.show(module.citiesView);
+                }
+            });
         },
 
         login: function () {            
@@ -193,23 +171,26 @@ function (app, Marionette, FooterView, Data) {
         },
 
         findTable: function (num) {
-            this.setup();
+            this.setup();            
+            var currentCity = app.request('CurrentCity:get');
+            if (currentCity == null) {
+                //
+                app.router.navigate('', { trigger: true });
+                return;
+            }
 
             var module = require('modules/findTable');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
-            module.contentLayout = new module.ContentLayout;
+            module.contentLayout = new module.ContentLayout({ model: currentCity });
 
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);
         },
 
-        searchResults: function () {
-            this.setup();
-            
+        searchResults: function (restaurantId, party, date, time) {
+            this.setup();            
             var module = require('modules/searchResults');
 
             module.restaurantsView = new module.RestaurantsView({

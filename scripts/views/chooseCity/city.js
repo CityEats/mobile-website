@@ -1,4 +1,4 @@
-﻿define(['marionette', 'underscore', 'text!templates/chooseCity/city.html', 'text!templates/chooseCity/current_city.html'], function (Marionette, _, cityHtml, currentCityHtml) {
+﻿define(['marionette', 'underscore', 'app', 'text!templates/chooseCity/city.html', 'text!templates/chooseCity/currentCity.html'], function (Marionette, _, app, cityHtml, currentCityHtml) {
 
     var ItemView = Marionette.ItemView.extend({
         getTemplate: function () {
@@ -10,7 +10,8 @@
         },
 
         goToFindTable: function (evt) {
-            var id = this.model.get("id")
+            var id = this.model.get('id')
+            app.execute('CurrentCity:set', this.model);
             app.router.navigate('find-table/' + id, { trigger: true });
             evt.preventDefault();
         }

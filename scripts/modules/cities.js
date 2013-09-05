@@ -29,7 +29,9 @@ function ($, _, Backbone, app, City, TopBar, Cities, ContentLayout, CityView, Ci
             CityView: CityView,
             CitiesView: CitiesView,
             DontSeeCityView: DontSeeCityView,
-            TopBarView: TopBarView
+            TopBarView: TopBarView,
+            Cities: Cities,
+            City: City
         });
     });
 });

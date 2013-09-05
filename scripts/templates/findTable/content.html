@@ -1,17 +1,24 @@
 ﻿<section class="findaTable">
     <div class="findaTableHeader">
-        <p>Find a Table in: <span class="city">New York</span></p>
+        <p>Find a Table in: <span class="city"><%= display_name %></span></p>
     </div>
     <form action="#">
         <div class="timing column3">
             <div class="selectForm column">
-                <select class="select">
-                    <option>2 people</option>
+                <select class="select partySize">
+                    <option value="1">1 people</option>
+                    <option value="2" selected>2 people</option>
+                    <option value="3">3 people</option>
+                    <option value="4">4 people</option>
+                    <option value="5">5 people</option>
+                    <option value="6">6 people</option>
+                    <option value="7">7 people</option>
+                    <option value="8">8 people</option>
                 </select>
             </div>
-            <div class="datePicker column">Today</div>
+            <div class="datePicker column date">Today</div>            
             <div class="selectForm column">
-                <select class="select">
+                <select class="select time">
                     <option>7:00p</option>
                 </select>
             </div>
@@ -23,7 +30,7 @@
             <a href="#" class="btn pale btnBrowseAll">Browse All</a>
         </div>
         <div class="btnHolder">
-            <a href="#" class="btn pale btnChangeCity">Change City: <span class="btnText">New York</span></a>
+            <a href="#" class="btn pale btnChangeCity">Change City: <span class="btnText"><%= display_name %></span></a>
         </div>
         <div class="btnHolder column2">
             <div class="column"><a href="#" class="btn pale btnLogIn">Log In</a></div>
