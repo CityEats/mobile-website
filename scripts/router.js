@@ -1,7 +1,7 @@
 define([
 	'app',
 	'marionette',
-    'views/shared/footer',    
+    'views/shared/footer',
 	'modules/cities',
     'modules/login',
     'modules/signUp',
@@ -24,13 +24,13 @@ function (app, Marionette, FooterView) {
         routes: {
             '': 'index',
             'index.html': 'index',
-            'login': 'login',            
+            'login': 'login',
             'signup': 'signUp',
-            'contact-us' : 'contactUs',
+            'contact-us': 'contactUs',
             'forgot-password': 'forgotPassword',
             'find-table/:num': 'findTable',
             'search-results/:num/party/:num/date/:num/time/:num': 'searchResults',
-            'browse-all': 'browseAll',
+            'browse-all/:num': 'browseAll',
             'filter': 'filter',
             'favorite-cuisines': 'favoriteCuisines',
             'favorite-neighborhoods': 'favoriteNeighborhoods',
@@ -40,7 +40,7 @@ function (app, Marionette, FooterView) {
             'restaurans/:num/book-it': 'restauranBookIt',
             'restaurans/:num/exclusive-eats': 'restaurantExclusiveEats',
             'restaurans/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
-            'restaurans/:num/complete-reservation': 'completeReservation',
+            'restaurans/:num/complete-reservation/:num': 'completeReservation',
             'restaurans/:num/reservation-card-info': 'reservationCardInfo',
             'restaurans/:num/reservation-confirmed': 'reservationConfirmed',
             'restaurans/:num/reservation-canceled': 'reservationCanceled',
@@ -54,14 +54,14 @@ function (app, Marionette, FooterView) {
 
         setup: function () {
             if (app.footer) { return true; }
-            
+
             app.footerView = new FooterView;
 
             app.addRegions({ topBar: '#topBar' });
             app.addRegions({ content: '#content' });
             app.addRegions({ footer: '#footer' });
 
-            app.footer.show(app.footerView);            
+            app.footer.show(app.footerView);
         },
 
         index: function () {
@@ -70,20 +70,17 @@ function (app, Marionette, FooterView) {
 
         chooseCity: function () {
             this.setup();
-            
+
             var module = require('modules/cities');
-            
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
 
             app.topBar.show(module.topBarBlock);
 
-            app.execute('Metros:get', function (err, data) {
+            app.execute('GetMetros', function (err, cities) {
                 if (err == null) {
-                    var cities = new module.Cities(data.metros),
-                        currentCity = app.request("CurrentCity:get");
+                    var currentCity = app.request('GetCurrentCity');
 
                     if (currentCity) {
                         //currentCity = cities.get(currentCityId);
@@ -100,9 +97,7 @@ function (app, Marionette, FooterView) {
                         app.content.show(module.contentLayout);
                     }
 
-                    module.citiesView = new module.CitiesView({
-                        collection: cities
-                    });
+                    module.citiesView = new module.CitiesView({ collection: cities });
 
                     module.contentLayout.findYourCity.show(new module.DontSeeCityView);
                     module.contentLayout.locationsButtons.show(module.citiesView);
@@ -110,19 +105,17 @@ function (app, Marionette, FooterView) {
             });
         },
 
-        login: function () {            
+        login: function () {
             this.setup();
 
             var module = require('modules/login');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });            
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.ContentLayout;
 
             app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);            
+            app.content.show(module.contentLayout);
         },
 
         signUp: function () {
@@ -130,14 +123,12 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/signUp');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.ContentLayout;
 
             app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);            
+            app.content.show(module.contentLayout);
         },
 
         forgotPassword: function () {
@@ -145,14 +136,12 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/forgotPassword');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.ContentLayout;
 
             app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);            
+            app.content.show(module.contentLayout);
         },
 
         contactUs: function () {
@@ -160,19 +149,19 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/contactUs');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.ContentLayout;
 
             app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);            
+            app.content.show(module.contentLayout);
         },
 
         findTable: function (num) {
-            this.setup();            
-            var currentCity = app.request('CurrentCity:get');
+            this.setup();
+            app.execute('GetRestaurantsByMetro', num); //preload restaurants;
+
+            var currentCity = app.request('GetCurrentCity');
             if (currentCity == null) {
                 //
                 app.router.navigate('', { trigger: true });
@@ -181,70 +170,102 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/findTable');
 
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
+            var aa = module.getSearchModel();
+            module.searchBar = new module.SearchBarView({ model: module.getSearchModel() })
 
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
             module.contentLayout = new module.ContentLayout({ model: currentCity });
 
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);
+            module.contentLayout.search.show(module.searchBar);
         },
 
-        searchResults: function (restaurantId, party, date, time) {
-            this.setup();            
-            var module = require('modules/searchResults');
+        searchResults: function (cityId, party, date, time) {
+            this.setup();
 
-            module.restaurantsView = new module.RestaurantsView({
-                collection: module.collection
-            });
-            
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            var module = require('modules/searchResults');
+            module.contentLayout = null;
+            var start = new Date(date + ' ' + time);
+            var end = new Date(date + ' ' + time);
+
+            start.setMinutes(start.getMinutes() - 15);
+            end.setMinutes(end.getMinutes() + 15);
+
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.searchBarView = new module.SearchBarView({
-                model: module.search
+                model: module.getSearchModel(party, date, time)
             });
 
-            module.contentLayout = new module.ContentLayout;
+            var getRestaurantsHandler = function (err, data) {
+                if (err == null) {
+                    console.log(data);
+
+                    module.restaurantsView = new module.RestaurantsView({ collection: data });
+
+                    if (module.contentLayout == null) {
+                        //render only at first time                        
+                        module.contentLayout = new module.ContentLayout;
+                        app.content.show(module.contentLayout);
+                        module.contentLayout.searchBar.show(module.searchBarView);
+                    }
+
+                    module.contentLayout.resultsHolder.show(module.restaurantsView);
+                }
+            };
+
+            module.searchBarView.on('searchParametersChanged', function (data) {
+                //data.searchQuery;
+
+                var startChanged = new Date(data.date + ' ' + data.time);
+                var endChanged = new Date(data.date + ' ' + data.time);
+
+                startChanged.setMinutes(start.getMinutes() - 15);
+                endChanged.setMinutes(end.getMinutes() + 15);
+
+                app.execute('GetRestaurants', cityId, startChanged, endChanged, data.party, data.time, getRestaurantsHandler);
+            });
 
             app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
-
-            module.contentLayout.resultsHolder.show(module.restaurantsView);            
-            module.contentLayout.searchBar.show(module.searchBarView);
+            app.execute('GetRestaurants', cityId, start, end, party, time, getRestaurantsHandler);
         },
 
-        browseAll: function () {
+        browseAll: function (cityId) {
             this.setup();
 
             var module = require('modules/browseAll');
 
-            module.restaurantsView = new module.RestaurantsView({
-                collection: module.collection
-            });
-            module.editorsPicksView = new module.RestaurantsView({
-                collection: module.editorsPicksCollection
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
-
-            module.searchBarView = new module.SearchBarView({
-                model: module.search
-            });
-
-            module.contentLayout = new module.ContentLayout({
-                isBrowseAll: true,
-                isEditorsPicks: !!module.editorsPicksCollection,
-            });
+            module.searchBarView = new module.SearchBarView({ model: module.search });
 
             app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
 
-            module.contentLayout.resultsHolder.show(module.restaurantsView);
-            module.contentLayout.editorsPicks.show(module.editorsPicksView);
-            module.contentLayout.searchBar.show(module.searchBarView);
+            app.execute('GetRestaurantsByMetro', cityId, function (err, restaurants) {
+                module.contentLayout = new module.ContentLayout({
+                    isBrowseAll: true,
+                    //isEditorsPicks: true,
+                });
+
+                app.content.show(module.contentLayout);
+
+                module.contentLayout.searchBar.show(module.searchBarView);
+
+                module.restaurantsView = new module.RestaurantsView({
+                    collection: restaurants,
+                    showSimple: true
+                });
+
+                //module.editorsPicksView = new module.RestaurantsView({
+                //    collection: restaurants,
+                //    showSimple: true
+                //});
+
+                module.contentLayout.resultsHolder.show(module.restaurantsView);
+                //module.contentLayout.editorsPicks.show(module.editorsPicksView);
+            });
+
         },
 
         filter: function () {
@@ -252,19 +273,17 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/filter');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.ContentLayout({
-                model: app.request('Filter:get')
+                model: app.request('GetFilter')
             });
 
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);
         },
 
-        favoriteCuisines: function () {            
+        favoriteCuisines: function () {
             this.setup();
 
             var module = require('modules/filter');
@@ -275,14 +294,14 @@ function (app, Marionette, FooterView) {
             });
 
             module.contentLayout = new module.FavoriteItemsView({
-                collection: app.request('FavCuisines:get'),
+                collection: app.request('GetFavCuisines'),
                 isCuisines: true
             });
 
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);
-            
-            module.topBarBlock.on('btnRightClick', function (url) {                
+
+            module.topBarBlock.on('btnRightClick', function (url) {
                 this.saveItems();
                 app.router.navigate(url, { trigger: true });
             }, module.contentLayout);
@@ -291,24 +310,24 @@ function (app, Marionette, FooterView) {
         favoriteNeighborhoods: function () {
             this.setup();
 
-            var module = require('modules/filter');            
-            
-            module.topBarBlock = new module.TopBarView({                
+            var module = require('modules/filter');
+
+            module.topBarBlock = new module.TopBarView({
                 model: module.topBarNeighborhoods,
                 rightClickEvent: 'btnRightClick'
             });
 
             module.contentLayout = new module.FavoriteItemsView({
-                collection: app.request('FavNeighborhoods:get')
+                collection: app.request('GetFavNeighborhoods')
             });
 
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);
-            
-            module.topBarBlock.on('btnRightClick', function (url) {               
-                this.saveItems();                
+
+            module.topBarBlock.on('btnRightClick', function (url) {
+                this.saveItems();
                 app.router.navigate(url, { trigger: true });
-            },  module.contentLayout );
+            }, module.contentLayout);
         },
 
         restauranInfo: function (num) {
@@ -318,10 +337,8 @@ function (app, Marionette, FooterView) {
 
             module.infoView = new module.info.InfoView;
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
-            
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
+
             module.topMenuView = new module.TopMenuView({
                 model: new module.KeyValue({ key: 0 })
             });
@@ -354,13 +371,9 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/restaurant/info');
 
-            module.reviewsView = new module.reviews.ReviewsView({
-                collection: module.reviews.reviews
-            });
+            module.reviewsView = new module.reviews.ReviewsView({ collection: module.reviews.reviews });
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.topMenuView = new module.TopMenuView({
                 model: new module.KeyValue({ key: 1 })
@@ -380,13 +393,9 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/restaurant/info');
 
-            module.reviewsView = new module.menus.MenusView({
-                collection: module.menus.menus
-            });
+            module.reviewsView = new module.menus.MenusView({ collection: module.menus.menus });
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.topMenuView = new module.TopMenuView({
                 model: new module.KeyValue({ key: 2 })
@@ -404,11 +413,9 @@ function (app, Marionette, FooterView) {
         restauranBookIt: function (num) {
             this.setup();
 
-            var module = require('modules/restaurant/bookIt');            
+            var module = require('modules/restaurant/bookIt');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.chooseTimeView = new module.ChooseTimeView;
             module.nextDaysView = new module.NextDaysView;
@@ -429,9 +436,7 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/restaurant/exclusiveEats');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.aboutView = new module.AboutView;
             module.bookView = new module.BookView;
@@ -452,24 +457,20 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/restaurant/exclusiveEats');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.faqTopBar
-            });
-            
+            module.topBarBlock = new module.TopBarView({ model: module.faqTopBar });
+
             module.contentLayout = new module.FaqView;
 
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);
         },
 
-        completeReservation: function (num) {
+        completeReservation: function (num, time) {
             this.setup();
 
             var module = require('modules/restaurant/completeReservation');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.ContentLayout;
 
@@ -482,9 +483,7 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/restaurant/completeReservation');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.CardInfoView;
 
@@ -492,14 +491,12 @@ function (app, Marionette, FooterView) {
             app.content.show(module.contentLayout);
         },
 
-        reservationConfirmed: function (num) {            
+        reservationConfirmed: function (num) {
             this.setup();
 
             var module = require('modules/restaurant/completeReservation');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.ConfirmedView;
 
@@ -507,14 +504,12 @@ function (app, Marionette, FooterView) {
             app.content.show(module.contentLayout);
         },
 
-        reservationCanceled: function (num) {            
+        reservationCanceled: function (num) {
             this.setup();
 
             var module = require('modules/restaurant/completeReservation');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.CanceledView;
 
@@ -527,9 +522,7 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/profile');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.ContentLayout;
 
@@ -542,9 +535,7 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/profile');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBarEdit
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBarEdit });
 
             module.contentLayout = new module.EditView;
 
@@ -557,9 +548,7 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/reservations');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.ContentLayout;
 
@@ -572,9 +561,7 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/reservations');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.CanceledView;
 
@@ -587,9 +574,7 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/reservations');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.PastView;
 
@@ -602,9 +587,7 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/reservations');
 
-            module.topBarBlock = new module.TopBarView({
-                model: module.topBar
-            });
+            module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.UpcomingView;
 

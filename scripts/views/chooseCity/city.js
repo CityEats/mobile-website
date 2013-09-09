@@ -11,7 +11,7 @@
 
         goToFindTable: function (evt) {
             var id = this.model.get('id')
-            app.execute('CurrentCity:set', this.model);
+            app.execute('SetCurrentCity', this.model);
             app.router.navigate('find-table/' + id, { trigger: true });
             evt.preventDefault();
         }

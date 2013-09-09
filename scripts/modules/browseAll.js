@@ -17,8 +17,8 @@
 function ($, _, Backbone, app, Restaurant, TopBar, SearchBar, TopBarView, Restaurants, ContentLayout, RestaurantView, RestaurantsView, SearchBarView) {
     return app.module('BrowseAll', function (BrowseAll) {
         _.extend(BrowseAll, {
-            collection: new Restaurants([new Restaurant({ name: '111', id: 1 }), new Restaurant({ name: '2222', id: 2 }), new Restaurant({ name: '3333', id: 3 })]),
-            editorsPicksCollection: new Restaurants([new Restaurant({ name: '555', id: 5 }), new Restaurant({ name: '444', id: 4 })]),
+            //collection: new Restaurants([new Restaurant({ name: '111', id: 1 }), new Restaurant({ name: '2222', id: 2 }), new Restaurant({ name: '3333', id: 3 })]),
+            //editorsPicksCollection: new Restaurants([new Restaurant({ name: '555', id: 5 }), new Restaurant({ name: '444', id: 4 })]),
             topBar: new TopBar({
                 leftText: 'Home',
                 leftUrl: '',
@@ -27,7 +27,7 @@ function ($, _, Backbone, app, Restaurant, TopBar, SearchBar, TopBarView, Restau
                 subTitle: 'Search for a restaurant in:',
                 title: 'New York'
             }),
-            search: new SearchBar,
+            search: new SearchBar({ showSearchBar: true }),
             ContentLayout: ContentLayout,
             RestaurantView: RestaurantView,
             RestaurantsView: RestaurantsView,

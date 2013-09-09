@@ -4,11 +4,16 @@
 	'backbone',
 	'app',    
     'models/filter',
-    'models/keyValue',    
+    'models/keyValue',
     'collections/dictionary',
+    'collections/restaurants',
+    'collections/cities',
 ],
 
-function ($, _, Backbone, app, FilterItem, KeyValue, Dictionary) {
+function ($, _, Backbone, app, FilterItem, KeyValue, Dictionary, Restaurants, Cities) {
+    var restaurantsByMetro = {},
+        metros = null;    
+
     return app.module('Data', function (Data) {
         _.extend(Data, {
             allNeighborhoods: new Dictionary([new KeyValue({ key: 1, value: 'nnn1' }), new KeyValue({ key: 2, value: 'nnn2' }), new KeyValue({ key: 3, value: 'nnn3' })]),
@@ -46,8 +51,31 @@ function ($, _, Backbone, app, FilterItem, KeyValue, Dictionary) {
                 }
             },
 
-            getFilter: function () {
-                return this.filter;
+            getRestaurantsByMetro: function (metroId, callback) {
+                var restaurants = restaurantsByMetro[metroId];                
+                if (typeof restaurants == 'undefined') {
+                    app.execute('API:GetRestaurantsByMetro', metroId, 1000, 1, function (err, data) {
+                        if (err == null) {
+                            restaurantsByMetro[metroId] = restaurants = new Restaurants(data.restaurants);
+                        }
+                        return callback ? callback(err, restaurants) : null;
+                    });
+                } else {
+                    return callback ? callback(null, restaurants) : null;
+                }
+            },
+
+            getMetros: function (callback) {
+                if (metros == null) {
+                    app.execute('API:GetMetros', function (err, data) {
+                        if (err == null) {
+                            metros = new Cities(data.metros);
+                        };                        
+                        return callback ? callback(err, metros) : null;
+                    });
+                } else {
+                    return callback ? callback(null, metros) : null;
+                }
             }
         });
     });

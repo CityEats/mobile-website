@@ -24,8 +24,8 @@
 
             this.model.set('sortBy', sortBy);
             this.model.set('price', price);
-            app.execute('Filter:save', this.model);
-            app.router.navigate('browse-all', { trigger: true });
+            app.execute('SaveFilter', this.model);
+            app.router.navigate('browse-all/5', { trigger: true });
 
             evt.preventDefault();
         }

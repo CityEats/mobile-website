@@ -1,5 +1,5 @@
-﻿define(['backbone'],
-	function (Backbone) {
+﻿define(['backbone', 'modules/helper'],
+	function (Backbone, Helper) {
 	    var ReviewItem = Backbone.Model.extend({
 	        defaults: {
 	            title: '',
@@ -8,19 +8,7 @@
 	            date: '',
 	            body: '',
 	            ratingClass: function () {
-	                switch (this.rating) {
-	                    case 2:
-	                        return 'two';
-	                    case 3:
-	                        return 'three';
-	                    case 4:
-	                        return 'four';
-	                    case 5:
-	                        return 'five';
-	                    case 1:
-	                    default:
-	                        return 'one';
-	                }
+	                return Helper.ratingClass(this.rating);
 	            },
 
 	            showReadMore: function () {

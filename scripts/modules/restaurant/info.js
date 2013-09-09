@@ -42,7 +42,7 @@ function ($, _, Backbone, app,
             //neighborhoods: new Dictionary([new KeyValue({ key: 1, value: 'nnn1' }), new KeyValue({ key: 2, value: 'nnn2' }), new KeyValue({ key: 3, value: 'nnn3' })]),
             topBar: new TopBar({
                 leftText: 'Back',
-                leftUrl: 'browse-all',
+                leftUrl: 'browse-all/5',
                 title: 'Station Grill'
             }),
             info: {

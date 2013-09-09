@@ -3,7 +3,7 @@
     var ContentLayout = Backbone.Marionette.Layout.extend({
         template: _.template(contentHtml),
         regions: {
-            locationsButtons: ".locationsButtons",
+            locationsButtons: '.locationsButtons',
             findYourCity: '.findYourCity',
             currentCity: '#currentCity'
         },

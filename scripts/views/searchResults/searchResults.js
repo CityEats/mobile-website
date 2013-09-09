@@ -15,7 +15,7 @@
                 if (!this.options.isEditorsPicks) {
                     this.$el.find('.resultsTitle.pick, #editorsPicks').remove();
                 }
-            }
+            }            
         }
     });
 

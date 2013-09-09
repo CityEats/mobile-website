@@ -1,18 +1,31 @@
-﻿<div class="searchForm">
+﻿<% if (typeof(showSearchBar) != "undefined" && showSearchBar) { %>
+<div class="searchForm">
     <input class="searchField" type="text" placeholder="Search by name, cusine, etc" />
+    <a class="searchFormClear hide" href="#">Clear</a>
+    <a class="searchFormButton" href="#">&nbsp;</a>
 </div>
-<% if (typeof(showTimingBar) != "undefined" && showTimingBar) { %>
+<% } if (typeof(showTimingBar) != "undefined" && showTimingBar) { %>
 <div class="timing column3">
     <div class="selectForm column">
-        <select class="select">
-            <option>2 people</option>
+        <select class="select partySize">
+            <option value="1">1 people</option>
+            <option value="2" selected>2 people</option>
+            <option value="3">3 people</option>
+            <option value="4">4 people</option>
+            <option value="5">5 people</option>
+            <option value="6">6 people</option>
+            <option value="7">7 people</option>
+            <option value="8">8 people</option>
         </select>
     </div>
     <div class="datePicker column">Today</div>
     <div class="selectForm column">
-        <select class="select">
+        <select class="select time">
             <option>7:00p</option>
         </select>
     </div>
+</div>
+<div class="searchResultsSubmit hide">
+    <input class="btn small btnFindTable" type="submit" value="Find a Table">
 </div>
 <% } %>

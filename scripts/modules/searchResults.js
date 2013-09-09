@@ -25,9 +25,15 @@ function ($, _, Backbone, app, Restaurant, TopBar, SearchBar, TopBarView, Restau
                 rightUrl: 'filter',
                 title: 'Choose Your City'
             }),
-            search: new SearchBar({
-                showTimingBar: true
-            }),
+            getSearchModel: function (party, date, time) {
+                return new SearchBar({
+                    showTimingBar: true,
+                    showSearchBar: true,
+                    party: party,
+                    date: date,
+                    time: time
+                });
+            },
             ContentLayout: ContentLayout,
             RestaurantView: RestaurantView,
             RestaurantsView: RestaurantsView,
