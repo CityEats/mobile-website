@@ -34,8 +34,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, Dictionary, Restaurants, Ci
                 }
                 else {
                     return this.allNeighborhoods;
-                }
-                
+                }                
             },
 
             getAllCuisines: function (ckecked) {                
@@ -44,7 +43,6 @@ function ($, _, Backbone, app, FilterItem, KeyValue, Dictionary, Restaurants, Ci
                         item.set('checked', ckecked.indexOf(item.get('key')) != -1);
                         return item;
                     }));
-
                 }
                 else {
                     return this.allCuisines;
@@ -65,12 +63,15 @@ function ($, _, Backbone, app, FilterItem, KeyValue, Dictionary, Restaurants, Ci
                 }
             },
 
-            getMetros: function (callback) {
+            getMetros: function (callback, lat, lng) {
                 if (metros == null) {
-                    app.execute('API:GetMetros', function (err, data) {
+                    app.execute('API:GetMetros', lat, lng, function (err, data) {
                         if (err == null) {
                             metros = new Cities(data.metros);
-                        };                        
+                        }
+                        if (lat && lng && metros.length > 0) {
+                            app.execute('SetCurrentCity', metros.at(0));
+                        }
                         return callback ? callback(err, metros) : null;
                     });
                 } else {

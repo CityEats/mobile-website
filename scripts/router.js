@@ -75,15 +75,12 @@ function (app, Marionette, FooterView) {
             var module = require('modules/cities');
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-
-            app.topBar.show(module.topBarBlock);
+            app.topBar.show(module.topBarBlock);            
 
             app.execute('GetMetros', function (err, cities) {
                 if (err == null) {
                     var currentCity = app.request('GetCurrentCity');
-
-                    if (currentCity) {
+                    if (currentCity) {                        
                         //currentCity = cities.get(currentCityId);
                         module.contentLayout = new module.ContentLayout({ hasCurrentCity: !!currentCity });
                         app.content.show(module.contentLayout);

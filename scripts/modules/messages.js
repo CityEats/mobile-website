@@ -12,7 +12,6 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     //init data methods
     //setup temporary DB logic    
     var API_PATH = 'http://qa-beta.cityeats.com/api/v2';
-    var WEB_PATH = 'https://qa-beta.cityeats.com';
 
     var getJSONStatic = function (url) {
         return function (callback) {
@@ -49,37 +48,6 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         }
     };
 
-    var basicAuthPost = function (url) {        
-        return function (data, callback) {       
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: "text=test",
-                crossDomain: true,
-                username: '2many',
-                password: 'curlyfries',
-                headers:{ 
-                    'X-Foo': 'bar'
-                }, 
-                xhrFields: {
-                    withCredentials: true
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("test", "test");
-                    xhr.setRequestHeader("Authorization", "Basic Mm1hbnk6Y3VybHlmcmllcw==");
-                },
-            })
-            .success(function (response) {
-                if (callback)
-                    callback(null, response);
-            })
-            .error(function (response) {
-                if (callback)
-                    callback(response);
-            });
-        }
-    };
-
     //cuisines
     app.commands.setHandler('SaveFavCuisines', function (items) {
         //data.favCuisines = items;
@@ -96,7 +64,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         //data.favNeighborhoods = items;
         debugger
         Data.filter.set('neighborhoodIds', items);
-    });    
+    });
 
     app.reqres.setHandler('GetFavNeighborhoods', function (checked) {
         return Data.getAllNeighborhoods(Data.filter.get('neighborhoodIds'));
@@ -114,14 +82,16 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     });
 
     //cities
-    app.commands.setHandler('API:GetMetros', function(callback){
-        var handler = getJSONStatic(API_PATH + '/metros');
+    app.commands.setHandler('API:GetMetros', function (lat, lng, callback) {
+        var handler = (lat && lng) ?
+            getJSONStatic(API_PATH + '/metros') :
+            getJSONStatic(API_PATH + '/metros?lat=' + lat + '&lng=' + lng);
         handler(callback);
     });
-        
-    app.commands.setHandler('GetMetros', function (callback) {
-        Data.getMetros(callback);
-    });
+
+    //app.commands.setHandler('GetMetros', function (callback, lat, lng) {
+    //    Data.getMetros(callback, lat, lng);
+    //});    
 
     app.reqres.setHandler('GetCurrentCity', function () {
         var result = localStorage.getItem('CurrentCity');
@@ -131,7 +101,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
             return null;
     });
 
-    app.commands.setHandler('SetCurrentCity', function (currentCity) {        
+    app.commands.setHandler('SetCurrentCity', function (currentCity) {
         localStorage.setItem('CurrentCity', JSON.stringify(currentCity));
     });
 
@@ -156,7 +126,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         handler(callback);
     });
 
-    app.commands.setHandler('GetRestaurants', function (cityId, start, end, party, time, callback) {        
+    app.commands.setHandler('GetRestaurants', function (cityId, start, end, party, time, callback) {
         app.execute('GetRestaurantsByMetro', cityId, function (err, restaurants) {
             if (err) {
                 return callback(err);
@@ -167,19 +137,19 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                 console.log('e' + end);
                 if (err) {
                     return callback(err);
-                }                
-                
+                }
+
                 var restaurantIds = restaurants.map(function (item) { return item.get('id') });
-                slots = slots.filter(function (item) {                    
-                    return _(restaurantIds).contains(item.id)                    
-                });                
+                slots = slots.filter(function (item) {
+                    return _(restaurantIds).contains(item.id)
+                });
 
                 var result = new Restaurants(
                     _(slots).map(function (item) {
                         var restaurant = restaurants.get(item.id).clone();
                         restaurant.set('slots', item.slots);
                         restaurant.set('selectedTime', time);
-                        
+
                         return restaurant;
                     })
                 );
@@ -206,7 +176,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         handler(callback);
     });
 
-    app.commands.setHandler('GetRestaurant', function (id, start, end, party, callback) {        
+    app.commands.setHandler('GetRestaurant', function (id, start, end, party, callback) {
         app.execute('API:GetRestaurant', id, function (err, restaurant) {
             if (err) {
                 return callback(err);
@@ -236,7 +206,27 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
 
     app.commands.setHandler('GetRestaurantsByMetro', function (metroId, callback) {
         Data.getRestaurantsByMetro(metroId, callback);
-    })
+    });
+
+    app.commands.setHandler('GetMetros', function (callback) {
+        var geoOptions = {
+            enableHighAccuracy: true,
+            maximumAge: 30000,
+            timeout: 15000
+        };
+
+        navigator.geolocation.getCurrentPosition(
+            function success(data) {
+                console.log(data);
+                Data.getMetros(callback, data.coords.latitude, data.coords.longitude);
+
+            },
+            function error(data) {
+                Data.getMetros(callback);
+            },
+            geoOptions
+        );
+    });
 
     return {};
 });
