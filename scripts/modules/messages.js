@@ -28,6 +28,20 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         }
     };
 
+    var postJSONStatic = function (url, data) {
+        return function (callback) {
+            $.post(url, data)
+                .success(function (response) {
+                    if (callback)
+                        callback(null, response);
+                })
+                .error(function (response) {
+                    if (callback)
+                        callback(response);
+                });
+        }
+    };
+
     var getJSON = function () {
         return function (url, callback) {
             var request = getJSONStatic(API_PATH + url);
@@ -122,7 +136,15 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     });
 
     //user
-    app.commands.setHandler('API:SignUp', basicAuthPost(WEB_PATH + '/users/sign_up'));
+    app.commands.setHandler('API:SignUp', function (user, callback) {
+        var handler = postJSONStatic(API_PATH + '/users/sign_up', user);
+        handler(callback);
+    });
+
+    app.commands.setHandler('API:SignIn', function (user, callback) {
+        var handler = postJSONStatic(API_PATH + '/users/sign_in', user);
+        handler(callback);
+    });
 
     //restaurants
     app.commands.setHandler('API:GetAvailableSlots', function (cityId, start, end, party, callback) {
@@ -141,6 +163,8 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
             }
 
             app.execute('API:GetAvailableSlots', cityId, start, end, party, function (err, slots) {
+                console.log('s ' + start);
+                console.log('e' + end);
                 if (err) {
                     return callback(err);
                 }                
@@ -163,6 +187,45 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                 callback(null, result);
             });
 
+        });
+    });
+
+    //restaurant
+    app.commands.setHandler('API:GetRestaurant', function (id, callback) {
+        var handler = getJSONStatic(API_PATH +
+            '/restaurants/' + id + '/extended_attrs');
+        handler(callback);
+    });
+
+    app.commands.setHandler('API:GetAvailableSlotsForRestaurant', function (id, start, end, party, callback) {
+        var handler = getJSONStatic(API_PATH +
+            '/restaurants/' + id +
+            '/available_slots?start_time=' + Helper.formatDateForApi(start) +
+            '&end_time=' + Helper.formatDateForApi(end) +
+            '&party_size=' + party);
+        handler(callback);
+    });
+
+    app.commands.setHandler('GetRestaurant', function (id, start, end, party, callback) {        
+        app.execute('API:GetRestaurant', id, function (err, restaurant) {
+            if (err) {
+                return callback(err);
+            }
+
+            app.execute('API:GetAvailableSlotsForRestaurant', id, start, end, party, function (err, slots) {
+                console.log('s ' + start);
+                console.log('e' + end);
+                if (err) {
+                    return callback(err);
+                }
+
+                var result = new Restaurant(restaurant);
+                if (slots.length > 0) {
+                    result.set('slots', slots[0].slots);
+                }
+
+                callback(null, result);
+            });
         });
     });
 

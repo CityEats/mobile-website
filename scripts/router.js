@@ -34,7 +34,8 @@ function (app, Marionette, FooterView) {
             'filter': 'filter',
             'favorite-cuisines': 'favoriteCuisines',
             'favorite-neighborhoods': 'favoriteNeighborhoods',
-            'restaurans/:num/info': 'restauranInfo',
+            'restaurans/:num/info': 'restauranInfoShort',
+            'restaurans/:num/party/:num/date/:num/time/:num/info': 'restauranInfo',
             'restaurans/:num/reviews': 'restauranReviews',
             'restaurans/:num/menus': 'restauranMenus',
             'restaurans/:num/book-it': 'restauranBookIt',
@@ -217,12 +218,11 @@ function (app, Marionette, FooterView) {
 
             module.searchBarView.on('searchParametersChanged', function (data) {
                 //data.searchQuery;
-
                 var startChanged = new Date(data.date + ' ' + data.time);
                 var endChanged = new Date(data.date + ' ' + data.time);
 
-                startChanged.setMinutes(start.getMinutes() - 15);
-                endChanged.setMinutes(end.getMinutes() + 15);
+                startChanged.setMinutes(startChanged.getMinutes() - 15);
+                endChanged.setMinutes(endChanged.getMinutes() + 15);
 
                 app.execute('GetRestaurants', cityId, startChanged, endChanged, data.party, data.time, getRestaurantsHandler);
             });
@@ -330,10 +330,19 @@ function (app, Marionette, FooterView) {
             }, module.contentLayout);
         },
 
-        restauranInfo: function (num) {
+        restauranInfoShort: function (id) {            
+            this.restauranInfo(id, 2, '2013-09-10', '19:00');
+        },
+
+        restauranInfo: function (id, party, date, time) {
             this.setup();
 
             var module = require('modules/restaurant/info');
+            var start = new Date(date + ' ' + time);
+            var end = new Date(date + ' ' + time);
+
+            start.setMinutes(start.getMinutes() - 15);
+            end.setMinutes(end.getMinutes() + 15);
 
             module.infoView = new module.info.InfoView;
 
@@ -363,7 +372,12 @@ function (app, Marionette, FooterView) {
             module.infoView.exclusiveEatsOffer.show(module.exclusiveEatsOfferView);
             module.infoView.mainBox.show(module.mainView);
             module.infoView.mapBox.show(module.mapView);
-            //module.infoView.imgBox.show('highlightsBox', 'goodToKnowBox', 'dishesBox', 'margaritasBox', 'fullOverviewBox');            
+            //module.infoView.imgBox.show('highlightsBox', 'goodToKnowBox', 'dishesBox', 'margaritasBox', 'fullOverviewBox');     
+
+            app.execute('GetRestaurant', id, start, end, party, function (err, restaurant) {
+                if (err == null) {
+                }
+            });
         },
 
         restauranReviews: function (num) {
