@@ -6,35 +6,84 @@
             'click .searchFormClear': 'btnClearClick',
             'click .searchFormButton': 'btnSearchClick',
             'click .btnFindTable': 'btnFindTableClick',
-            'change .partySize, .datePicker, .time': 'searchParametersChanged'
+            'click .datePicker': 'datePickerClick',
+            'change .partySize, .time': 'searchParametersChanged'
         },
         ui: {
             party: '.partySize',
-            date: '.datePicker',
+            dateLabel: '.datePicker',
+            date: '.date',
             time: '.time',
             txtSearch: '.searchField',
             btnSearchClear: '.searchFormClear',
             searchSubmit: '.searchResultsSubmit'
         },
 
-        onRender: function () {
-            this.rerenderTime(true);
+        onRender: function () {            
+            var that = this;
 
-            var party = this.model.get('party'),
+            var showTimingBar = this.model.get('showTimingBar'),
+                party = this.model.get('party'),
                 date = this.model.get('date'),
-                time = this.model.get('time');
+                time = this.model.get('time');            
             
-            if (typeof party != 'undefined') {
-                this.ui.party.val(party);
-            }
+            if (showTimingBar === true) {
+                this.rerenderTime(true);
+                if (typeof party != 'undefined') {
+                    this.ui.party.val(party);
+                }
 
-            if (typeof date != 'undefined') {
-                this.ui.date.val(date);
-            }
+                if (typeof date != 'undefined') {
+                    this.ui.dateLabel.text(date);
+                    this.ui.date.val(date);
+                }
 
-            if (typeof time != 'undefined') {
-                this.ui.time.val(time);
+                if (typeof time != 'undefined') {
+                    this.ui.time.val(time);
+                }
+
+                var datepicker = this.ui.date,
+                    dateLabel = this.ui.dateLabel;
+
+                this.ui.date.datepicker({
+                    minDate: new Date(),
+                    maxDate: "+90d",
+                    dateFormat: 'yy-mm-dd',
+                    onSelect: function (dateText) {
+                        var selectedDate = datepicker.datepicker('getDate');
+                        that.setDateText(selectedDate, dateLabel);
+                        that.searchParametersChanged();
+                    }
+                });
+
+                this.ui.date.datepicker('setDate', date);
+
+                that.setDateText(this.ui.date.datepicker('getDate'), this.ui.dateLabel);
             }
+        },
+
+        setDateText: function (date, label) {
+            var current = new Date;
+
+            if (current.getDate() == date.getDate() &&
+                current.getMonth() == date.getMonth() &&
+                current.getFullYear() == date.getFullYear()) {
+                    label.text('Today');
+            } else {
+                current.setDate(current.getDate() + 1);
+                if (current.getDate() == date.getDate() &&
+                    current.getMonth() == date.getMonth() &&
+                    current.getFullYear() == date.getFullYear()) {
+                        label.text('Tomorrow');
+                }
+                else {
+                    label.text(date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate());
+                }
+            }
+        },
+
+        datePickerClick: function () {
+            this.ui.date.datepicker('show');
         },
 
         btnClearClick: function (evt) {            
@@ -64,13 +113,16 @@
         },
 
         searchParametersChanged: function () {
-            //'updated'
+            if (this.options.showFindButton !== true) {
+                return true;
+            }
+            
             var party = this.ui.party.val(),
                 date = this.ui.date.val(),
                 time = this.ui.time.val(),
                 isChanged = false;
             
-            if (party.toLowerCase() == this.model.get('party').toLowerCase()) {
+            if (party.toLowerCase() == this.model.get('party').toString().toLowerCase()) {
                 this.ui.party.removeClass('updated');
             } else {
                 this.ui.party.addClass('updated');

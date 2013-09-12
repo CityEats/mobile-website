@@ -6,11 +6,12 @@
         itemView: CheckboxesListItemView,
 
         saveItems: function () {
-            //var that = this;
-            //return _.map(this.$(':checked'), function (item) {
-            //    return that.$(item).attr('itemId');
-            //});
-            app.execute(this.options.isCuisines ? 'SaveFavCuisines' : 'SaveFavNeighborhoods', this.collection.where({ 'checked': true }).map(function (item) { return item.get('key') }));
+            
+            app.execute(
+                this.options.isCuisines ? 'SaveFilterCuisines' : 'SaveFilterNeighborhoods',
+                this.options.cityId,
+                this.collection.where({ 'checked': true }).map(function (item) { return item.get('key') }));
+
             console.log('saveItems call');
         }
     });

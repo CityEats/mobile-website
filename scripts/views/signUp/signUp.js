@@ -16,11 +16,31 @@
         },
 
         btnSubmitClick: function () {
-            //var user = {
-            //    user=User{userId=897, firstName='Oleg101', lastName='Soroka101', email='40a.oleg+101@gmail.com', phone='3102762251', postalCode='null', dietRestrict='null', birthday='null', createdAt='2013-09-04T12:46:32Z', badges=BadgesContainer{available=[], completed=[]}, avatarUrl='/assets/default_normal_avatar.gif', favorite_cuisine_types=[], favorite_neighborhoods=[], password='null', passwordConfirmation='null', emailConfirmation='null', cookie='null', userDetails=null, exceptionMsg='null', isLoggedIn=false}, error='null'
-            //}
+            var user = {
+                'first_name': 'Alexey',
+                'last_name': 'Grachov',
+                'email': 'grachov.alexey@gmail.com',
+                'password': 'secret',
+                'password_confirmation': 'secret',
+                'postal_code': '03110',
+                'phone_number': '',
+                'birthday': ''
+            };
 
-            app.execute('API:SignUp', { Z: 1 }, function (err, data) {
+            var user = {
+                user: {
+                    "first_name": "Alexey",
+                    "last_name": "Grachov",
+                    "email": "grachov.alexey@gmail.com",
+                    "password": "secret",
+                    "password_confirmation": "secret",
+                    "postal_code": "03110",
+                    "phone_number": "",
+                    "birthday": ""
+                }
+            };
+
+            app.execute('API:SignUp', user, function (err, data) {
                 debugger
                 if (err == null) {
                     

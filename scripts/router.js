@@ -31,9 +31,9 @@ function (app, Marionette, FooterView) {
             'find-table/:num': 'findTable',
             'search-results/:num/party/:num/date/:num/time/:num': 'searchResults',
             'browse-all/:num': 'browseAll',
-            'filter': 'filter',
-            'favorite-cuisines': 'favoriteCuisines',
-            'favorite-neighborhoods': 'favoriteNeighborhoods',
+            'filter/:num': 'filter',
+            'filter/:num/cuisines': 'filterCuisines',
+            'filter/:num/neighborhoods': 'filterNeighborhoods',
             'restaurans/:num/info': 'restauranInfoShort',
             'restaurans/:num/party/:num/date/:num/time/:num/info': 'restauranInfo',
             'restaurans/:num/reviews': 'restauranReviews',
@@ -80,7 +80,7 @@ function (app, Marionette, FooterView) {
             app.execute('GetMetros', function (err, cities) {
                 if (err == null) {
                     var currentCity = app.request('GetCurrentCity');
-                    if (currentCity) {                        
+                    if (currentCity) {
                         //currentCity = cities.get(currentCityId);
                         module.contentLayout = new module.ContentLayout({ hasCurrentCity: !!currentCity });
                         app.content.show(module.contentLayout);
@@ -158,6 +158,7 @@ function (app, Marionette, FooterView) {
         findTable: function (num) {
             this.setup();
             app.execute('GetRestaurantsByMetro', num); //preload restaurants;
+            app.execute('GetCuisines', num); //preload cuisines;
 
             var currentCity = app.request('GetCurrentCity');
             if (currentCity == null) {
@@ -168,8 +169,9 @@ function (app, Marionette, FooterView) {
 
             var module = require('modules/findTable');
 
-            var aa = module.getSearchModel();
-            module.searchBar = new module.SearchBarView({ model: module.getSearchModel() })
+            module.searchBar = new module.SearchBarView({
+                model: module.getSearchModel(2, new Date(), '19:00')                
+            })
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
             module.contentLayout = new module.ContentLayout({ model: currentCity });
@@ -182,7 +184,17 @@ function (app, Marionette, FooterView) {
         searchResults: function (cityId, party, date, time) {
             this.setup();
 
-            var module = require('modules/searchResults');
+            var module = require('modules/searchResults'),
+                filter = app.request('GetFilterSimple', cityId);
+
+            module.topBar.set('rightUrl', 'filter/' + cityId);
+
+            if (filter && !filter.isDefault()) {
+                module.topBar.set('rightCss', 'red');
+            } else {
+                module.topBar.set('rightCss', '');
+            }
+
             module.contentLayout = null;
             var start = new Date(date + ' ' + time);
             var end = new Date(date + ' ' + time);
@@ -193,7 +205,8 @@ function (app, Marionette, FooterView) {
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.searchBarView = new module.SearchBarView({
-                model: module.getSearchModel(party, date, time)
+                model: module.getSearchModel(party, date, time),
+                showFindButton: true
             });
 
             var getRestaurantsHandler = function (err, data) {
@@ -214,6 +227,7 @@ function (app, Marionette, FooterView) {
             };
 
             module.searchBarView.on('searchParametersChanged', function (data) {
+
                 //data.searchQuery;
                 var startChanged = new Date(data.date + ' ' + data.time);
                 var endChanged = new Date(data.date + ' ' + data.time);
@@ -221,25 +235,36 @@ function (app, Marionette, FooterView) {
                 startChanged.setMinutes(startChanged.getMinutes() - 15);
                 endChanged.setMinutes(endChanged.getMinutes() + 15);
 
-                app.execute('GetRestaurants', cityId, startChanged, endChanged, data.party, data.time, getRestaurantsHandler);
+                app.execute('GetRestaurants', cityId, startChanged, endChanged, data.party, data.time, filter, getRestaurantsHandler);
             });
 
-            app.topBar.show(module.topBarBlock);
-            app.execute('GetRestaurants', cityId, start, end, party, time, getRestaurantsHandler);
+            app.topBar.show(module.topBarBlock);            
+            app.execute('GetRestaurants', cityId, start, end, party, time, filter, getRestaurantsHandler);
         },
 
         browseAll: function (cityId) {
             this.setup();
 
-            var module = require('modules/browseAll');
+            var module = require('modules/browseAll'),
+                filter = app.request('GetFilterSimple', cityId);
+
+            module.topBar.set('rightUrl', 'filter/' + cityId);
+            if (filter && !filter.isDefault()) {
+                module.topBar.set('rightCss', 'red');
+            } else {
+                module.topBar.set('rightCss', '');
+            }
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
-            module.searchBarView = new module.SearchBarView({ model: module.search });
+            module.searchBarView = new module.SearchBarView({
+                model: module.search,
+                showFindButton: true
+            });
 
             app.topBar.show(module.topBarBlock);
 
-            app.execute('GetRestaurantsByMetro', cityId, function (err, restaurants) {
+            app.execute('GetRestaurantsByMetro', cityId, app.request('GetFilterSimple', cityId), function (err, restaurants) {
                 module.contentLayout = new module.ContentLayout({
                     isBrowseAll: true,
                     //isEditorsPicks: true,
@@ -265,70 +290,105 @@ function (app, Marionette, FooterView) {
 
         },
 
-        filter: function () {
+        filter: function (cityId) {
             this.setup();
 
             var module = require('modules/filter');
-
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-            module.contentLayout = new module.ContentLayout({
-                model: app.request('GetFilter')
+            module.topBarBlock = new module.TopBarView({
+                model: module.topBar,
+                rightClickEvent: 'btnRightClick'
             });
-
             app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
+
+            app.execute('GetFilter', cityId, function (err, filter) {
+                if (err == null) {
+                    module.contentLayout = new module.ContentLayout({
+                        model: filter,
+                        cityId: cityId
+                    });
+
+                    module.contentLayout.on('filterChanged', function (isDefault) {
+                        if (isDefault) {
+                            this.hideRightButton();
+                        } else {
+                            this.showRightButton();
+                        }
+                    }, module.topBarBlock);
+
+                    module.topBarBlock.on('btnRightClick', function () {
+                        app.execute('ResetFilter', cityId);
+                        this.resetFilter();
+                    }, module.contentLayout);
+                    
+                    app.content.show(module.contentLayout);                    
+                }
+            });            
+            
         },
 
-        favoriteCuisines: function () {
+        filterCuisines: function (cityId) {
             this.setup();
 
             var module = require('modules/filter');
 
+            module.topBarCuisines.set('rightUrl', 'filter/' + cityId);
             module.topBarBlock = new module.TopBarView({
                 model: module.topBarCuisines,
                 rightClickEvent: 'btnRightClick'
             });
 
-            module.contentLayout = new module.FavoriteItemsView({
-                collection: app.request('GetFavCuisines'),
-                isCuisines: true
+            app.topBar.show(module.topBarBlock);            
+
+            app.execute('GetFilter', cityId, function (err, filter) {                
+                if (err == null) {
+                    module.contentLayout = new module.FavoriteItemsView({
+                        collection: filter.get('cuisines'),
+                        isCuisines: true,
+                        cityId: cityId
+                    });
+
+                    app.content.show(module.contentLayout);
+
+                    module.topBarBlock.on('btnRightClick', function (url) {
+                        this.saveItems();
+                        app.router.navigate(url, { trigger: true });
+                    }, module.contentLayout);
+                }
             });
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
-
-            module.topBarBlock.on('btnRightClick', function (url) {
-                this.saveItems();
-                app.router.navigate(url, { trigger: true });
-            }, module.contentLayout);
         },
 
-        favoriteNeighborhoods: function () {
+        filterNeighborhoods: function (cityId) {
             this.setup();
 
             var module = require('modules/filter');
 
+            module.topBarNeighborhoods.set('rightUrl', 'filter/' + cityId);
             module.topBarBlock = new module.TopBarView({
                 model: module.topBarNeighborhoods,
                 rightClickEvent: 'btnRightClick'
+            });            
+
+            app.topBar.show(module.topBarBlock);            
+
+            app.execute('GetFilter', cityId, function (err, filter) {
+                if (err == null) {
+                    module.contentLayout = new module.FavoriteItemsView({
+                        collection: filter.get('neighborhoods'),
+                        cityId: cityId
+                    });
+
+                    app.content.show(module.contentLayout);
+
+                    module.topBarBlock.on('btnRightClick', function (url) {
+                        this.saveItems();
+                        app.router.navigate(url, { trigger: true });
+                    }, module.contentLayout);
+                }
             });
-
-            module.contentLayout = new module.FavoriteItemsView({
-                collection: app.request('GetFavNeighborhoods')
-            });
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
-
-            module.topBarBlock.on('btnRightClick', function (url) {
-                this.saveItems();
-                app.router.navigate(url, { trigger: true });
-            }, module.contentLayout);
         },
 
         restauranInfoShort: function (id) {            
-            this.restauranInfo(id, 2, '2013-09-10', '19:00');
+            this.restauranInfo(id, 2, new Date(), '19:00');
         },
 
         restauranInfo: function (id, party, date, time) {

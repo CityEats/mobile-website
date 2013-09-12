@@ -5,10 +5,13 @@
         events: {
             'click .linkLeft': 'btnLeftClick',
             'click .linkRight': 'btnRightClick',            
-        },        
+        },
+        ui: {
+            linkRight: '.linkRight'
+        },
 
         btnLeftClick: function (evt) {
-            var url = this.$(evt.target).data('url')
+            var url = this.model.get('leftUrl');
 
             if (this.options.leftClickEvent) {
                 this.trigger(this.options.leftClickEvent, url);
@@ -19,8 +22,8 @@
             evt.preventDefault();
         },
 
-        btnRightClick: function (evt) {
-            var url = this.$(evt.target).data('url')
+        btnRightClick: function (evt) {            
+            var url = this.model.get('rightUrl');
 
             if (this.options.rightClickEvent) {                
                 this.trigger(this.options.rightClickEvent, url);
@@ -33,7 +36,15 @@
 
         goToPage: function (url) {            
             app.router.navigate(url, { trigger: true });
-        }        
+        },
+
+        hideRightButton: function () {
+            this.ui.linkRight.hide();
+        },
+
+        showRightButton: function () {
+            this.ui.linkRight.show();
+        },
     });
     
     return ItemView;

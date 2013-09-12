@@ -27,13 +27,13 @@
         },
 
         goToSearchResults: function (evt) {            
-            var time = this.$('.time');
-            var partySize = this.$('.partySize');
+            var time = this.$('.time').val();
+            var partySize = this.$('.partySize').val();
             //var date = this.el$('.date');
 
             var cityId = this.model.get('id');
-            var date = '2013-09-10' //this.ui.date.text();
-            var url = 'search-results/' + cityId + '/party/' + partySize.val() + '/date/' + date + '/time/' + time.val();
+            var date = this.$('.date').val();
+            var url = 'search-results/' + cityId + '/party/' + partySize + '/date/' + date + '/time/' + time;
             this.goTo(evt, url);
         },
 

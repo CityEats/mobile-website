@@ -1,15 +1,15 @@
 ﻿define(['underscore', 'backbone','modules/helper'],
 	function (_, Backbone, Helper) {
-	    var Restaurant = Backbone.Model.extend({
+	    var Restaurant = Backbone.Model.extend({	       
 	        defaults: {
+	            distance: 5,
+	            distanceText: function () {
+	                return this.distance.toFixed(2) + ' mi';
+	            },
 	            cuisine_types: [],
 	            cuisinesText: function () {
 	                return _(this.cuisine_types).map(function (item) { return item.name; }).join(' / ');
-	            },
-
-	            distance: function () {
-	                return 'x.x mi';
-	            },
+	            },	            
 
 	            priceSymbos: function () {
 	                return (new Array(this.price_rating + 1)).join('$');
@@ -47,8 +47,10 @@
 	                    };
 	                }
 	                return result;
-	            }
-	        }
+	            },	            
+	        },	        
+
+	        
 	    });
 
 	    return Restaurant;

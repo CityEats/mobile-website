@@ -21,23 +21,20 @@ function ($, _, Backbone, app, TopBar, FilterItem, KeyValue, Dictionary, TopBarV
                 leftText: 'Cancel',
                 leftUrl: '',
                 rightText: 'Reset',
+                rightCss: 'hide red',
                 rightUrl: '',
                 title: 'Filter'
             }),
             topBarCuisines: new TopBar({
-                leftText: 'Cancel',                
-                leftUrl: 'filter',
+                leftText: 'Cancel',
                 rightText: 'Done',
-                rightCss: 'blue',
-                rightUrl: 'filter',
+                rightCss: 'blue',                
                 title: 'Cuisines'
             }),
             topBarNeighborhoods: new TopBar({
-                leftText: 'Cancel',
-                leftUrl: 'filter',
+                leftText: 'Cancel',                
                 rightText: 'Done',
-                rightCss: 'blue',
-                rightUrl: 'filter',
+                rightCss: 'blue',                
                 title: 'Neighborhoods'
             }),
             //filter: new FilterItem({

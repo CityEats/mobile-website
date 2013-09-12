@@ -387,6 +387,17 @@ p {
     background: url(../img/sprite.png) -344px -5px no-repeat;
 }
 
+.searchFormButton {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0;
+  left: 8px;
+  text-indent: -9999px;
+  overflow: hidden; 
+}
+
 .checkboxesListItem {
     border-top: 1px solid rgba(255,255,255,.4);
     border-bottom: 1px solid #ccc;
@@ -1039,6 +1050,10 @@ p {
 
 .wrapper {
     min-height: 100%;
+}
+
+.hide {
+  display: none;
 }
 
 /* Top Bar */
