@@ -138,13 +138,13 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         handler(callback);
     });
 
-    app.commands.setHandler('GetRestaurants', function (cityId, start, end, party, time, filter, callback) {
-        app.execute('GetRestaurantsByMetro', cityId, filter, function (err, restaurants) {
+    app.commands.setHandler('GetRestaurants', function (cityId, start, end, party, time, filter, searchQuery, callback) {
+        app.execute('GetRestaurantsByMetro', cityId, searchQuery, filter, function (err, restaurants) {
             if (err) {
                 return callback(err);
             }
 
-            app.execute('API:GetAvailableSlots', cityId, start, end, party, function (err, slots) {                
+            app.execute('API:GetAvailableSlots', cityId, start, end, party, function (err, slots) {
                 if (err) {
                     return callback(err);
                 }
@@ -211,8 +211,8 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         handler(callback);
     });
 
-    app.commands.setHandler('GetRestaurantsByMetro', function (metroId, filter, callback) {        
-        Data.getRestaurantsByMetro(metroId, filter, callback);
+    app.commands.setHandler('GetRestaurantsByMetro', function (metroId, filter, searchQuery, callback) {
+        Data.getRestaurantsByMetro(metroId, filter, searchQuery, callback);
     });
 
     app.commands.setHandler('GetMetros', function (callback) {

@@ -235,11 +235,11 @@ function (app, Marionette, FooterView) {
                 startChanged.setMinutes(startChanged.getMinutes() - 15);
                 endChanged.setMinutes(endChanged.getMinutes() + 15);
 
-                app.execute('GetRestaurants', cityId, startChanged, endChanged, data.party, data.time, filter, getRestaurantsHandler);
+                app.execute('GetRestaurants', cityId, startChanged, endChanged, data.party, data.time, data.searchQuery,  filter, getRestaurantsHandler);
             });
 
             app.topBar.show(module.topBarBlock);            
-            app.execute('GetRestaurants', cityId, start, end, party, time, filter, getRestaurantsHandler);
+            app.execute('GetRestaurants', cityId, start, end, party, time, null, filter, getRestaurantsHandler);
         },
 
         browseAll: function (cityId) {
@@ -255,6 +255,7 @@ function (app, Marionette, FooterView) {
                 module.topBar.set('rightCss', '');
             }
 
+            module.contentLayout = null;
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.searchBarView = new module.SearchBarView({
@@ -264,30 +265,40 @@ function (app, Marionette, FooterView) {
 
             app.topBar.show(module.topBarBlock);
 
-            app.execute('GetRestaurantsByMetro', cityId, app.request('GetFilterSimple', cityId), function (err, restaurants) {
-                module.contentLayout = new module.ContentLayout({
-                    isBrowseAll: true,
-                    //isEditorsPicks: true,
-                });
+            var getRestaurantsHandler = function (err, restaurants) {
+                if (err == null) {
+                    if (module.contentLayout == null) {
+                        module.contentLayout = new module.ContentLayout({
+                            isBrowseAll: true,
+                            //isEditorsPicks: true,
+                        });
 
-                app.content.show(module.contentLayout);
+                        app.content.show(module.contentLayout);
 
-                module.contentLayout.searchBar.show(module.searchBarView);
+                        module.contentLayout.searchBar.show(module.searchBarView);
+                    }
 
-                module.restaurantsView = new module.RestaurantsView({
-                    collection: restaurants,
-                    showSimple: true
-                });
+                    module.restaurantsView = new module.RestaurantsView({
+                        collection: restaurants,
+                        showSimple: true
+                    });
 
-                //module.editorsPicksView = new module.RestaurantsView({
-                //    collection: restaurants,
-                //    showSimple: true
-                //});
+                    //module.editorsPicksView = new module.RestaurantsView({
+                    //    collection: restaurants,
+                    //    showSimple: true
+                    //});
 
-                module.contentLayout.resultsHolder.show(module.restaurantsView);
-                //module.contentLayout.editorsPicks.show(module.editorsPicksView);
+                    module.contentLayout.resultsHolder.show(module.restaurantsView);
+                    //module.contentLayout.editorsPicks.show(module.editorsPicksView);
+                }
+            };            
+
+            module.searchBarView.on('searchParametersChanged', function (data) {
+                
+                app.execute('GetRestaurantsByMetro', cityId, filter, data.searchQuery, getRestaurantsHandler);
             });
 
+            app.execute('GetRestaurantsByMetro', cityId, filter, null, getRestaurantsHandler);
         },
 
         filter: function (cityId) {

@@ -19,7 +19,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, Dictionary, Restaurants, Ci
 
     return app.module('Data', function (Data) {
         _.extend(Data, {            
-            getRestaurantsByMetro: function (metroId, filter, callback) {
+            getRestaurantsByMetro: function (metroId, filter, searchQuery, callback) {
                 var that = this;
                 var restaurants = restaurantsByMetro[metroId];
                 if (typeof restaurants == 'undefined') {
@@ -29,26 +29,25 @@ function ($, _, Backbone, app, FilterItem, KeyValue, Dictionary, Restaurants, Ci
                         }
                         
                         console.log(restaurants);
-                        return callback ? callback(err, that.filterRestaurants(restaurants, filter)) : null;
+                        return callback ? callback(err, that.filterRestaurants(restaurants, searchQuery, filter)) : null;
                     });
                 } else {
-                    return callback ? callback(null, that.filterRestaurants(restaurants, filter)) : null;
+                    return callback ? callback(null, that.filterRestaurants(restaurants, searchQuery, filter)) : null;
                 }
             },
 
-            filterRestaurants: function (restaurants, filter) {
-                var cuisineIds, neighborhoodIds, prices;
+            filterRestaurants: function (restaurants, searchQuery, filter) {
+                var cuisineIds = [], neighborhoodIds = [], prices = [], sortBy;
 
                 if (filter != null) {
                     cuisineIds = filter.get('cuisineIds');
                     neighborhoodIds = filter.get('neighborhoodIds');
                     prices = filter.get('prices');
-                } else {
-                    return this.orderRestaurants(restaurants);
+                    sortBy = filter.get('sortBy');
                 }
 
                 restaurants = new Restaurants(restaurants.filter(function (restaurant) {
-                    var filteredByCuisine = filteredByNeighborhood = filteredByPrice = true;
+                    var filteredByCuisine = filteredByNeighborhood = filteredByPrice = filteredByQuery = true;
 
                     if (cuisineIds.length > 0) {
                         filteredByCuisine = _.intersection(cuisineIds, restaurant.get('cuisine_type_ids')).length > 0;
@@ -62,11 +61,19 @@ function ($, _, Backbone, app, FilterItem, KeyValue, Dictionary, Restaurants, Ci
                         filteredByPrice = prices.indexOf(restaurant.get('price_rating')) != -1;
                     }
 
-                    return filteredByCuisine && filteredByNeighborhood && filteredByPrice;
+                    if (searchQuery && searchQuery.length > 0) {
+                        searchQuery = searchQuery.toLowerCase();
+                        var name = restaurant.get('name').toLowerCase(),
+                            cuisines = _(restaurant.get('cuisine_types')).map(function (item) { return item.name; }).join(' | ').toLowerCase();
+
+                        filteredByQuery = name.indexOf(searchQuery) != -1 || cuisines.indexOf(searchQuery) != -1;
+                    }
+
+                    return filteredByCuisine && filteredByNeighborhood && filteredByPrice && filteredByQuery;
 
                 }));
 
-                return this.orderRestaurants(restaurants, filter.get('sortBy'));
+                return this.orderRestaurants(restaurants, sortBy);
             },
 
             orderRestaurants: function (restaurants, by) {

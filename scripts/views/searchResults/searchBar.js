@@ -130,9 +130,9 @@
             }
 
             if (date.toLowerCase() == this.model.get('date').toLowerCase()) {
-                this.ui.date.removeClass('updated');
+                this.ui.dateLabel.removeClass('updated');
             } else {
-                this.ui.date.addClass('updated');
+                this.ui.dateLabel.addClass('updated');
                 isChanged = true;
             }
 
