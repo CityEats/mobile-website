@@ -2,6 +2,7 @@ define([
 	'app',
 	'marionette',
     'views/shared/footer',
+    'modules/helper',
 	'modules/cities',
     'modules/login',
     'modules/signUp',
@@ -19,7 +20,7 @@ define([
     'modules/reservations',
     'modules/messages'
 ],
-function (app, Marionette, FooterView) {
+function (app, Marionette, FooterView, Helper) {
     var Router = Marionette.AppRouter.extend({
         routes: {
             '': 'index',
@@ -112,6 +113,12 @@ function (app, Marionette, FooterView) {
 
             module.contentLayout = new module.ContentLayout;
 
+            module.contentLayout.on('loginSubmited', function (user) {
+                app.execute('SignIn', user, function (err, data) {
+                    debugger
+                });
+            });
+
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);
         },
@@ -124,6 +131,22 @@ function (app, Marionette, FooterView) {
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.contentLayout = new module.ContentLayout;
+
+            module.contentLayout.on('loginSubmited', function (user) {
+                var view = this;
+                app.execute('SignUp', user, function (err, data) {
+                    if (err == null) {
+                        //TODO: Redirect somewhere
+                    } else {                        
+                        var error = Helper.getErrorMessage(err);
+                        if (error) {
+                            view.showError(error, null, 'main');
+                        } else {
+                            //TODO: show global error
+                        }
+                    }
+                });
+            });
 
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);
@@ -161,6 +184,13 @@ function (app, Marionette, FooterView) {
             app.execute('GetCuisines', num); //preload cuisines;
 
             var currentCity = app.request('GetCurrentCity');
+            var currentUser = app.request('GetCurrentUser');
+            var name;
+
+            if (currentUser) {
+                name = currentUser.get('first_name') + ' ' + currentUser.get('last_name');
+            }
+
             if (currentCity == null) {
                 //
                 app.router.navigate('', { trigger: true });
@@ -174,7 +204,10 @@ function (app, Marionette, FooterView) {
             })
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
-            module.contentLayout = new module.ContentLayout({ model: currentCity });
+            module.contentLayout = new module.ContentLayout({
+                model: currentCity,
+                user: name
+            });
 
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);

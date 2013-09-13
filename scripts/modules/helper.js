@@ -58,7 +58,15 @@ function (_, Backbone, app) {
                     amText: h + ':' + m + (am ? 'a' : 'p'),
                     amTextFull: h + ':' + m + (am ? 'am' : 'pm')
                 };
-            }
+            },
+
+            getErrorMessage: function (err) {
+                if (err.responseText && err.responseText.length > 0) {
+                    var text = JSON.parse(err.responseText);
+                    return text.error;
+                }
+                return null;
+            },
         });
     });
 });

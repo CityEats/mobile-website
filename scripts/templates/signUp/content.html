@@ -4,49 +4,57 @@
     <section class="form signUp">
         <a class="fbLoginBtn" href="#">Sign Up with Facebook</a>
         <h3 class="title grey line"><span class="titleText">Or</span></h3>        
+        <p class="textError txtError row hide">Error</p>
         <div class="row">
             <label class="labelForm">First Name <span class="labelFormRequired">*</span></label>
             <input class="textField txtFirstName" type="text" />
+            <p class="textError txtFirstNameError hide">Error</p>
         </div>
         <div class="row">
             <label class="labelForm">Last Name <span class="labelFormRequired">*</span></label>
             <input class="textField txtLastName" type="text" />
+            <p class="textError txtLastNameError hide">Error</p>
         </div>
         <div class="row">
             <label class="labelForm">Email <span class="labelFormRequired">*</span></label>
             <input class="textField txtEmail" type="email" />
+            <p class="textError txtEmailError hide">Error</p>
         </div>
         <div class="row">
             <label class="labelForm">Password <span class="labelFormRequired">*</span></label>
             <input class="textField txtPassword" type="password" />
+            <p class="textError txtPasswordError hide">Error</p>
         </div>
         <div class="row">
             <label class="labelForm">Confirm Password <span class="labelFormRequired">*</span></label>
             <input class="textField txtPassword2" type="password" />
+            <p class="textError txtPassword2Error hide">Error</p>
         </div>
         <div class="row">
             <label class="labelForm">Zip Code <span class="labelFormRequired">*</span></label>
             <input class="textField txtZip" type="text" />
+            <p class="textError txtZipError hide">Error</p>
         </div>
         <div class="row">
             <label class="labelForm">Phone Number <span class="labelFormRequired">*</span></label>
             <input class="textField txtPhone" type="tel" />
+            <p class="textError txtPhoneError hide">Error</p>
         </div>
         <div class="row">
             <label class="labelForm">Birthday <span class="labelFormOptional">(optional)</span></label>
             <div class="clearfix">
                 <div class="selectForm selectFormBirthdayMonth">
-                    <select class="select">
+                    <select class="select ddlMonth">
                         <option>Month</option>
                     </select>
                 </div>
                 <div class="selectForm selectFormBirthdayDay">
-                    <select class="select">
+                    <select class="select ddlDay">
                         <option>Day</option>
                     </select>
                 </div>
                 <div class="selectForm selectFormBirthdayYear">
-                    <select class="select">
+                    <select class="select ddlYear">
                         <option>Year</option>
                     </select>
                 </div>
@@ -55,7 +63,7 @@
         <div class="row">
             <label class="labelForm">How did you hear about us? <span class="labelFormOptional">(optional)</span></label>
             <div class="selectForm">
-                <select class="select">
+                <select class="select ddlHowHear">
                     <option>Internet</option>
                     <option>Radio</option>
                 </select>
@@ -63,7 +71,7 @@
         </div>
         <div class="row">
             <label class="labelFormHasCheckbox">
-                <span class="checkboxForm"><input class="checkbox" type="checkbox" /></span>
+                <span class="checkboxForm"><input class="checkbox cbAgree" type="checkbox" /></span>
                 By checking this box, you confirm that you have read, understood and agree to the CityEats <a href="#">terms of use</a> and <a href="#">privacy policy</a> <span class="labelFormRequired">*</span>
             </label>
         </div>

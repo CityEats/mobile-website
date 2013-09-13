@@ -28,7 +28,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     };
 
     var postJSONStatic = function (url, data) {
-        return function (callback) {
+        return function (callback) {            
             $.post(url, data)
                 .success(function (response) {
                     if (callback)
@@ -124,9 +124,25 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     });
 
     app.commands.setHandler('API:SignIn', function (user, callback) {
-        var handler = postJSONStatic(API_PATH + '/users/sign_in', user);
+        var handler = postJSONStatic(API_PATH + '/users/sign_in.json', user);
         handler(callback);
     });
+
+    app.commands.setHandler('SignUp', function (user, callback) {
+        Data.signUp(user, callback);
+    });
+
+    app.commands.setHandler('SignIn', function (user, callback) {        
+        Data.signIn(user, callback);
+    });
+
+    app.commands.setHandler('SignOut', function () {
+        Data.signOut();
+    });
+
+    app.reqres.setHandler('GetCurrentUser', function () {
+        return Data.getCurrentUser();
+    });    
 
     //restaurants
     app.commands.setHandler('API:GetAvailableSlots', function (cityId, start, end, party, callback) {

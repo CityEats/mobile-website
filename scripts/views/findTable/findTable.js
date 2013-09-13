@@ -11,8 +11,25 @@
             'click .btnSignUp': 'goToSignUp',
             'click .btnChangeCity': 'goToChangeCity',
             'click .btnFindTable': 'goToSearchResults',
-            'click .btnBrowseAll': 'goToBrowseAll'
-        },        
+            'click .btnBrowseAll': 'goToBrowseAll',
+            'click .btnUser': 'goToUser',
+        },
+
+        ui: {
+            pnlLogin: '.pnlLogin',
+            pnlUser: '.pnlUser'
+        },
+
+        onRender: function () {
+            if (this.options.user) {
+                this.ui.pnlUser.show();
+                this.ui.pnlLogin.hide();
+                this.ui.pnlUser.find('.btnText').text(this.options.user);
+            } else {
+                this.ui.pnlUser.hide();
+                this.ui.pnlLogin.show();
+            }
+        },
 
         goToLogIn: function (evt) {
             this.goTo(evt, 'login');
@@ -23,6 +40,10 @@
         },
 
         goToChangeCity: function (evt) {
+            this.goTo(evt, '');
+        },
+
+        goToUser: function (evt) {
             this.goTo(evt, '');
         },
 
