@@ -1,10 +1,11 @@
-﻿define(['app', 'marionette', 'underscore', 'text!templates/signUp/content.html'], function (app, Marionette, _, signUpHtml) {
+﻿define(['app', 'marionette', 'underscore', 'basicItemView', 'text!templates/signUp/content.html'], function (app, Marionette, _, BasicItemView, signUpHtml) {
 
-    var ItemView = Marionette.ItemView.extend({
+    var ItemView = BasicItemView.extend({
         template: _.template(signUpHtml),
         events: {
             'click .btnSubmit': 'btnSubmitClick',
             'click .cbAgree': 'cbAgreeClick',
+            'click .btnTermsPrivacy': 'btnTermsPrivacyClick',
         },
         ui: {
             txtFirstName: '.txtFirstName',
@@ -26,44 +27,79 @@
             ddlMonth: '.ddlMonth',
             ddlDay: '.ddlDay',
             ddlYear: '.ddlYear',
-            ddlHowHear: '.ddlHowHear'
+            ddlHowHeard: '.ddlHowHeard',
+            fbLoginBtn: '.fbLoginBtn'
         },
 
-        btnSubmitClick: function () {           
-            //var user = {
-            //    user: {
-            //        "first_name": "Alexey",
-            //        "last_name": "Grachov",
-            //        "email": "grachov.alexey@gmail.com",
-            //        "password": "secret",
-            //        "password_confirmation": "secret",
-            //        "postal_code": "03110",
-            //        "phone_number": "",
-            //        "birthday": ""
-            //    }
-            //};
+        onRender: function () {
+            //fb link
+            var fbLink = "https://www.facebook.com/dialog/oauth?client_id=" + this.options.appId + "&redirect_uri=" + this.options.redirectUri;
+            this.ui.fbLoginBtn.attr('href', fbLink);
 
-            //app.execute('API:SignUp', user, function (err, data) {
-            //    debugger
-            //    if (err == null) {
-                    
-            //    }
-            //});
+            //render years
+            var date = new Date;
+            var years = ['<option>Year</option>'];
+            var months = ['<option>Month</option>'];
+            var howHeards = ['<option></option>'];
+            var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            var howHeardNames = [{ 'Word of Mouth': 1 }, { 'Online ad': 2 }, { 'Radio': 3 }, { 'TV': 4 }, { 'Print': 5 }, { 'Outdoor ad': 6 }, { 'Other': 7 }];
+            var days = ['<option>Day</option>'];
+            for (var i = 1900; i <= date.getFullYear() ; i++) {
+                years.push('<option value=" ' + i + ' "> ' + i + '</option>');
+            }
 
+            for (var i = 0; i < monthNames.length; i++) {
+                months.push('<option value=" ' + (i + 1) + ' "> ' + monthNames[i] + '</option>');
+            }
+
+            for (var i = 1; i <= 31 ; i++) {
+                days.push('<option value=" ' + i + ' "> ' + i + '</option>');
+            }
+
+            for (var i = 0; i < howHeardNames.length; i++) {
+                var keys = Object.keys(howHeardNames[i]);
+                howHeards.push('<option value=" ' + howHeardNames[i][keys[0]] + ' "> ' + keys[0] + '</option>');
+            }
+
+            this.ui.ddlYear.empty().append(years);
+            this.ui.ddlMonth.empty().append(months);
+            this.ui.ddlDay.empty().append(days);
+            this.ui.ddlHowHeard.empty().append(howHeards);
+        },
+
+        btnTermsPrivacyClick: function (evt) {
+            app.router.navigate('terms-privacy', { trigger: true });
+            evt.preventDefault();
+        },
+
+        btnSubmitClick: function (evt) {
             if (this.validate()) {
-                this.trigger('loginSubmited', {
+                var year = parseInt(this.ui.ddlYear.val(), 10),
+                    month = parseInt(this.ui.ddlMonth.val(), 10),
+                    day = parseInt(this.ui.ddlDay.val(), 10),
+                    howHeard = parseInt(this.ui.ddlHowHeard.val());
+
+                var user = {
                     email: this.ui.txtEmail.val(),
                     password: this.ui.txtPassword.val(),
                     password_confirmation: this.ui.txtPassword2.val(),
                     first_name: this.ui.txtFirstName.val(),
                     last_name: this.ui.txtLastName.val(),
                     postal_code: this.ui.txtZip.val(),
-                    phone_number: this.ui.txtPhone.val(),
-                    birthdayM: this.ui.ddlMonth.val(),
-                    birthdayD: this.ui.ddlDay.val(),
-                    birthdayY: this.ui.ddlYear.val(),
-                    howHear: this.ui.ddlHowHear.val(),
-                });
+                    phone_number: this.ui.txtPhone.val()                    
+                };
+
+                if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+                    user["birthday(1i)"] = year.toString();
+                    user["birthday(2i)"] = month.toString();
+                    user["birthday(3i)"] = day.toString();
+                }
+
+                if (!isNaN(howHeard)) {
+                    user["referral_type_id"] = howHeard;
+                }
+
+                this.trigger('loginSubmited', user);
             }
         },
 
@@ -86,17 +122,31 @@
                 isValid  = false;
             }
 
-            if(!this.requireValidation('Password is a required field', this.ui.txtPassword, this.ui.txtPasswordError)) {
-                isValid  = false;
+            if (!this.requireValidation('Password is a required field', this.ui.txtPassword, this.ui.txtPasswordError)) {
+                isValid = false;
+            } else {
+                if (this.ui.txtPassword.val().length < 6) {
+                    isValid = false;
+                    this.showError('Password must be at least 6 characters long.', this.ui.txtPassword, this.ui.txtPasswordError);
+                } else {
+                    this.hideError(this.ui.txtPassword, this.ui.txtPasswordError);
+                }
             }
 
-            if(!this.requireValidation('Confirm Password is a required field', this.ui.txtPassword2, this.ui.txtPassword2Error)) {
-                isValid  = false;
+            if (!this.requireValidation('Confirm Password is a required field', this.ui.txtPassword2, this.ui.txtPassword2Error)) {
+                isValid = false;
+            } else {
+                if (this.ui.txtPassword.val() !== this.ui.txtPassword2.val()) {
+                    isValid = false;
+                    this.showError('Password Confirmation must match Password.', this.ui.txtPassword2, this.ui.txtPassword2Error);
+                } else {
+                    this.hideError(this.ui.txtPassword2, this.ui.txtPassword2Error);
+                }
             }
 
             if(!this.requireValidation('Zip is a required field', this.ui.txtZip, this.ui.txtZipError)) {
                 isValid  = false;
-            }            
+            }
 
             if(!this.requireValidation('Phone is a required field', this.ui.txtPhone, this.ui.txtPhoneError)) {
                 isValid  = false;
@@ -110,45 +160,7 @@
             }
 
             return isValid;
-        },
-
-        requireValidation: function (error, input, errorLabel) {
-            var value = input.val();
-            if (value.length == 0) {
-                this.showError(error, input, errorLabel);
-                return false;
-            }
-            else {
-                this.hideError(input, errorLabel);
-                return true;
-            }
-        },
-
-        showError: function (error, input, errorLabel) {            
-            if (input) {
-                input.addClass('hasError');
-            }
-
-            if (errorLabel) {
-                if (errorLabel == 'main') {
-                    this.ui.txtError.text(error).show();
-                } else {
-                    errorLabel.text(error).show();
-                }
-            } 
-        },
-
-        hideError: function (input, errorLabel) {
-            if (input) {
-                input.removeClass('hasError');
-            }
-
-            if (errorLabel) {
-                errorLabel.hide();
-            } else {
-                this.ui.txtError.hide();
-            }
-        },
+        }
     });
 
     return ItemView;

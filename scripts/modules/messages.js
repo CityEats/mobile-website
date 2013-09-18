@@ -11,10 +11,12 @@
 function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     //init data methods
     //setup temporary DB logic    
-    var API_PATH = 'http://qa-beta.cityeats.com/api/v2';
+    //var API_PATH = 'https://build-beta.cityeats.com/api/v2';
+    var API_PATH = 'http://m.qa-beta.cityeats.com/api/v2';
 
     var getJSONStatic = function (url) {
         return function (callback) {
+            
             $.getJSON(url)
                 .success(function (response) {
                     if (callback)
@@ -24,12 +26,28 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                     if (callback)
                         callback(response);
                 });
+            
+            //$.ajax({
+            //    url: url,
+            //    dataType: "json",
+            //    //crossDomain: true,
+            //    //xhrFields: {
+            //    //    withCredentials: true
+            //    //}
+            //}).success(function (response) {
+            //    if (callback)
+            //        callback(null, response);
+            //})
+            //.error(function (response) {
+            //    if (callback)
+            //        callback(response);
+            //});
         }
     };
 
     var postJSONStatic = function (url, data) {
-        return function (callback) {            
-            $.post(url, data)
+        return function (callback) {
+            $.post(url, JSON.stringify(data))
                 .success(function (response) {
                     if (callback)
                         callback(null, response);
@@ -38,6 +56,27 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                     if (callback)
                         callback(response);
                 });
+            
+
+            //$.ajax({
+            //    type: 'POST',
+            //    url: url,
+            //    data: JSON.stringify(data),
+            //    beforeSend: function (xhr) { xhr.setRequestHeader('X-Test-Header', 'test-value'); },
+            //    //dataType: 'json',                
+            //    //contentType: "application/json",
+            //    //crossDomain: true,
+            //    //xhrFields: {
+            //    //    withCredentials: true
+            //    //}
+            //}).success(function (response) {
+            //    if (callback)
+            //        callback(null, response);
+            //})
+            //.error(function (response) {
+            //    if (callback)
+            //        callback(response);
+            //});
         }
     };
 
@@ -77,6 +116,17 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
             getJSONStatic(API_PATH + '/metros?lat=' + lat + '&lng=' + lng): 
             getJSONStatic(API_PATH + '/metros');
         handler(callback);
+    });
+
+    app.commands.setHandler('API:CreateMetroEmail', function (newMetroEmail, callback) {
+        var handler = postJSONStatic(API_PATH + '/new_metro_emails', { new_metro_email: newMetroEmail });
+        handler(callback);
+    });
+
+    app.commands.setHandler('CreateMetroEmail', function (newMetroEmail, callback) {
+        app.execute('API:CreateMetroEmail', newMetroEmail, function (err, response) {
+            callback(err, response);
+        });
     });
 
     //app.commands.setHandler('GetMetros', function (callback, lat, lng) {
@@ -128,11 +178,16 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         handler(callback);
     });
 
+    app.commands.setHandler('API:GetUser', function (callback) {
+        var handler = getJSONStatic(API_PATH + '/user');        
+        handler(callback);
+    });
+
     app.commands.setHandler('SignUp', function (user, callback) {
         Data.signUp(user, callback);
     });
 
-    app.commands.setHandler('SignIn', function (user, callback) {        
+    app.commands.setHandler('SignIn', function (user, callback) {
         Data.signIn(user, callback);
     });
 
@@ -140,8 +195,8 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         Data.signOut();
     });
 
-    app.reqres.setHandler('GetCurrentUser', function () {
-        return Data.getCurrentUser();
+    app.commands.setHandler('GetCurrentUser', function (callback) {        
+        Data.getCurrentUser(callback);
     });    
 
     //restaurants

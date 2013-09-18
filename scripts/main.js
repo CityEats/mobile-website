@@ -8,7 +8,8 @@ require.config({
         'backbone.eventbinder': 'vendors/backbone.marionette/core/amd/backbone.eventbinder',
         'backbone.babysitter': 'vendors/backbone.marionette/core/amd/backbone.babysitter',
         text: 'vendors/require/text',
-        urlArgs: "bust=" + (new Date()).getTime()
+        urlArgs: "bust=" + (new Date()).getTime(),
+        basicItemView: 'views/shared/basicItemView'
     },
     shim: {
         jquery: {

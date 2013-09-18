@@ -2,6 +2,7 @@ define([
 	'app',
 	'marionette',
     'views/shared/footer',
+    'views/shared/error',
     'modules/helper',
 	'modules/cities',
     'modules/login',
@@ -20,18 +21,22 @@ define([
     'modules/reservations',
     'modules/messages'
 ],
-function (app, Marionette, FooterView, Helper) {
+function (app, Marionette, FooterView, ErrorView, Helper) {
+    var fbAppId = '488317004581923',
+        fbRedirectUri = 'https://qa-beta.cityeats.com/api/v2/facebook_auth';
+
     var Router = Marionette.AppRouter.extend({
         routes: {
             '': 'index',
             'index.html': 'index',
+            'back': 'back',
             'login': 'login',
             'signup': 'signUp',
             'contact-us': 'contactUs',
             'forgot-password': 'forgotPassword',
             'find-table/:num': 'findTable',
             'search-results/:num/party/:num/date/:num/time/:num': 'searchResults',
-            'browse-all/:num': 'browseAll',
+            'browse-all/:num': 'browseAll',            
             'filter/:num': 'filter',
             'filter/:num/cuisines': 'filterCuisines',
             'filter/:num/neighborhoods': 'filterNeighborhoods',
@@ -73,6 +78,8 @@ function (app, Marionette, FooterView, Helper) {
         chooseCity: function () {
             this.setup();
 
+            app.execute('GetCurrentUser');
+
             var module = require('modules/cities');
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
@@ -82,41 +89,77 @@ function (app, Marionette, FooterView, Helper) {
                 if (err == null) {
                     var currentCity = app.request('GetCurrentCity');
                     if (currentCity) {
-                        //currentCity = cities.get(currentCityId);
                         module.contentLayout = new module.ContentLayout({ hasCurrentCity: !!currentCity });
                         app.content.show(module.contentLayout);
-                        //if (currentCity) {
                         currentCity.set('isCurrent', true);
                         cities = new module.Cities(cities.without(currentCity));
-
                         module.contentLayout.currentCity.show(new module.CityView({ model: currentCity }));
-                        //}
                     } else {
                         module.contentLayout = new module.ContentLayout;
                         app.content.show(module.contentLayout);
                     }
 
                     module.citiesView = new module.CitiesView({ collection: cities });
+                    module.dontSeeCityView = new module.DontSeeCityView;
 
-                    module.contentLayout.findYourCity.show(new module.DontSeeCityView);
+                    module.dontSeeCityView.on('submitNewCity', function (email, zip) {
+                        var reuquest = { email: email, zip: zip };
+                        var view = this;
+                        app.execute('CreateMetroEmail', reuquest, function (err, response) {                            
+                            if (err == null) {
+                                view.hideError();
+                                alert("Thanks for your interest. We'll be sure to let you know when we're coming to your city!");
+                                return;
+                            } else {
+                                var error = Helper.getErrorMessage(err);
+                                if (error) {
+                                    view.showError(error, null, 'main');
+                                } else {
+                                    that.errorPartial();
+                                }
+                            }
+                        });
+                    }, module.dontSeeCityView);
+
+                    module.contentLayout.findYourCity.show(module.dontSeeCityView);
                     module.contentLayout.locationsButtons.show(module.citiesView);
                 }
             });
         },
 
-        login: function () {
-            this.setup();
+        back: function () {
+            //TODO: redirect to choose city or to find table page
+            this.chooseCity();
+        },
 
+        login: function () {
+            console.log('login');
+            this.setup();
+            var that = this;
             var module = require('modules/login');
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
-            module.contentLayout = new module.ContentLayout;
+            module.contentLayout = new module.ContentLayout({
+                appId: fbAppId,
+                redirectUri: fbRedirectUri
+            });
 
             module.contentLayout.on('loginSubmited', function (user) {
+                var view = this;
                 app.execute('SignIn', user, function (err, data) {
-                    debugger
-                });
+                    if (err == null) {
+                        app.router.navigate('back', { trigger: true });
+                    } else {                        
+                        var error = Helper.getErrorMessage(err);
+                        if (error) {
+                            view.showError(error, null, 'main');
+                        } else {
+                            that.errorPartial();
+                        }
+                    }
+
+                }, module.contentLayou);
             });
 
             app.topBar.show(module.topBarBlock);
@@ -125,28 +168,31 @@ function (app, Marionette, FooterView, Helper) {
 
         signUp: function () {
             this.setup();
-
+            var that = this;
             var module = require('modules/signUp');
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
-            module.contentLayout = new module.ContentLayout;
+            module.contentLayout = new module.ContentLayout({
+                appId: fbAppId,
+                redirectUri: fbRedirectUri
+            });
 
             module.contentLayout.on('loginSubmited', function (user) {
                 var view = this;
                 app.execute('SignUp', user, function (err, data) {
-                    if (err == null) {
-                        //TODO: Redirect somewhere
+                    if (err == null) {                        
+                        app.router.navigate('back', { trigger: true });
                     } else {                        
                         var error = Helper.getErrorMessage(err);
                         if (error) {
                             view.showError(error, null, 'main');
                         } else {
-                            //TODO: show global error
+                            that.errorPartial();
                         }
                     }
                 });
-            });
+            }, module.contentLayout);
 
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);
@@ -180,16 +226,11 @@ function (app, Marionette, FooterView, Helper) {
 
         findTable: function (num) {
             this.setup();
+            var module = require('modules/findTable');
             app.execute('GetRestaurantsByMetro', num); //preload restaurants;
             app.execute('GetCuisines', num); //preload cuisines;
 
             var currentCity = app.request('GetCurrentCity');
-            var currentUser = app.request('GetCurrentUser');
-            var name;
-
-            if (currentUser) {
-                name = currentUser.get('first_name') + ' ' + currentUser.get('last_name');
-            }
 
             if (currentCity == null) {
                 //
@@ -197,21 +238,29 @@ function (app, Marionette, FooterView, Helper) {
                 return;
             }
 
-            var module = require('modules/findTable');
+            app.execute('GetCurrentUser', function (err, currentUser) {
+                if (err == null) {
+                    var name;
+                    if (currentUser) {
+                        name = currentUser.get('first_name') + ' ' + currentUser.get('last_name');
+                    }
 
-            module.searchBar = new module.SearchBarView({
-                model: module.getSearchModel(2, new Date(), '19:00')                
-            })
+                    module.contentLayout = new module.ContentLayout({
+                        model: currentCity,
+                        user: name
+                    });
+
+                    module.searchBar = new module.SearchBarView({
+                        model: module.getSearchModel(2, new Date(), '19:00')
+                    });
+
+                    app.content.show(module.contentLayout);
+                    module.contentLayout.search.show(module.searchBar);
+                }
+            });            
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
-            module.contentLayout = new module.ContentLayout({
-                model: currentCity,
-                user: name
-            });
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
-            module.contentLayout.search.show(module.searchBar);
+            app.topBar.show(module.topBarBlock);            
         },
 
         searchResults: function (cityId, party, date, time) {
@@ -708,6 +757,12 @@ function (app, Marionette, FooterView, Helper) {
 
             app.topBar.show(module.topBarBlock);
             app.content.show(module.contentLayout);
+        },
+
+        errorPartial: function (holder) {
+            holder = holder || app.content;
+            var errorView = new ErrorView;
+            holder.show(errorView);
         },
     });
 

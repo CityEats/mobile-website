@@ -1,6 +1,6 @@
-﻿define(['marionette', 'underscore', 'text!templates/login/content.html'], function (Marionette, _, loginHtml) {
+﻿define(['marionette', 'underscore', 'basicItemView', 'text!templates/login/content.html'], function (Marionette, _, BasicItemView, loginHtml) {
 
-    var ItemView = Marionette.ItemView.extend({
+    var ItemView = BasicItemView.extend({
         template: _.template(loginHtml),
         events: {
             'click .btnForgotPassword': 'goToForgotPassword',
@@ -12,12 +12,18 @@
             txtPassword: '.txtPassword',
             txtEmailError: '.txtEmailError',
             txtPasswordError: '.txtPasswordError',
-            txtError: '.txtError'
+            txtError: '.txtError',
+            fbLoginBtn: '.fbLoginBtn'
+        },
+
+        onRender: function () {
+            var fbLink = "https://www.facebook.com/dialog/oauth?client_id=" + this.options.appId + "&redirect_uri=" + this.options.redirectUri;
+            this.ui.fbLoginBtn.attr('href', fbLink);
         },
 
         goToForgotPassword: function (evt) {
             evt.preventDefault();
-            app.router.navigate('forgot-password', { trigger: true });            
+            app.router.navigate('forgot-password', { trigger: true });
         },
 
         btnSubmitClick: function (evt) {
@@ -31,51 +37,16 @@
         },
 
         validate: function () {
-            var email = this.ui.txtEmail.val(),
-                password = this.ui.txtPassword.val(),
-                isValid = true;
+            var isValid = true;
 
-            if (email.length == 0) {
-                this.showError('Email is a required field.', this.ui.txtEmail, this.ui.txtEmailError);
+            if (!this.requireValidation('Email is a required field.', this.ui.txtEmail, this.ui.txtEmailError)) {
                 isValid = false;
             }
-            else {
-                this.hideError(this.ui.txtEmail, this.ui.txtEmailError);
-            }
 
-            if (password.length == 0) {
-                this.showError('Password is a required field.', this.ui.txtPassword, this.ui.txtPasswordError);
+            if (!this.requireValidation('Password is a required field.', this.ui.txtPassword, this.ui.txtPasswordError)) {
                 isValid = false;
             }
-            else {
-                this.hideError(this.ui.txtPassword, this.ui.txtPasswordError);
-            }
-
             return isValid;
-        },
-
-        showError: function (error, input, errorLabel) {
-            if (input) {
-                input.addClass('hasError');
-            }
-
-            if (errorLabel) {
-                errorLabel.text(error).show();
-            } else {
-                this.ui.txtError.text(error).show();
-            }
-        },
-
-        hideError: function (input, errorLabel) {
-            if (input) {
-                input.removeClass('hasError');
-            }
-
-            if (errorLabel) {
-                errorLabel.hide();
-            } else {
-                this.ui.txtError.hide();
-            }            
         },
     });
 

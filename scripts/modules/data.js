@@ -98,7 +98,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Dictionary, Restauran
 
             getMetros: function (callback, lat, lng) {
                 if (metros == null) {
-                    app.execute('API:GetMetros', lat, lng, function (err, data) {
+                    app.execute('API:GetMetros', lat, lng, function (err, data) {                        
                         if (err == null) {
                             metros = new Cities(data.metros);
                         }
@@ -200,28 +200,31 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Dictionary, Restauran
             },
 
             signUp: function (user, callback) {                
-                app.execute('API:SignUp', { user: user }, function (err, data) {                    
+                app.execute('API:SignUp', { user: user }, function (err, data) {
+                    currentUser = null;
                     if (err == null) {
-                        currentUser = new User(data.user);
+                        app.execute('GetCurrentUser');
+                        return callback(err, true);                        
                         //"{"user":{"id":931,"first_name":"Max","last_name":"K","email":"max@max.com","phone_number":"3102762251","created_at":"2013-09-13T14:57:08Z","badges":{"Available":[],"Completed":[]},"avatar_url":"default_normal_avatar.gif","favorite_cuisine_types":[],"favorite_neighborhoods":[]}}"
                     } else {
-                        currentUser = null;
-                    }                    
-                    callback(err, currentUser);
+                        return callback(err, false);
+                        
+                    }
                 });
             },
 
             signIn: function (user, callback) {
                 user['remember_me'] = 1;                
-                app.execute('API:SignIn', { user: user }, function (err, data) {
+                app.execute('API:SignIn', { user: user }, function (err, data) {                    
+                    currentUser = null;
                     if (err == null) {
-                        currentUser = new User(data);
+                        app.execute('GetCurrentUser');
+                        return callback(err, true);                        
                         //"{"avatar_content_type":null,"avatar_file_name":null,"avatar_file_size":null,"avatar_updated_at":null,"birthday":null,"cached_slug":"maxk","concierge_hotel_name":null,"created_at":"2013-09-13T14:57:08Z","dietary_restrictions":null,"disabled_at":null,"email":"max@max.com","first_favorite_food":null,"first_favorite_neighborhood":null,"first_name":"Max","id":931,"invitation_accepted_at":null,"invitation_sent_at":null,"invitation_token":null,"invited_by_id":null,"invited_by_message":null,"invited_by_type":null,"is_hotel_concierge":false,"last_name":"K","location":"New York, NY","phone_number":"3102762251","postal_code":"11222","private_history":null,"referral_awarded":false,"referral_type_id":null,"reviewer":null,"search_opt_out":false,"second_favorite_food":null,"second_favorite_neighborhood":null,"terms_of_service_id":1,"terms_of_service_ip":"91.247.221.51","third_favorite_food":null,"third_favorite_neighborhood":null,"unique_id":"95f98c1d4cd2a7bbc1fde59ce38d1f5e","updated_at":"2013-09-13T15:11:49Z","success":true}"
                     } else {
-                        currentUser = null;
-                    }
+                        return callback(err, false);
 
-                    callback(err, currentUser);
+                    }
                 });
             },
 
@@ -229,8 +232,20 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Dictionary, Restauran
                 currentUser = null;
             },
 
-            getCurrentUser: function () {
-                return currentUser;
+            getCurrentUser: function (callback) {                
+                if (currentUser) {
+                    return callback ? callback(null, currentUser) : null;
+                } else {
+                    app.execute('API:GetUser', function (err, data) {
+                        if (err == null && typeof data.error == 'undefined') {
+                            currentUser = new User(data.user);
+                        } else {
+                            currentUser = null;
+                        }
+
+                        return callback ? callback(err, currentUser) : null;
+                    });
+                }
             }
         });
     });

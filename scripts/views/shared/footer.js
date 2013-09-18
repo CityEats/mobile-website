@@ -9,14 +9,14 @@
 
         gotToContactUs: function (evt) {
             app.router.navigate('contact-us', { trigger: true });
-
             evt.preventDefault();
         },
 
         gotToTermsPrivacy: function (evt) {
+            app.router.navigate('terms-privacy', { trigger: true });
             evt.preventDefault();
         },
     });
 
     return ItemView;
-})
+});
