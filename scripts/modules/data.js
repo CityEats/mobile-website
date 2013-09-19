@@ -91,7 +91,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Dictionary, Restauran
                     case 2:
                     default: {
                         //Popular                        
-                        return new Restaurants(restaurants.sortBy('popularity'));
+                        return new Restaurants(restaurants.sortBy('popularity').reverse());
                     }
                 }                
             },
