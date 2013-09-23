@@ -8,7 +8,7 @@
 
         goToPage: function (evt) {
             var url = this.$(evt.target).data('url');
-            url = 'restaurans/5/' + url;
+            url = 'restaurants/5/' + url;
             app.router.navigate(url, { trigger: true });
             evt.preventDefault();
         }

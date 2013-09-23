@@ -22,7 +22,7 @@ function ($, _, Backbone, app, Restaurant, TopBar, SearchBar, TopBarView, Restau
                 leftUrl: '',
                 rightText: 'Filter',
                 subTitle: 'Search for a restaurant in:',
-                title: 'New York'
+                title: ''
             }),
             search: new SearchBar({ showSearchBar: true }),
             ContentLayout: ContentLayout,

@@ -19,7 +19,8 @@ function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, ContentLayout, Res
                 leftText: 'Home',
                 leftUrl: '',
                 rightText: 'Filter',
-                title: 'Choose Your City'
+                subTitle: 'Search for a restaurant in:',
+                title: ''
             }),
             getSearchModel: function (party, date, time) {
                 return new SearchBar({

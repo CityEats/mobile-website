@@ -19,7 +19,6 @@ function ($, _, Backbone, app, TopBar, FilterItem, KeyValue, Dictionary, TopBarV
             //neighborhoods: new Dictionary([new KeyValue({ key: 1, value: 'nnn1' }), new KeyValue({ key: 2, value: 'nnn2' }), new KeyValue({ key: 3, value: 'nnn3' })]),
             topBar: new TopBar({
                 leftText: 'Cancel',
-                leftUrl: '',
                 rightText: 'Reset',
                 rightCss: 'hide red',
                 rightUrl: '',

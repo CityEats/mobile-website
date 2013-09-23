@@ -9,7 +9,7 @@
 
         goToCompleteReservation: function (evt) {
             evt.preventDefault();
-            var url = 'restaurans/5/complete-reservation';
+            var url = 'restaurants/5/complete-reservation';
             app.router.navigate(url, { trigger: true });
         }
     });

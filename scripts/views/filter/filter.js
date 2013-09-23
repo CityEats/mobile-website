@@ -10,20 +10,31 @@
         },
 
         initialize: function () {
-            this.model.prepareData();            
+            this.model.prepareData();
+            this.backUrl = this.options.isRestaurants ?
+                'restaurants/' + this.options.cityId :
+                'search-results/' + this.options.cityId + '/party/' + this.options.searchSettings.party + '/date/' + this.options.searchSettings.date + '/time/' + this.options.searchSettings.time;
+
+            this.cuisinesUrl = this.options.isRestaurants ?
+                'restaurants/' + this.options.cityId + '/filter/cuisines' :
+                'search-results/' + this.options.cityId + '/party/' + this.options.searchSettings.party + '/date/' + this.options.searchSettings.date + '/time/' + this.options.searchSettings.time + '/filter/cuisines';
+
+            this.neighborhoodsUrl = this.options.isRestaurants ?
+                'restaurants/' + this.options.cityId + '/filter/neighborhoods' :
+                'search-results/' + this.options.cityId + '/party/' + this.options.searchSettings.party + '/date/' + this.options.searchSettings.date + '/time/' + this.options.searchSettings.time + '/neighborhoods/cuisines';
         },
 
         onRender: function () {
             this.pricesChanged(this.model.isDefault());
         },
 
-        goToCuisines: function (evt) {
-            app.router.navigate('filter/' + this.options.cityId + '/cuisines', { trigger: true });
+        goToCuisines: function (evt) {            
+            app.router.navigate(this.cuisinesUrl, { trigger: true });
             evt.preventDefault();
         },
 
         goToNeighborhoods: function (evt) {
-            app.router.navigate('filter/' + this.options.cityId + '/neighborhoods', { trigger: true });
+            app.router.navigate(this.neighborhoodsUrl, { trigger: true });
             evt.preventDefault();
         },
 
@@ -41,7 +52,8 @@
             this.model.set('sortBy', sortBy);
             this.model.set('prices', prices);
             app.execute('SaveFilter', this.model);
-            app.router.navigate('browse-all/' + this.options.cityId, { trigger: true });
+            
+            app.router.navigate(this.backUrl, { trigger: true });
 
             evt.preventDefault();
         },

@@ -60,7 +60,7 @@
 
         goToBrowseAll: function (evt) {
             var cityId = this.model.get('id');
-            this.goTo(evt, 'browse-all/' + cityId);
+            this.goTo(evt, 'restaurants/' + cityId);
         },
 
         goTo: function (evt, url) {

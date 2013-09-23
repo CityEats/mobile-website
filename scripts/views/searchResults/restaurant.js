@@ -18,14 +18,14 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
             evt.preventDefault();
 
             var id = this.model.get('id')
-            app.router.navigate('restaurans/' + id + '/info', { trigger: true });
+            app.router.navigate('restaurants/' + id + '/info', { trigger: true });
         },
 
         gotoReservation: function (evt) {
             evt.preventDefault();
             var time = this.$(evt.target).data('time');
             var id = this.model.get('id')
-            app.router.navigate('restaurans/' + id + '/complete-reservation/' + time, { trigger: true });
+            app.router.navigate('restaurants/' + id + '/complete-reservation/' + time, { trigger: true });
         }
     });
 

@@ -13,7 +13,7 @@
 
         goToCardInfo: function (evt) {
             evt.preventDefault();
-            var url = 'restaurans/5/reservation-card-info';
+            var url = 'restaurants/5/reservation-card-info';
             app.router.navigate(url, { trigger: true });
         },
     });

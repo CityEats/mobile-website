@@ -47,7 +47,15 @@
 	                    };
 	                }
 	                return result;
-	            },	            
+	            },
+
+	            thumbImage: function () {
+	                if (this.images.length > 0) {
+	                    return this.images[0].thumb_mobile_app;
+	                } else {
+	                    return '';
+	                }
+	            }
 	        },	        
 
 	        

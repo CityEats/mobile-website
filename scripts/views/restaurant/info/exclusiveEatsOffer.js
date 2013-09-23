@@ -9,7 +9,7 @@
 
         goToExclusiveEats: function (evt) {
             evt.preventDefault();
-            var url = 'restaurans/5/exclusive-eats';
+            var url = 'restaurants/5/exclusive-eats';
             app.router.navigate(url, { trigger: true });
         }
     });

@@ -8,7 +8,7 @@
 
         goToCanceled: function (evt) {
             evt.preventDefault();
-            var url = 'restaurans/5/reservation-canceled';
+            var url = 'restaurants/5/reservation-canceled';
             app.router.navigate(url, { trigger: true });
         }
     });

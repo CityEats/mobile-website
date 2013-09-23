@@ -14,7 +14,7 @@
 
         goToFaq: function (evt) {
             evt.preventDefault();
-            var url = 'restaurans/5/exclusive-eats-faq';
+            var url = 'restaurants/5/exclusive-eats-faq';
             app.router.navigate(url, { trigger: true });
         },
     });

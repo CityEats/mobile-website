@@ -30,7 +30,6 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Dictionary, Restauran
                             restaurantsByMetro[metroId] = restaurants = new Restaurants(data.restaurants);
                         }
                         
-                        console.log(restaurants);
                         return callback ? callback(err, that.filterRestaurants(restaurants, searchQuery, filter)) : null;
                     });
                 } else {
@@ -102,7 +101,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Dictionary, Restauran
                         if (err == null) {
                             metros = new Cities(data.metros);
                         }
-                        if (lat && lng && metros.length > 0) {
+                        if (lat && lng && metros.length > 0 && app.request('GetCurrentCity') == null) {
                             app.execute('SetCurrentCity', metros.at(0));
                         }
                         return callback ? callback(err, metros) : null;

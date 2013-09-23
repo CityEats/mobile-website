@@ -8,7 +8,7 @@
 
         goToConfirmed: function (evt) {
             evt.preventDefault();
-            var url = 'restaurans/5/reservation-confirmed';
+            var url = 'restaurants/5/reservation-confirmed';
             app.router.navigate(url, { trigger: true });
         },
     });

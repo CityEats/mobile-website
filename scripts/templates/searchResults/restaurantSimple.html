@@ -1,4 +1,9 @@
-﻿<div class="resultsListItemPhoto"><img src="/img/assets/img-1.jpg" alt=""></div>
+﻿<div class="resultsListItemPhoto">
+    <% if(thumbImage().length > 0) { %>
+        <!--<img src="/img/assets/img-1.jpg" alt="" />-->
+        <img src="<%= thumbImage() %>" alt="" />
+    <% } %>
+</div>
 <div class="resultsListItemHolder">
     <div class="resultsListInfo">
         <h3 class="resultsListTitle"><a href="#"><%= name %></a></h3>
