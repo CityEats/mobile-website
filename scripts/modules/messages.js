@@ -129,10 +129,6 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         });
     });
 
-    //app.commands.setHandler('GetMetros', function (callback, lat, lng) {
-    //    Data.getMetros(callback, lat, lng);
-    //});    
-
     app.reqres.setHandler('GetCurrentCity', function () {
         var result = localStorage.getItem('CurrentCity');
         if (result) {
