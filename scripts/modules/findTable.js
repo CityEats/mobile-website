@@ -6,15 +6,25 @@
     'models/topBar',
     'models/searchBar',
     'views/shared/topBar',
+    'views/shared/calendar',
     'views/findTable/findTable',
     'views/searchResults/searchBar'
 ],
 
-function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, ContentLayout, SearchBarView) {
+function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, CalendarView, ContentLayout, SearchBarView) {
     return app.module('FindTable', function (FindTable) {
         _.extend(FindTable, {
             topBar: new TopBar({ title: 'Find a Table' }),
-            getSearchModel: function (party, date, time) {                
+            calendarTopBar: new TopBar({
+                leftText: 'Cancel',
+                leftUrl: '',
+                title: 'Date'
+            }),
+            getSearchModel: function (party, date, time) {
+                if (typeof date == 'string') {
+                    date = new Date(date);
+                }
+
                 return new SearchBar({
                     showTimingBar: true,
                     party: party,
@@ -24,7 +34,8 @@ function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, ContentLayout, Sea
             },
             ContentLayout: ContentLayout,
             TopBarView: TopBarView,
-            SearchBarView: SearchBarView
+            SearchBarView: SearchBarView,
+            CalendarView: CalendarView,            
         });
     });
 });

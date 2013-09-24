@@ -60,6 +60,28 @@ function (_, Backbone, app) {
                 };
             },
 
+            formatDate: function (date) {
+                if (typeof date == 'string') {
+                    return date;
+                }
+
+                return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+            },
+
+            equalDates: function (date1, date2) {
+                if (typeof date1 == 'string') {
+                    date1 = new Date(date1);
+                }
+
+                if (typeof date2 == 'string') {
+                    date2 = new Date(date2);
+                }
+
+                return date1.getFullYear() == date2.getFullYear() &&
+                date1.getMonth() == date2.getMonth() &&
+                date1.getDate() == date2.getDate();
+            },
+
             getErrorMessage: function (err) {
                 if (err.responseText && err.responseText.length > 0) {
                     var text = JSON.parse(err.responseText);

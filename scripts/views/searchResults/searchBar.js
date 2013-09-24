@@ -1,4 +1,4 @@
-﻿define(['marionette', 'underscore', 'text!templates/searchResults/searchHeader.html'], function (Marionette, _, searchHeaderHtml) {
+﻿define(['marionette', 'underscore', 'modules/helper', 'text!templates/searchResults/searchHeader.html'], function (Marionette, _, Helper, searchHeaderHtml) {
 
     var ItemView = Marionette.ItemView.extend({
         template: _.template(searchHeaderHtml),
@@ -21,7 +21,7 @@
 
         onRender: function () {            
             var that = this;
-
+            
             var showTimingBar = this.model.get('showTimingBar'),
                 party = this.model.get('party'),
                 date = this.model.get('date'),
@@ -43,22 +43,23 @@
                 }
 
                 var datepicker = this.ui.date,
-                    dateLabel = this.ui.dateLabel;
+                    dateLabel = this.ui.dateLabel;                
 
-                this.ui.date.datepicker({
-                    minDate: new Date(),
-                    maxDate: "+90d",
-                    dateFormat: 'yy-mm-dd',
-                    onSelect: function (dateText) {
-                        var selectedDate = datepicker.datepicker('getDate');
-                        that.setDateText(selectedDate, dateLabel);
-                        that.searchParametersChanged();
-                    }
-                });
+                //this.ui.date.datepicker({
+                //    minDate: new Date(),
+                //    maxDate: "+90d",
+                //    dateFormat: 'yy-mm-dd',
+                //    onSelect: function (dateText) {
+                //        var selectedDate = datepicker.datepicker('getDate');
+                //        that.setDateText(selectedDate, dateLabel);
+                //        that.searchParametersChanged();
+                //    }
+                //});
 
-                this.ui.date.datepicker('setDate', date);
+                //this.ui.date.datepicker('setDate', date);
 
-                that.setDateText(this.ui.date.datepicker('getDate'), this.ui.dateLabel);
+                that.setDateText(date, this.ui.dateLabel);
+                this.searchParametersChanged();
             }
         },
 
@@ -76,14 +77,15 @@
                     current.getFullYear() == date.getFullYear()) {
                         label.text('Tomorrow');
                 }
-                else {
-                    label.text(date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate());
+                else {                    
+                    label.text(Helper.formatDate(date));
                 }
             }
         },
 
         datePickerClick: function () {
-            this.ui.date.datepicker('show');
+            //this.ui.date.datepicker('show');
+            this.trigger('datePickerClicked', this.model.get('date'));
         },
 
         btnClearClick: function (evt) {            
@@ -112,24 +114,26 @@
             this.refreshResults();
         },
 
-        searchParametersChanged: function () {
+        searchParametersChanged: function () {            
+            var party = this.options.defaults.party,
+                date = this.options.defaults.date,
+                time = this.options.defaults.time,
+                isChanged = false;
+            
+            this.model.set('party', parseInt(this.ui.party.val(), 10));
+            this.model.set('time', this.ui.time.val());
             if (this.options.showFindButton !== true) {
                 return true;
             }
             
-            var party = this.ui.party.val(),
-                date = this.ui.date.val(),
-                time = this.ui.time.val(),
-                isChanged = false;
-            
-            if (party.toLowerCase() == this.model.get('party').toString().toLowerCase()) {
+            if (party.toString().toLowerCase() == this.model.get('party').toString().toLowerCase()) {
                 this.ui.party.removeClass('updated');
             } else {
                 this.ui.party.addClass('updated');
                 isChanged = true;
             }
-
-            if (date.toLowerCase() == this.model.get('date').toLowerCase()) {
+            
+            if (Helper.formatDate(date) == Helper.formatDate(this.model.get('date'))) {
                 this.ui.dateLabel.removeClass('updated');
             } else {
                 this.ui.dateLabel.addClass('updated');
@@ -151,9 +155,11 @@
         },
 
         refreshResults: function () {            
+            var date = this.model.get('date');
+            
             this.trigger('searchParametersChanged', {
                 party: this.ui.party.val(),
-                date: this.ui.date.val(),
+                date: Helper.formatDate(date),
                 time: this.ui.time.val(),
                 searchQuery: this.searchQuery
             });

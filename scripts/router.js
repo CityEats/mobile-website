@@ -236,11 +236,14 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             app.content.show(module.contentLayout);
         },
 
-        findTable: function (num) {
+        findTable: function (cityId, date, newDate) {
             this.setup();
+            var that = this;
             var module = require('modules/findTable');
-            app.execute('GetRestaurantsByMetro', num); //preload restaurants;
-            app.execute('GetCuisines', num); //preload cuisines;
+            date = date || new Date;            
+            app.execute('GetRestaurantsByMetro', cityId); //preload restaurants;
+            app.execute('GetCuisines', cityId); //preload cuisines;
+
 
             var currentCity = app.request('GetCurrentCity');
 
@@ -248,7 +251,7 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                 //
                 app.router.navigate('', { trigger: true });
                 return;
-            }
+            }            
 
             app.execute('GetCurrentUser', function (err, currentUser) {
                 if (err == null) {
@@ -261,13 +264,47 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                         model: currentCity,
                         user: name
                     });
-
+                    
                     module.searchBar = new module.SearchBarView({
-                        model: module.getSearchModel(2, new Date(), '19:00')
+                        model: module.getSearchModel(2, newDate || date, '19:00'),
+                        defaults: {
+                            party: 2,
+                            date: date,
+                            time: '19:00'
+                        },
+                    });
+
+                    module.calendarView = new module.CalendarView({ date: newDate || date });
+                    module.calendarTopBarView = new module.TopBarView({
+                        model: module.calendarTopBar,
+                        leftClickEvent: 'btnLeftClick'
                     });
 
                     app.content.show(module.contentLayout);
                     module.contentLayout.search.show(module.searchBar);
+
+                    module.searchBar.on('datePickerClicked', function () {
+                        module.calendarTopBarView.on('btnLeftClick', function () {
+                            that.findTable(cityId, date, newDate);
+                        });
+
+                        app.topBar.show(module.calendarTopBarView);
+                        app.content.show(module.calendarView);
+
+                        module.calendarView.on('dateSelected', function (selectedDate) {                            
+                            module.searchBar.model.set('date', selectedDate);
+                            that.findTable(cityId, date, selectedDate);
+                        });
+                    });
+
+                    module.contentLayout.on('findTableClicked', function () {
+                        var date = module.searchBar.model.get('date');
+                        var partySize = module.searchBar.model.get('party');
+                        var time = module.searchBar.model.get('time');
+
+                        var url = 'search-results/' + cityId + '/party/' + partySize + '/date/' + Helper.formatDate(date) + '/time/' + time;
+                        app.router.navigate(url, { trigger: true });
+                    });
                 }
             });            
 
@@ -275,8 +312,9 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             app.topBar.show(module.topBarBlock);            
         },
 
-        searchResults: function (cityId, party, date, time) {
+        searchResults: function (cityId, party, date, time, newDate) {
             this.setup();
+            var that = this;
 
             var module = require('modules/searchResults'),
                 filter = app.request('GetFilterSimple', cityId);
@@ -305,9 +343,14 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             end.setMinutes(end.getMinutes() + 15);
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-            module.searchBarView = new module.SearchBarView({
-                model: module.getSearchModel(party, date, time),
+            
+            module.searchBar = new module.SearchBarView({
+                model: module.getSearchModel(party, newDate || date, time),
+                defaults: {
+                    party: party,
+                    date: date,
+                    time: time
+                },
                 showFindButton: true
             });
 
@@ -318,15 +361,35 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                     if (module.contentLayout == null) {
                         //render only at first time                        
                         module.contentLayout = new module.ContentLayout;
+                        module.calendarView = new module.CalendarView({ date: newDate || date });;
+                        module.calendarTopBarView = new module.TopBarView({
+                            model: module.calendarTopBar,
+                            leftClickEvent: 'btnLeftClick'
+                        })
+
                         app.content.show(module.contentLayout);
-                        module.contentLayout.searchBar.show(module.searchBarView);
+                        module.contentLayout.searchBar.show(module.searchBar);
+
+                        module.searchBar.on('datePickerClicked', function () {
+                            module.calendarTopBarView.on('btnLeftClick', function () {
+                                that.searchResults(cityId, party, date, time, newDate);
+                            });
+
+                            app.topBar.show(module.calendarTopBarView);
+                            app.content.show(module.calendarView);
+
+                            module.calendarView.on('dateSelected', function (selectedDate) {
+                                module.searchBar.model.set('date', selectedDate);
+                                that.searchResults(cityId, party, date, time, Helper.formatDate(selectedDate));
+                            });
+                        });
                     }
 
                     module.contentLayout.resultsHolder.show(module.restaurantsView);
                 }
             };
 
-            module.searchBarView.on('searchParametersChanged', function (data) {
+            module.searchBar.on('searchParametersChanged', function (data) {
                 var startChanged = new Date(data.date + ' ' + data.time);
                 var endChanged = new Date(data.date + ' ' + data.time);
 
@@ -400,8 +463,7 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                 }
             };            
 
-            module.searchBarView.on('searchParametersChanged', function (data) {
-                
+            module.searchBarView.on('searchParametersChanged', function (data) {                
                 app.execute('GetRestaurantsByMetro', cityId, filter, data.searchQuery, getRestaurantsHandler);
             });
 

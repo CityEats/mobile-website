@@ -47,15 +47,8 @@
             this.goTo(evt, '');
         },
 
-        goToSearchResults: function (evt) {            
-            var time = this.$('.time').val();
-            var partySize = this.$('.partySize').val();
-            //var date = this.el$('.date');
-
-            var cityId = this.model.get('id');
-            var date = this.$('.date').val();
-            var url = 'search-results/' + cityId + '/party/' + partySize + '/date/' + date + '/time/' + time;
-            this.goTo(evt, url);
+        goToSearchResults: function (evt) {
+            this.trigger('findTableClicked');
         },
 
         goToBrowseAll: function (evt) {
