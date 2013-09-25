@@ -205,7 +205,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         handler(callback);
     });
 
-    app.commands.setHandler('GetRestaurants', function (cityId, start, end, party, time, filter, searchQuery, callback) {
+    app.commands.setHandler('GetRestaurants', function (cityId, start, end, party, time, filter, searchQuery, callback) {        
         app.execute('GetRestaurantsByMetro', cityId, searchQuery, filter, function (err, restaurants) {
             if (err) {
                 return callback(err);
@@ -237,13 +237,19 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     });
 
     //restaurant
-    app.commands.setHandler('API:GetRestaurant', function (id, callback) {
+    app.commands.setHandler('API:GetRestaurantExtended', function (id, callback) {
         var handler = getJSONStatic(API_PATH +
             '/restaurants/' + id + '/extended_attrs');
         handler(callback);
     });
 
-    app.commands.setHandler('API:GetAvailableSlotsForRestaurant', function (id, start, end, party, callback) {
+    app.commands.setHandler('API:GetRestaurant', function (id, callback) {
+        var handler = getJSONStatic(API_PATH +
+            '/restaurants/' + id);
+        handler(callback);
+    });
+
+    app.commands.setHandler('API:GetAvailableSlotsForRestaurant', function (id, start, end, party, callback) {        
         var handler = getJSONStatic(API_PATH +
             '/restaurants/' + id +
             '/available_slots?start_time=' + Helper.formatDateForApi(start) +
@@ -253,12 +259,12 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     });
 
     app.commands.setHandler('GetRestaurant', function (id, start, end, party, callback) {
-        app.execute('API:GetRestaurant', id, function (err, restaurant) {
+        Data.getRestaurantExtended(id, function (err, restaurant) {
             if (err) {
                 return callback(err);
             }
 
-            app.execute('API:GetAvailableSlotsForRestaurant', id, start, end, party, function (err, slots) {                
+            app.execute('API:GetAvailableSlotsForRestaurant', id, start, end, party, function (err, slots) {
                 if (err) {
                     return callback(err);
                 }
@@ -266,11 +272,10 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                 var result = new Restaurant(restaurant);
                 if (slots.length > 0) {
                     result.set('slots', slots[0].slots);
-                }
-
+                }                
                 callback(null, result);
             });
-        });
+        });        
     });
 
     app.commands.setHandler('API:GetRestaurantsByMetro', function (metroId, perPage, pageNumber, callback) {

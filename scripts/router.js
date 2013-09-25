@@ -43,8 +43,8 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             'search-results/:num/party/:num/date/:num/time/:num/filter/cuisines': 'searchResultsFilterCuisines',
             'restaurants/:num/filter/neighborhoods': 'restaurantsFilterNeighborhoods',
             'search-results/:num/party/:num/date/:num/time/:num/filter/neighborhoods': 'searchResultsFilterNeighborhoods',
-            'restaurants/:num/info': 'restauranInfoShort',
-            'restaurants/:num/party/:num/date/:num/time/:num/info': 'restauranInfo',
+            'restaurants/:num/:num/info': 'restauranInfoShort',
+            'restaurants/:num/:num/party/:num/date/:num/time/:num/info': 'restauranInfo',
             'restaurants/:num/reviews': 'restauranReviews',
             'restaurants/:num/menus': 'restauranMenus',
             'restaurants/:num/book-it': 'restauranBookIt',
@@ -616,13 +616,12 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             });
         },
 
-        restauranInfoShort: function (id) {            
-            this.restauranInfo(id, 2, new Date(), '19:00');
+        restauranInfoShort: function (cityId, id) {            
+            this.restauranInfo(cityId, id, 2, Helper.formatDate(new Date()), '19:00');
         },
 
-        restauranInfo: function (id, party, date, time) {
-            this.setup();
-
+        restauranInfo: function (cityId, id, party, date, time) {
+            this.setup();            
             var module = require('modules/restaurant/info');
             var start = new Date(date + ' ' + time);
             var end = new Date(date + ' ' + time);
@@ -636,32 +635,31 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
 
             module.topMenuView = new module.TopMenuView({
                 model: new module.KeyValue({ key: 0 })
-            });
-
-            module.bookView = new module.info.BookView;
-            module.exclusiveEatsOfferView = new module.info.ExclusiveEatsOfferView;
-            module.imagesView = new module.info.ImagesView;
-            module.mainView = new module.info.MainView;
-            module.mapView = new module.info.MapView;
-            //module.TextBlockView = new module.info.TextBlockView;
-
-            module.contentLayout = new module.ContentLayout;
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
-
-            module.contentLayout.restaurantContent.show(module.infoView);
-            module.contentLayout.topMenu.show(module.topMenuView);
-
-            module.infoView.imgBox.show(module.imagesView);
-            module.infoView.bookBox.show(module.bookView);
-            module.infoView.exclusiveEatsOffer.show(module.exclusiveEatsOfferView);
-            module.infoView.mainBox.show(module.mainView);
-            module.infoView.mapBox.show(module.mapView);
-            //module.infoView.imgBox.show('highlightsBox', 'goodToKnowBox', 'dishesBox', 'margaritasBox', 'fullOverviewBox');     
+            });            
 
             app.execute('GetRestaurant', id, start, end, party, function (err, restaurant) {
                 if (err == null) {
+                    module.bookView = new module.info.BookView({ model: restaurant });
+                    module.exclusiveEatsOfferView = new module.info.ExclusiveEatsOfferView;
+                    module.imagesView = new module.info.ImagesView;
+                    module.mainView = new module.info.MainView;
+                    module.mapView = new module.info.MapView;
+                    //module.TextBlockView = new module.info.TextBlockView;
+
+                    module.contentLayout = new module.ContentLayout;
+
+                    app.topBar.show(module.topBarBlock);
+                    app.content.show(module.contentLayout);
+
+                    module.contentLayout.restaurantContent.show(module.infoView);
+                    module.contentLayout.topMenu.show(module.topMenuView);
+
+                    module.infoView.imgBox.show(module.imagesView);
+                    module.infoView.bookBox.show(module.bookView);
+                    module.infoView.exclusiveEatsOffer.show(module.exclusiveEatsOfferView);
+                    module.infoView.mainBox.show(module.mainView);
+                    module.infoView.mapBox.show(module.mapView);
+                    //module.infoView.imgBox.show('highlightsBox', 'goodToKnowBox', 'dishesBox', 'margaritasBox', 'fullOverviewBox');     
                 }
             });
         },

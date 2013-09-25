@@ -21,7 +21,7 @@
 
             this.neighborhoodsUrl = this.options.isRestaurants ?
                 'restaurants/' + this.options.cityId + '/filter/neighborhoods' :
-                'search-results/' + this.options.cityId + '/party/' + this.options.searchSettings.party + '/date/' + this.options.searchSettings.date + '/time/' + this.options.searchSettings.time + '/neighborhoods/cuisines';
+                'search-results/' + this.options.cityId + '/party/' + this.options.searchSettings.party + '/date/' + this.options.searchSettings.date + '/time/' + this.options.searchSettings.time + '/filter/neighborhoods';
         },
 
         onRender: function () {

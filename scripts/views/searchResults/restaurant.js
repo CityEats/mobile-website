@@ -17,15 +17,16 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
         goToRestaurantInfo: function (evt) {
             evt.preventDefault();
 
-            var id = this.model.get('id')
-            app.router.navigate('restaurants/' + id + '/info', { trigger: true });
+            var id = this.model.get('id'),
+                cityid = this.model.get('metro').id;
+            app.router.navigate('restaurants/' + cityid + '/'+ id + '/info', { trigger: true });
         },
 
         gotoReservation: function (evt) {
             evt.preventDefault();
             var time = this.$(evt.target).data('time');
             var id = this.model.get('id')
-            app.router.navigate('restaurants/' + id + '/complete-reservation/' + time, { trigger: true });
+            app.router.navigate('restaurants/' + cityid + '/' + id + '/complete-reservation/' + time, { trigger: true });
         }
     });
 

@@ -6,13 +6,15 @@
     'models/filter',
     'models/keyValue',
     'models/user',
+    'models/restaurant',
     'collections/dictionary',
     'collections/restaurants',
     'collections/cities'
 ],
 
-function ($, _, Backbone, app, FilterItem, KeyValue, User, Dictionary, Restaurants, Cities) {
+function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionary, Restaurants, Cities) {
     var restaurantsByMetro = {},
+        restaurantExtended = {},
         cuisinesByMetro = {},
         neighborhoodsByMetro = {},
         metros = null,
@@ -34,6 +36,28 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Dictionary, Restauran
                     });
                 } else {
                     return callback ? callback(null, that.filterRestaurants(restaurants, searchQuery, filter)) : null;
+                }
+            },
+
+            getRestaurantExtended: function (id, callback) {                
+                var restaurant = restaurantExtended[id];
+                if (typeof restaurant == 'undefined') {
+                    app.execute('API:GetRestaurantExtended', id, function (err, resposneRestaurant) {
+                        if (err == null) {
+                            app.execute('API:GetRestaurant', id, function (err, resposneExtRestaurant) {
+                                if (err == null) {
+                                    _.extend(resposneRestaurant, resposneExtRestaurant.restaurants);
+                                    restaurantExtended[id] = restaurant = new Restaurant(resposneRestaurant);
+                                }
+
+                                callback(err, restaurant);
+                            });
+                        } else {
+                            callback(err);
+                        }
+                    });
+                } else {
+                    return callback(null, restaurant);
                 }
             },
 

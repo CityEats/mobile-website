@@ -17,7 +17,8 @@
         },
 
         onRender: function () {
-            var fbLink = "https://www.facebook.com/dialog/oauth?client_id=" + this.options.appId + "&redirect_uri=" + this.options.redirectUri;
+            //var fbLink = "https://www.facebook.com/dialog/oauth?client_id=" + this.options.appId + "&redirect_uri=" + this.options.redirectUri;
+            var fbLink = "https://build-beta.cityeats.com/auth/facebook?callback_url=/api/v2/facebook_auth";
             this.ui.fbLoginBtn.attr('href', fbLink);
         },
 

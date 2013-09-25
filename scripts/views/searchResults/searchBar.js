@@ -155,11 +155,15 @@
         },
 
         refreshResults: function () {            
-            var date = this.model.get('date');
-            
+            var date = this.model.get('date'),
+                dateFormated;
+            if (date) {
+                dateFormated = Helper.formatDate(date);
+            }
+
             this.trigger('searchParametersChanged', {
                 party: this.ui.party.val(),
-                date: Helper.formatDate(date),
+                date: dateFormated,
                 time: this.ui.time.val(),
                 searchQuery: this.searchQuery
             });
