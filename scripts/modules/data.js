@@ -126,7 +126,8 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                             metros = new Cities(data.metros);
                         }
                         if (lat && lng && metros.length > 0 && app.request('GetCurrentCity') == null) {
-                            app.execute('SetCurrentCity', metros.at(0));
+                            app.execute('SetCurrentCity', metros.at(0))
+                            return callback ? callback(err, metros, true) : null;;
                         }
                         return callback ? callback(err, metros) : null;
                     });

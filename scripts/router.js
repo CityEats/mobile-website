@@ -91,10 +91,14 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                         module.topBarBlock.hideRightButton();
                     }
 
-                    app.execute('GetMetros', function (err, cities) {
+                    app.execute('GetMetros', function (err, cities, isNearestCity) {
                         if (err == null) {
                             var currentCity = app.request('GetCurrentCity');
                             if (currentCity) {
+                                if (isNearestCity === true) {
+                                    app.router.navigate('find-table/' + currentCity.get('id'), { trigger: true });
+                                    return true;
+                                }
                                 module.contentLayout = new module.ContentLayout({ hasCurrentCity: !!currentCity });
                                 app.content.show(module.contentLayout);
                                 currentCity.set('isCurrent', true);
