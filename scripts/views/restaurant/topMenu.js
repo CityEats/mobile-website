@@ -9,7 +9,8 @@
         goToPage: function (evt) {
             evt.preventDefault();
             var url = this.$(evt.target).data('url');
-            url = 'restaurants/5/' + url;
+            
+            url = this.options.urlBase + url;
             app.router.navigate(url, { trigger: true });            
         }
     });

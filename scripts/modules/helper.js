@@ -5,6 +5,19 @@
 ],
 
 function (_, Backbone, app) {
+    var month_names_short = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    function getNumber(num) {
+        switch (num) {
+            case 1:
+                return '1st';
+            case 2:
+                return '2nd';            
+            default:
+                return num + 'th';
+
+        }
+    }
+
     return app.module('Helper', function (Helper) {
 
         function pad(number) {
@@ -67,6 +80,13 @@ function (_, Backbone, app) {
 
                 return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
             },
+
+            formatDateLong: function (date) {
+                if (typeof date == 'string') {
+                    date = new Date(date);
+                }
+                return month_names_short[date.getMonth()] + ' ' + getNumber(date.getDate()) + ', ' + date.getFullYear();
+            },           
 
             equalDates: function (date1, date2) {
                 if (typeof date1 == 'string') {

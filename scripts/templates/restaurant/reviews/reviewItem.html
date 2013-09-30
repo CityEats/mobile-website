@@ -1,7 +1,7 @@
 ﻿<h3 class="reviewTitle"><%= title %></h3>
 <div class="rating <%= ratingClass() %>"></div>
-<p class="reviewMeta">By <%= author %>  -  <%= date %></p>
-<p><%= body %> 
+<p class="reviewMeta">By <%= username %>  -  <%= date() %></p>
+<p><%= madlibs %> 
 <% if(showReadMore()) { %>
     <a href="#">Read More</a></p>
 <% } %>
