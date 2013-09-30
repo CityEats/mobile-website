@@ -2,12 +2,6 @@
 	function (Backbone, Helper) {
 	    var ReviewItem = Backbone.Model.extend({
 	        defaults: {
-	            title: '',
-	            rating: 0,
-	            author: '',
-	            date: '',
-	            body: '',
-
 	            atmosphere_rating: 0,
 	            created_at: '',
 	            dishes: [],
@@ -19,13 +13,18 @@
 	            restaurant_id: 0,
 	            service_rating: 0,
 	            title: '',
+	            username: '',
 
 	            ratingClass: function () {
-	                return Helper.ratingClass(this.rating);
+	                return Helper.ratingClass(parseInt(this.overall_rating, 10));
 	            },
 
 	            showReadMore: function () {
-	                return this.body.length > 300;
+	                return this.madlibs.length > 300;
+	            },
+
+	            date: function () {
+	                return Helper.formatDateLong(this.created_at);
 	            }
 	        }
 	    });
