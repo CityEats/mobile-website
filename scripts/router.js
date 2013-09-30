@@ -50,7 +50,7 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             'restaurants/:num/book-it': 'restauranBookIt',
             'restaurants/:num/exclusive-eats': 'restaurantExclusiveEats',
             'restaurants/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
-            'restaurants/:num/complete-reservation/:num': 'completeReservation',
+            'restaurants/:num/:num/complete-reservation/:num': 'completeReservation',
             'restaurants/:num/reservation-card-info': 'reservationCardInfo',
             'restaurants/:num/reservation-confirmed': 'reservationConfirmed',
             'restaurants/:num/reservation-canceled': 'reservationCanceled',
@@ -240,14 +240,15 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             app.content.show(module.contentLayout);
         },
 
-        findTable: function (cityId, date, newDate) {
+        findTable: function (cityId, date, newParty, newDate, newTime) {
             this.setup();
             var that = this;
             var module = require('modules/findTable');
-            date = date || new Date;            
+            date = date || new Date;
+            party = 2;
+            time = '19:00';
             app.execute('GetRestaurantsByMetro', cityId); //preload restaurants;
             app.execute('GetCuisines', cityId); //preload cuisines;
-
 
             var currentCity = app.request('GetCurrentCity');
 
@@ -270,7 +271,7 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                     });
                     
                     module.searchBar = new module.SearchBarView({
-                        model: module.getSearchModel(2, newDate || date, '19:00'),
+                        model: module.getSearchModel(newParty || party, newDate || date, newTime || time),
                         defaults: {
                             party: 2,
                             date: date,
@@ -297,7 +298,8 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
 
                         module.calendarView.on('dateSelected', function (selectedDate) {                            
                             module.searchBar.model.set('date', selectedDate);
-                            that.findTable(cityId, date, selectedDate);
+                            
+                            that.findTable(cityId, date, module.searchBar.model.get('party'), selectedDate, module.searchBar.model.get('time'));
                         });
                     });
 
@@ -316,7 +318,7 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             app.topBar.show(module.topBarBlock);            
         },
 
-        searchResults: function (cityId, party, date, time, newDate) {
+        searchResults: function (cityId, party, date, time, newParty, newDate, newTime) {
             this.setup();
             var that = this;
 
@@ -349,7 +351,7 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
             
             module.searchBar = new module.SearchBarView({
-                model: module.getSearchModel(party, newDate || date, time),
+                model: module.getSearchModel(newParty || party, newDate || date, newTime || time),
                 defaults: {
                     party: party,
                     date: date,
@@ -383,8 +385,8 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                             app.content.show(module.calendarView);
 
                             module.calendarView.on('dateSelected', function (selectedDate) {
-                                module.searchBar.model.set('date', selectedDate);
-                                that.searchResults(cityId, party, date, time, Helper.formatDate(selectedDate));
+                                module.searchBar.model.set('date', selectedDate);                                
+                                that.searchResults(cityId, party, date, time, module.searchBar.model.get('party'), Helper.formatDate(selectedDate), module.searchBar.model.get('time'));
                             });
                         });
                     }
@@ -621,10 +623,10 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
         },
 
         restauranInfoShort: function (cityId, id) {            
-            this.restauranInfo(cityId, id, 2, Helper.formatDate(new Date()), '19:00');
+            this.restauranInfo(cityId, id, 2, Helper.formatDate(new Date()), '19:00', true);
         },
 
-        restauranInfo: function (cityId, id, party, date, time) {
+        restauranInfo: function (cityId, id, party, date, time, fromRestaurants) {
             this.setup();            
             var module = require('modules/restaurant/info');
             var start = new Date(date + ' ' + time);
@@ -633,21 +635,49 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             start.setMinutes(start.getMinutes() - 15);
             end.setMinutes(end.getMinutes() + 15);
 
-            module.infoView = new module.info.InfoView;
-
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
+            module.infoView = new module.info.InfoView;            
 
             module.topMenuView = new module.TopMenuView({
                 model: new module.KeyValue({ key: 0 })
             });            
 
-            app.execute('GetRestaurant', id, start, end, party, function (err, restaurant) {
+            app.execute('GetRestaurant', id, start, end, party, time, function (err, restaurant) {
                 if (err == null) {
+                    module.topBar.set('title', restaurant.get('name'));
+                    
+                    module.topBar.set('leftUrl',
+                        fromRestaurants === true ?
+                        ('restaurants/' + cityId):
+                        ('search-results/' + cityId + '/party/' + party + '/date/' + date + '/time/' + time));                    
+                    
+                    module.topBarBlock = new module.TopBarView({ model: module.topBar });
+
                     module.bookView = new module.info.BookView({ model: restaurant });
                     module.exclusiveEatsOfferView = new module.info.ExclusiveEatsOfferView;
-                    module.imagesView = new module.info.ImagesView;
-                    module.mainView = new module.info.MainView;
-                    module.mapView = new module.info.MapView;
+                    module.imagesView = new module.info.ImagesView({ model: restaurant });
+                    module.mainView = new module.info.MainView({ model: restaurant });
+                    module.mapView = new module.info.MapView({ model: restaurant });
+
+                    var highlights = restaurant.highlights();
+                    if (highlights.length > 0) {
+                        module.highlights = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Highlights', value: highlights }) })
+                    } else {
+                        module.highlights = null;
+                    }
+
+                    var goodToKnow = restaurant.goodToKnow();
+                    if (goodToKnow.length > 0) {
+                        module.goodToKnow = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Good to Know', value: goodToKnow }) })
+                    } else {
+                        module.goodToKnow = null;
+                    }
+                    
+                    var reviews = restaurant.get('reviews');
+                    if (reviews.length > 0) {
+                        module.reviews = new module.info.FullOverviewView({ collection: restaurant.getReviewCollection() });
+                    } else {
+                        module.reviews = null;
+                    }
                     //module.TextBlockView = new module.info.TextBlockView;
 
                     module.contentLayout = new module.ContentLayout;
@@ -657,12 +687,31 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
 
                     module.contentLayout.restaurantContent.show(module.infoView);
                     module.contentLayout.topMenu.show(module.topMenuView);
-
+                    
                     module.infoView.imgBox.show(module.imagesView);
                     module.infoView.bookBox.show(module.bookView);
-                    module.infoView.exclusiveEatsOffer.show(module.exclusiveEatsOfferView);
+                    //module.infoView.exclusiveEatsOffer.show(module.exclusiveEatsOfferView);
                     module.infoView.mainBox.show(module.mainView);
                     module.infoView.mapBox.show(module.mapView);
+
+                    if (module.highlights != null) {
+                        module.infoView.highlightsBox.show(module.highlights);
+                    } else {
+                        module.infoView.highlightsBox.close();
+                    }
+
+                    if (module.goodToKnow != null) {
+                        module.infoView.goodToKnowBox.show(module.goodToKnow);
+                    } else {
+                        module.infoView.goodToKnowBox.close();
+                    }                    
+
+                    if (module.reviews != null) {
+                        module.infoView.fullOverviewBox.show(module.reviews);
+                    } else {
+                        module.infoView.fullOverviewBox.close();
+                    }
+                    
                     //module.infoView.imgBox.show('highlightsBox', 'goodToKnowBox', 'dishesBox', 'margaritasBox', 'fullOverviewBox');     
                 }
             });
@@ -767,7 +816,7 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             app.content.show(module.contentLayout);
         },
 
-        completeReservation: function (num, time) {
+        completeReservation: function (cityId, restaurantId, time) {
             this.setup();
 
             var module = require('modules/restaurant/completeReservation');

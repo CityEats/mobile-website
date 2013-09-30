@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title></title>
-</head>
-<body>
-
-</body>
-</html>
+﻿<h2 class="mainBoxTitle"><%= key %></h2>
+<% if (typeof value == 'string') { %>
+    <p><%= value %></p>
+<% } else { %>
+    <ul class="mainBoxTextList indent">
+    <% for (var i = 0; i < value.length; i++) { %>
+        <li class="mainBoxTextListItem"><%= value[i]%></li>
+    <% } %>
+    </ul>
+<% } %> 

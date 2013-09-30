@@ -1,39 +1,84 @@
-﻿define(['underscore', 'backbone','modules/helper'],
-	function (_, Backbone, Helper) {
+﻿define(['underscore', 'backbone','modules/helper', 'collections/reviews'],
+	function (_, Backbone, Helper, Reviews) {
 	    var Restaurant = Backbone.Model.extend({	       
 	        defaults: {
 	            distance: 5,
+
 	            distanceText: function () {
 	                return this.distance.toFixed(2) + ' mi';
 	            },
-	            cuisine_types: [],
-	            cuisinesText: function () {
-	                return _(this.cuisine_types).map(function (item) { return item.name; }).join(' / ');
-	            },	            
 
-	            priceSymbos: function () {
+	            cuisine_types: [],
+
+	            cuisinesText: function (separator) {
+                    separator = separator || ' / ';
+	                return _(this.cuisine_types).map(function (item) { return item.name; }).join(separator);
+	            },
+
+	            priceSymbols: function () {
+	                console.log(this.reviews);
 	                return (new Array(this.price_rating + 1)).join('$');
+	            },
+
+	            priceSymbolsReverse: function () {
+	                return (new Array(5 - this.price_rating + 1)).join('$');
 	            },
 
 	            ratingClass: function () {
 	                return Helper.ratingClass(parseInt(this.rating, 10));
 	            },
 
-	            slotsFromated: function () {
+	            formatPhone: function () {
+	                if (this.phone_number.length > 5) {
+	                    return [
+                            '(',
+                            this.phone_number.substr(0, 3),
+                            ') ',
+                            this.phone_number.substr(3, 3),
+                            '-',
+                            this.phone_number.substr(6)
+	                    ].join('');
+	                } else {
+	                    return this.phone_number;
+	                }
+	            },
 
+	            slotsFormated: function () {
+                    
 	                var times = this.selectedTime.split(':');
 	                var selectedHour = parseInt(times[0], 10),
                         selectedMin = parseInt(times[1], 10);
-                    
-	                var result = new Array(3);                    
+
+	                var date = new Date(2000, 1, 1, selectedHour, selectedMin);
+	                var minus15 = new Date(date),
+                        plus15 = new Date(date);
+	                minus15.setMinutes(minus15.getMinutes() - 15);
+	                plus15.setMinutes(plus15.getMinutes() + 15);
+
+	                var times = [
+                        {
+                            text: Helper.formatTime(minus15.getHours(), minus15.getMinutes()).textSimple,
+                            amText: Helper.formatTime(minus15.getHours(), minus15.getMinutes()).amText
+                        },
+                        {
+                            text: Helper.formatTime(date.getHours(), date.getMinutes()).textSimple,
+                            amText: Helper.formatTime(date.getHours(), date.getMinutes()).amText
+                        },
+	                    {
+	                        text: Helper.formatTime(plus15.getHours(), plus15.getMinutes()).textSimple,
+	                        amText: Helper.formatTime(plus15.getHours(), plus15.getMinutes()).amText
+	                    }
+	                ];	                
+
+	                var result = new Array(3);
 	                for (var i = 0; i < this.slots.length; i++) {
 	                    var time = new Date(this.slots[i]),
-                        h = time.getHours(time),
-	                    m = time.getMinutes(time);
+                        h = time.getHours(),
+	                    m = time.getMinutes();
 	                    var position = 0
 	                    if (h < selectedHour || m < selectedMin) {
 	                        position = 0;
-	                    } else if (h == selectedHour && m == selectedMin) {                            
+	                    } else if (h == selectedHour && m == selectedMin) {
 	                        position = 1;
 	                    }
 	                    else if (h > selectedHour || m > selectedMin) {
@@ -42,10 +87,22 @@
 
 	                    result[position] = {
 	                        text: Helper.formatTime(h, m).textSimple,
+	                        amText: Helper.formatTime(h, m).amText,
 	                        value: this.slots[i],
 	                        isEmpty: false
-	                    };
+	                    };                        
 	                }
+
+	                for (var i = 0; i < result.length; i++) {
+	                    if (typeof result[i] == 'undefined') {
+	                        result[i] = {
+	                            text: times[i].text,
+	                            amText: times[i].amText,
+	                            isEmpty: true
+	                        };
+	                    }
+	                }
+
 	                return result;
 	            },
 
@@ -55,10 +112,45 @@
 	                } else {
 	                    return '';
 	                }
-	            }
-	        },	        
+	            },
 
-	        
+	            paymentsText: function () {
+	                return this.payment_options.join(', ');
+	            },
+
+	            geoImageUrl: function () {
+	                if (this.address.lat && this.address.lng) {
+	                    return 'http://maps.googleapis.com/maps/api/staticmap?center=' + this.address.lat + ',' + this.address.lng + '&zoom=12&size=292x73&sensor=false&&markers=color:red%7Clabel:R%7C' + this.address.lat + ','+ this.address.lng ;
+	                } else {
+	                    return null;
+	                }
+	            },
+	        },
+
+	        highlights: function () {
+	            var result = _.find(this.get('lists'), function (item) { return item.list.title.toLowerCase() === 'highlights'; });
+	            if (result) {
+	                return (result.list.description || '').split('\n');	                
+	            } else {
+	                return [];
+	            }
+	        },
+
+	        goodToKnow: function () {
+	            var result = _.find(this.get('lists'), function (item) { return item.list.title.toLowerCase() === 'good to know'; });
+	            if (result) {
+	                return (result.list.description || '').split('\n');
+	            } else {
+	                return [];
+	            }
+	        },
+
+	        getReviewCollection: function () {
+	            this.reviewCollection || (this.reviewCollection = new Reviews);
+
+	            this.reviewCollection.reset(_.map(this.get('reviews'), function (item) { return item.review }));
+	            return this.reviewCollection;
+	        },
 	    });
 
 	    return Restaurant;

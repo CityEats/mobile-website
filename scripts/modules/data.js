@@ -45,7 +45,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                     app.execute('API:GetRestaurantExtended', id, function (err, resposneRestaurant) {
                         if (err == null) {
                             app.execute('API:GetRestaurant', id, function (err, resposneExtRestaurant) {
-                                if (err == null) {
+                                if (err == null) {                                    
                                     _.extend(resposneRestaurant, resposneExtRestaurant.restaurants);
                                     restaurantExtended[id] = restaurant = new Restaurant(resposneRestaurant);
                                 }

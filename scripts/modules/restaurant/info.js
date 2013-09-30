@@ -42,8 +42,8 @@ function ($, _, Backbone, app,
             //neighborhoods: new Dictionary([new KeyValue({ key: 1, value: 'nnn1' }), new KeyValue({ key: 2, value: 'nnn2' }), new KeyValue({ key: 3, value: 'nnn3' })]),
             topBar: new TopBar({
                 leftText: 'Back',
-                leftUrl: 'browse-all/5',
-                title: 'Station Grill'
+                leftUrl: 'back',
+                title: ''
             }),
             info: {
                 InfoView: InfoView,
@@ -53,7 +53,7 @@ function ($, _, Backbone, app,
                 ImagesView: ImagesView,
                 MainView: MainView,
                 TextBlockView: TextBlockView,
-                MapView: MapView
+                MapView: MapView                
             },
             reviews: {
                 reviews: new Reviews([new ReviewItem({

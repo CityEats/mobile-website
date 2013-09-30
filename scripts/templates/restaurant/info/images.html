@@ -1,8 +1,8 @@
 ﻿<div class="carouselHolder">
     <ul class="carousel">
-        <li class="carouselItem"><img src="/img/assets/img-large-1.jpg" alt=""></li>
-        <li class="carouselItem"><img src="/img/assets/img-large-1.jpg" alt=""></li>
-        <li class="carouselItem"><img src="/img/assets/img-large-1.jpg" alt=""></li>
+        <% for(var i = 0; i < images.length; i++) {%>                
+            <li class="carouselItem"><img src="<%= images[i].photo_mobile_app %>" alt=""></li>            
+        <% } %>
     </ul>
     <a class="carouselPrev" href="#">Previous</a>
     <a class="carouselNext" href="#">Next</a>

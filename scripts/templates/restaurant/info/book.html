@@ -1,14 +1,21 @@
-﻿<h3 class="bookBoxTitle">Book a Table Tonight for 2 People at:</h3>
-<ul class="schedule restaurantInfoSchedule">
-    <li class="scheduleItem">
-        <a class="scheduleLink" href="#">6:45<span class="scheduleText">p</span></a>
-    </li>
-    <li class="scheduleItem">
-        <a class="scheduleLink" href="#">7:00<span class="scheduleText">p</span></a>
-    </li>
-    <li class="scheduleItem">
-        <div class="scheduleCanceled">7:15<span class="scheduleText">p</span></div>
-    </li>
+﻿<h3 class="bookBoxTitle">Book a Table Tonight for <%= party%> People at:</h3>
+<ul class="schedule restaurantInfoSchedule">    
+    <% 
+        var slotsF = slotsFormated();
+        for (var i = 0; i < slotsF.length; i++) { %>            
+
+        <%if(!slotsF[i].isEmpty) { %>            
+            <li class="scheduleItem">
+                <a class="scheduleLink" data-time="<%= slotsF[i].value %>" href="#"><%= slotsF[i].text %><span class="scheduleText"><%= slotsF[i].amText %></span></a>
+            </li>
+
+        <% } else { %>            
+            <li class="scheduleItem">
+                <div class="scheduleCanceled"><%= slotsF[i].text %><span class="scheduleText"><%= slotsF[i].amText %></span></div>
+            </li>
+        <% } 
+    } %>
+
     <li class="scheduleItem">
         <a class="scheduleLink" href="#"><span class="scheduleMoreOptions">more<br>options</span></a>
     </li>

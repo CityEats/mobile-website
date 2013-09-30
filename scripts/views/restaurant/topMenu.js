@@ -7,10 +7,10 @@
         },
 
         goToPage: function (evt) {
+            evt.preventDefault();
             var url = this.$(evt.target).data('url');
             url = 'restaurants/5/' + url;
-            app.router.navigate(url, { trigger: true });
-            evt.preventDefault();
+            app.router.navigate(url, { trigger: true });            
         }
     });
 

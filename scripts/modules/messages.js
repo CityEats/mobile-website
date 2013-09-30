@@ -258,7 +258,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         handler(callback);
     });
 
-    app.commands.setHandler('GetRestaurant', function (id, start, end, party, callback) {
+    app.commands.setHandler('GetRestaurant', function (id, start, end, party, time, callback) {
         Data.getRestaurantExtended(id, function (err, restaurant) {
             if (err) {
                 return callback(err);
@@ -267,13 +267,23 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
             app.execute('API:GetAvailableSlotsForRestaurant', id, start, end, party, function (err, slots) {
                 if (err) {
                     return callback(err);
+                }                
+                
+                if (slots.length > 0) {
+                    restaurant.set('slots', slots[0].slots);
+                } else {
+                    restaurant.set('slots', []);
                 }
 
-                var result = new Restaurant(restaurant);
-                if (slots.length > 0) {
-                    result.set('slots', slots[0].slots);
-                }                
-                callback(null, result);
+                if (time) {
+                    restaurant.set('selectedTime', time);
+                }
+
+                if (party) {
+                    restaurant.set('party', party);
+                }
+
+                callback(null, restaurant);
             });
         });        
     });

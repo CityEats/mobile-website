@@ -59,7 +59,7 @@
                 //this.ui.date.datepicker('setDate', date);
 
                 that.setDateText(date, this.ui.dateLabel);
-                this.searchParametersChanged();
+                this.searchParametersChanged(true);
             }
         },
 
@@ -114,7 +114,7 @@
             this.refreshResults();
         },
 
-        searchParametersChanged: function () {            
+        searchParametersChanged: function (onRender) {
             var party = this.options.defaults.party,
                 date = this.options.defaults.date,
                 time = this.options.defaults.time,
@@ -147,7 +147,7 @@
                 isChanged = true;
             }
 
-            if (isChanged) {
+            if (onRender !== true || isChanged) {
                 this.ui.searchSubmit.show();
             } else {
                 this.ui.searchSubmit.hide();

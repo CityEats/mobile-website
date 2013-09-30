@@ -11,10 +11,10 @@
         <p class="resultsListType"><%= cuisinesText() %></p>
         <ul class="resultsListSchedule">
             <% 
-                var slotsF = slotsFromated();
+                var slotsF = slotsFormated();
                 for (var i = 0; i < slotsF.length; i++) { %>            
 
-                <%if(typeof slotsF[i] != 'undefined') { %>
+                <%if(!slotsF[i].isEmpty) { %>
                     <li><a href="#" class="btnSlot" data-time="<%= slotsF[i].value %>"><%= slotsF[i].text %></a></li>
                 <% } else { %>            
                     <li>-----</li>
@@ -24,7 +24,7 @@
     </div>
     <div class="resultsListMeta">
         <p><%= distanceText() %></p>
-        <p><%= priceSymbos() %></p>
+        <p><%= priceSymbols() %></p>
         <div class="rating small <%= ratingClass() %>"></div>
     </div>
 </div>

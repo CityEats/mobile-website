@@ -55,8 +55,8 @@ function (_, Backbone, app) {
                 return {
                     value: hours + ':' + minutes,
                     textSimple: h + ':' + m,
-                    amText: h + ':' + m + (am ? 'a' : 'p'),
-                    amTextFull: h + ':' + m + (am ? 'am' : 'pm')
+                    amText: am ? 'a' : 'p',
+                    amTextFull: am ? 'am' : 'pm'
                 };
             },
 
