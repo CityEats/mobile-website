@@ -11,8 +11,6 @@
                 this.options.isCuisines ? 'SaveFilterCuisines' : 'SaveFilterNeighborhoods',
                 this.options.cityId,
                 this.collection.where({ 'checked': true }).map(function (item) { return item.get('key') }));
-
-            console.log('saveItems call');
         }
     });
 

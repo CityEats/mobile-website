@@ -2,11 +2,13 @@
 	function (Backbone) {
 	    var Dish = Backbone.Model.extend({
 	        defaults: {
-	            title: '',
-                description: '',
+	            name: '',
+	            description: '',
                 price: 0.00,
                 priceText: function () {
-                    return '$' + this.price.toFixed(2);
+                    return (typeof this.price == 'number') ?
+                        ('$' + this.price.toFixed(2)) :
+                        this.price;
                 },
 	        }
 	    });

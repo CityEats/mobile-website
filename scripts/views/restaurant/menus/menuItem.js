@@ -34,7 +34,7 @@
         },
             
         initialize: function () {
-            this.collection = this.model.get('categories');            
+            this.collection = this.model.getMenuCategories();
         }        
     });
 

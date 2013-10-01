@@ -1,5 +1,5 @@
-﻿define(['underscore', 'backbone','modules/helper', 'collections/reviews'],
-	function (_, Backbone, Helper, Reviews) {
+﻿define(['underscore', 'backbone', 'modules/helper', 'collections/reviews', 'collections/menus'],
+	function (_, Backbone, Helper, Reviews, Menus) {
 	    var Restaurant = Backbone.Model.extend({	       
 	        defaults: {
 	            distance: 5,
@@ -16,7 +16,6 @@
 	            },
 
 	            priceSymbols: function () {
-	                console.log(this.reviews);
 	                return (new Array(this.price_rating + 1)).join('$');
 	            },
 
@@ -148,9 +147,16 @@
 	        getReviewCollection: function () {
 	            this.reviewCollection || (this.reviewCollection = new Reviews);
 
-	            this.reviewCollection.reset(_.map(this.get('reviews'), function (item) { return item.review }));
+	            this.reviewCollection.reset(_.map(this.get('reviews'), function (item) { return item.review; }));
 	            return this.reviewCollection;
 	        },
+
+	        getMenuCollection: function () {
+	            this.menusCollection || (this.menusCollection = new Menus);
+
+	            this.menusCollection.reset(_.map(this.get('menus'), function (item) { return item.menu; }));
+	            return this.menusCollection;
+	        }
 	    });
 
 	    return Restaurant;

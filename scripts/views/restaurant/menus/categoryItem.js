@@ -7,7 +7,7 @@
         itemViewContainer: '.menuList',
         itemView: DishItemView,
         initialize: function () {
-            this.collection = this.model.get('dishes');
+            this.collection = this.model.getDishes();
         }
     });
 

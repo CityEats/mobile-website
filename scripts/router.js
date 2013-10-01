@@ -47,7 +47,8 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             'restaurants/:num/:num/party/:num/date/:num/time/:num/info': 'restauranInfo',
             'restaurants/:num/:num/reviews': 'restauranReviewsShort',
             'restaurants/:num/:num/party/:num/date/:num/time/:num/reviews': 'restauranReviews',
-            'restaurants/:num/menus': 'restauranMenus',
+            'restaurants/:num/:num/menus': 'restauranMenushort',
+            'restaurants/:num/:num/party/:num/date/:num/time/:num/menus': 'restauranMenus',
             'restaurants/:num/book-it': 'restauranBookIt',
             'restaurants/:num/exclusive-eats': 'restaurantExclusiveEats',
             'restaurants/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
@@ -623,6 +624,45 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             });
         },
 
+        buildRestaurantBaseInfo: function (cityId, id, party, date, time, fromRestaurants, module, menu, callback) {
+            var module = require('modules/restaurant/info');
+            var start = new Date(date + ' ' + time);
+            var end = new Date(date + ' ' + time);
+
+            start.setMinutes(start.getMinutes() - 15);
+            end.setMinutes(end.getMinutes() + 15);
+
+            app.execute('GetRestaurant', id, start, end, party, time, function (err, restaurant) {
+                if (err == null) {
+                    module.topBar.set('title', restaurant.get('name'));
+
+                    module.topBar.set('leftUrl',
+                        fromRestaurants === true ?
+                        ('restaurants/' + cityId) :
+                        ('search-results/' + cityId + '/party/' + party + '/date/' + date + '/time/' + time));
+
+                    module.topMenuView = new module.TopMenuView({
+                        model: new module.KeyValue({ key: menu }),
+                        urlBase: fromRestaurants === true ?
+                        ('restaurants/' + cityId + '/' + id + '/') :
+                        ('restaurants/' + cityId + '/' + id + '/' + '/party/' + party + '/date/' + date + '/time/' + time)
+                    });
+
+                    module.topBarBlock = new module.TopBarView({ model: module.topBar });
+
+
+                    module.contentLayout = new module.ContentLayout;
+
+                    app.topBar.show(module.topBarBlock);
+                    app.content.show(module.contentLayout);
+
+                    module.contentLayout.topMenu.show(module.topMenuView);
+
+                    callback(restaurant);
+                }
+            });
+        },
+
         restauranInfoShort: function (cityId, id) {            
             this.restauranInfo(cityId, id, 2, Helper.formatDate(new Date()), '19:00', true);
         },
@@ -703,67 +743,22 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                 module.reviewsView = new module.reviews.ReviewsView({ collection: restaurant.getReviewCollection() });
                 module.contentLayout.restaurantContent.show(module.reviewsView);
             });
+        },     
+
+        restauranMenushort: function (cityId, id) {
+            this.restauranMenus(cityId, id, 2, Helper.formatDate(new Date()), '19:00', true);
         },
 
-        buildRestaurantBaseInfo: function (cityId, id, party, date, time, fromRestaurants, module, menu, callback) {
-            var module = require('modules/restaurant/info');
-            var start = new Date(date + ' ' + time);
-            var end = new Date(date + ' ' + time);
-
-            start.setMinutes(start.getMinutes() - 15);
-            end.setMinutes(end.getMinutes() + 15);
-
-            app.execute('GetRestaurant', id, start, end, party, time, function (err, restaurant) {
-                if (err == null) {
-                    module.topBar.set('title', restaurant.get('name'));
-
-                    module.topBar.set('leftUrl',
-                        fromRestaurants === true ?
-                        ('restaurants/' + cityId) :
-                        ('search-results/' + cityId + '/party/' + party + '/date/' + date + '/time/' + time));
-
-                    module.topMenuView = new module.TopMenuView({
-                        model: new module.KeyValue({ key: menu }),
-                        urlBase: fromRestaurants === true ?
-                        ('restaurants/' + cityId + '/' + id + '/') :
-                        ('restaurants/' + cityId + '/' + id + '/' + '/party/' + party + '/date/' + date + '/time/' + time)
-                    });
-
-                    module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-
-                    module.contentLayout = new module.ContentLayout;
-
-                    app.topBar.show(module.topBarBlock);
-                    app.content.show(module.contentLayout);
-
-                    module.contentLayout.topMenu.show(module.topMenuView);
-
-                    callback(restaurant);
-                }
-            });
-        },
-
-        restauranMenus: function (num) {
+        restauranMenus: function (cityId, id, party, date, time, fromRestaurants) {
             this.setup();
 
             var module = require('modules/restaurant/info');
 
-            module.reviewsView = new module.menus.MenusView({ collection: module.menus.menus });
-
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-            module.topMenuView = new module.TopMenuView({
-                model: new module.KeyValue({ key: 2 })
+            this.buildRestaurantBaseInfo(cityId, id, party, date, time, fromRestaurants, module, 2, function (restaurant) {
+                console.log(restaurant.getMenuCollection());
+                module.reviewsView = new module.menus.MenusView({ collection: restaurant.getMenuCollection() });
+                module.contentLayout.restaurantContent.show(module.reviewsView);
             });
-
-            module.contentLayout = new module.ContentLayout;
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
-
-            module.contentLayout.restaurantContent.show(module.reviewsView);
-            module.contentLayout.topMenu.show(module.topMenuView);
         },
 
         restauranBookIt: function (num) {
@@ -808,8 +803,7 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             module.contentLayout.book.show(module.bookView);
         },
 
-        restaurantExclusiveEatsFaq: function (num) {
-            this.setup();
+        restaurantExclusiveEatsFaq: function (num) {            
 
             var module = require('modules/restaurant/exclusiveEats');
 
