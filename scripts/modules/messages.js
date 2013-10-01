@@ -9,10 +9,8 @@
     'collections/restaurants',
 ],
 function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
-    //init data methods
-    //setup temporary DB logic    
-    //var API_PATH = 'https://build-beta.cityeats.com/api/v2';
-    var API_PATH = 'http://m.qa-beta.cityeats.com/api/v2';
+
+    var API_PATH = '/api/v2';
 
     var getJSONStatic = function (url) {
         return function (callback) {
@@ -25,23 +23,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                 .error(function (response) {
                     if (callback)
                         callback(response);
-                });
-            
-            //$.ajax({
-            //    url: url,
-            //    dataType: "json",
-            //    //crossDomain: true,
-            //    //xhrFields: {
-            //    //    withCredentials: true
-            //    //}
-            //}).success(function (response) {
-            //    if (callback)
-            //        callback(null, response);
-            //})
-            //.error(function (response) {
-            //    if (callback)
-            //        callback(response);
-            //});
+                });          
         }
     };
 
@@ -56,27 +38,6 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                     if (callback)
                         callback(response);
                 });
-            
-
-            //$.ajax({
-            //    type: 'POST',
-            //    url: url,
-            //    data: JSON.stringify(data),
-            //    beforeSend: function (xhr) { xhr.setRequestHeader('X-Test-Header', 'test-value'); },
-            //    //dataType: 'json',                
-            //    //contentType: "application/json",
-            //    //crossDomain: true,
-            //    //xhrFields: {
-            //    //    withCredentials: true
-            //    //}
-            //}).success(function (response) {
-            //    if (callback)
-            //        callback(null, response);
-            //})
-            //.error(function (response) {
-            //    if (callback)
-            //        callback(response);
-            //});
         }
     };
 
