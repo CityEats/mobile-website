@@ -630,94 +630,64 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
         restauranInfo: function (cityId, id, party, date, time, fromRestaurants) {
             this.setup();            
             var module = require('modules/restaurant/info');
-            var start = new Date(date + ' ' + time);
-            var end = new Date(date + ' ' + time);
 
-            start.setMinutes(start.getMinutes() - 15);
-            end.setMinutes(end.getMinutes() + 15);
+            this.buildRestaurantBaseInfo(cityId, id, party, date, time, fromRestaurants, module, 0, function (restaurant) {
+                module.infoView = new module.info.InfoView;
+                module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
-            module.infoView = new module.info.InfoView;
+                module.bookView = new module.info.BookView({ model: restaurant });
+                module.exclusiveEatsOfferView = new module.info.ExclusiveEatsOfferView;
+                module.imagesView = new module.info.ImagesView({ model: restaurant });
+                module.mainView = new module.info.MainView({ model: restaurant });
+                module.mapView = new module.info.MapView({ model: restaurant });
 
-            app.execute('GetRestaurant', id, start, end, party, time, function (err, restaurant) {
-                if (err == null) {
-                    module.topBar.set('title', restaurant.get('name'));
-                    
-                    module.topBar.set('leftUrl',
-                        fromRestaurants === true ?
-                        ('restaurants/' + cityId):
-                        ('search-results/' + cityId + '/party/' + party + '/date/' + date + '/time/' + time));
-
-                    module.topMenuView = new module.TopMenuView({
-                        model: new module.KeyValue({ key: 0 }),
-                        urlBase: fromRestaurants === true ?
-                        ('restaurants/' + cityId + '/' + id + '/') :
-                        ('restaurants/' + cityId + '/' + id + '/' + '/party/' + party + '/date/' + date + '/time/' + time)
-                    });
-                    
-                    module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-                    module.bookView = new module.info.BookView({ model: restaurant });
-                    module.exclusiveEatsOfferView = new module.info.ExclusiveEatsOfferView;
-                    module.imagesView = new module.info.ImagesView({ model: restaurant });
-                    module.mainView = new module.info.MainView({ model: restaurant });
-                    module.mapView = new module.info.MapView({ model: restaurant });
-
-                    var highlights = restaurant.highlights();
-                    if (highlights.length > 0) {
-                        module.highlights = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Highlights', value: highlights }) })
-                    } else {
-                        module.highlights = null;
-                    }
-
-                    var goodToKnow = restaurant.goodToKnow();
-                    if (goodToKnow.length > 0) {
-                        module.goodToKnow = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Good to Know', value: goodToKnow }) })
-                    } else {
-                        module.goodToKnow = null;
-                    }
-                    
-                    var reviews = restaurant.get('reviews');
-                    if (reviews.length > 0) {
-                        module.fullOverview = new module.info.FullOverviewView({ collection: restaurant.getReviewCollection() });
-                    } else {
-                        module.fullOverview = null;
-                    }
-                    //module.TextBlockView = new module.info.TextBlockView;
-
-                    module.contentLayout = new module.ContentLayout;
-
-                    app.topBar.show(module.topBarBlock);
-                    app.content.show(module.contentLayout);
-
-                    module.contentLayout.restaurantContent.show(module.infoView);
-                    module.contentLayout.topMenu.show(module.topMenuView);
-                    
-                    module.infoView.imgBox.show(module.imagesView);
-                    module.infoView.bookBox.show(module.bookView);
-                    //module.infoView.exclusiveEatsOffer.show(module.exclusiveEatsOfferView);
-                    module.infoView.mainBox.show(module.mainView);
-                    module.infoView.mapBox.show(module.mapView);
-
-                    if (module.highlights != null) {
-                        module.infoView.highlightsBox.show(module.highlights);
-                    } else {
-                        module.infoView.highlightsBox.close();
-                    }
-
-                    if (module.goodToKnow != null) {
-                        module.infoView.goodToKnowBox.show(module.goodToKnow);
-                    } else {
-                        module.infoView.goodToKnowBox.close();
-                    }                    
-
-                    if (module.reviews != null) {
-                        module.infoView.fullOverviewBox.show(module.fullOverview);
-                    } else {
-                        module.infoView.fullOverviewBox.close();
-                    }
-                    
-                    //module.infoView.imgBox.show('highlightsBox', 'goodToKnowBox', 'dishesBox', 'margaritasBox', 'fullOverviewBox');     
+                var highlights = restaurant.highlights();
+                if (highlights.length > 0) {
+                    module.highlights = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Highlights', value: highlights }) })
+                } else {
+                    module.highlights = null;
                 }
+
+                var goodToKnow = restaurant.goodToKnow();
+                if (goodToKnow.length > 0) {
+                    module.goodToKnow = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Good to Know', value: goodToKnow }) })
+                } else {
+                    module.goodToKnow = null;
+                }
+
+                var reviews = restaurant.get('reviews');
+                if (reviews.length > 0) {
+                    module.fullOverview = new module.info.FullOverviewView({ collection: restaurant.getReviewCollection() });
+                } else {
+                    module.fullOverview = null;
+                }
+
+                module.contentLayout.restaurantContent.show(module.infoView);
+
+                module.infoView.imgBox.show(module.imagesView);
+                module.infoView.bookBox.show(module.bookView);
+                //module.infoView.exclusiveEatsOffer.show(module.exclusiveEatsOfferView);
+                module.infoView.mainBox.show(module.mainView);
+                module.infoView.mapBox.show(module.mapView);
+
+                if (module.highlights != null) {
+                    module.infoView.highlightsBox.show(module.highlights);
+                } else {
+                    module.infoView.highlightsBox.close();
+                }
+
+                if (module.goodToKnow != null) {
+                    module.infoView.goodToKnowBox.show(module.goodToKnow);
+                } else {
+                    module.infoView.goodToKnowBox.close();
+                }
+
+                if (module.fullOverview != null) {
+                    module.infoView.fullOverviewBox.show(module.fullOverview);
+                } else {
+                    module.infoView.fullOverviewBox.close();
+                }
+
             });
         },
 
@@ -726,8 +696,16 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
         },
 
         restauranReviews: function (cityId, id, party, date, time, fromRestaurants) {
-
             this.setup();
+            var module = require('modules/restaurant/info');            
+
+            this.buildRestaurantBaseInfo(cityId, id, party, date, time, fromRestaurants, module, 1, function (restaurant) {
+                module.reviewsView = new module.reviews.ReviewsView({ collection: restaurant.getReviewCollection() });
+                module.contentLayout.restaurantContent.show(module.reviewsView);
+            });
+        },
+
+        buildRestaurantBaseInfo: function (cityId, id, party, date, time, fromRestaurants, module, menu, callback) {
             var module = require('modules/restaurant/info');
             var start = new Date(date + ' ' + time);
             var end = new Date(date + ' ' + time);
@@ -735,7 +713,6 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             start.setMinutes(start.getMinutes() - 15);
             end.setMinutes(end.getMinutes() + 15);
 
-            
             app.execute('GetRestaurant', id, start, end, party, time, function (err, restaurant) {
                 if (err == null) {
                     module.topBar.set('title', restaurant.get('name'));
@@ -746,27 +723,25 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                         ('search-results/' + cityId + '/party/' + party + '/date/' + date + '/time/' + time));
 
                     module.topMenuView = new module.TopMenuView({
-                        model: new module.KeyValue({ key: 1 }),
+                        model: new module.KeyValue({ key: menu }),
                         urlBase: fromRestaurants === true ?
                         ('restaurants/' + cityId + '/' + id + '/') :
                         ('restaurants/' + cityId + '/' + id + '/' + '/party/' + party + '/date/' + date + '/time/' + time)
                     });
 
-
-                    module.reviewsView = new module.reviews.ReviewsView({ collection: restaurant.getReviewCollection() });
-
                     module.topBarBlock = new module.TopBarView({ model: module.topBar });
-                    
+
 
                     module.contentLayout = new module.ContentLayout;
 
                     app.topBar.show(module.topBarBlock);
                     app.content.show(module.contentLayout);
 
-                    module.contentLayout.restaurantContent.show(module.reviewsView);
                     module.contentLayout.topMenu.show(module.topMenuView);
+
+                    callback(restaurant);
                 }
-            });            
+            });
         },
 
         restauranMenus: function (num) {

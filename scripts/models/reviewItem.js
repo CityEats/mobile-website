@@ -17,15 +17,17 @@
 
 	            ratingClass: function () {
 	                return Helper.ratingClass(parseInt(this.overall_rating, 10));
-	            },
-
-	            showReadMore: function () {
-	                return this.madlibs.length > 300;
-	            },
+	            },	            
 
 	            date: function () {
 	                return Helper.formatDateLong(this.created_at);
 	            }
+	        },
+
+            maxLength: 100,
+
+            getShortContent: function () {                
+	            return this.get('madlibs').substring(0, this.maxLength);
 	        }
 	    });
 

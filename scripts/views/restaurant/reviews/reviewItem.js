@@ -3,7 +3,30 @@
     var ItemView = Marionette.ItemView.extend({
         tagName: 'article',
         className: 'review',
-        template: _.template(reviewItemHtml)
+        template: _.template(reviewItemHtml),
+        ui: {
+            btnShowMore: '.btnShowMore'
+        },
+        events: {
+            'click .btnShowMore': 'showMoreClick'
+        },
+
+        initialize: function () {
+            this.fullContent = this.model.get('madlibs');
+            this.shortContent = this.model.getShortContent();
+            this.model.set('madlibs', this.shortContent);
+        },
+
+        onRender: function () {
+            if (this.fullContent.length < this.model.maxLength) this.ui.btnShowMore.hide();
+        },        
+
+        showMoreClick: function (evt) {
+            evt.preventDefault();
+            this.model.set('madlibs', this.fullContent);
+            this.render();
+            this.ui.btnShowMore.hide();
+        }
     });
 
     return ItemView;

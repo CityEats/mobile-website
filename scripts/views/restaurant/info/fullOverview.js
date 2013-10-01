@@ -15,7 +15,7 @@
         },
 
         initialize: function () {
-            this.expanded = false;            
+            this.expanded = false;
             this.fullCollection = this.collection.clone();
             this.shortCollection = this.collection.clone();
             this.shortCollection.reset([this.fullCollection.at(0)]);
