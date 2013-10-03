@@ -33,7 +33,7 @@
 
         onRender: function () {
             //fb link
-            var fbLink = "https://www.facebook.com/dialog/oauth?client_id=" + this.options.appId + "&redirect_uri=" + this.options.redirectUri;
+            var fbLink = "/auth/facebook?callback_url=/back";
             this.ui.fbLoginBtn.attr('href', fbLink);
 
             //render years
