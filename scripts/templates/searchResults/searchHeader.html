@@ -5,7 +5,8 @@
     <a class="searchFormButton" href="#">&nbsp;</a>
 </div>
 <% } if (typeof(showTimingBar) != "undefined" && showTimingBar) { %>
-<div class="timing column3">
+<% var showTimesDdl =  (typeof(showTimes) != "undefined" && showTimes); %>
+<div class="<%= showTimesDdl ? 'timing column3' : 'chooseTimeSelect column2' %>">
     <div class="selectForm column">
         <select class="select partySize">
             <option value="1">1 people</option>
@@ -19,12 +20,14 @@
         </select>
     </div>
     <input type="hidden" class="date" />
-    <div class="datePicker column">Today</div>    
-    <div class="selectForm column">
-        <select class="select time ">
-            <option>7:00p</option>
-        </select>
-    </div>
+    <div class="datePicker column">Today</div>
+    <% if(showTimesDdl) { %>
+        <div class="selectForm column">
+            <select class="select time">
+                <option>7:00p</option>
+            </select>
+        </div>
+    <% } %>
 </div>
 <div class="searchResultsSubmit hide">
     <input class="btn small btnFindTable" type="submit" value="Find a Table">

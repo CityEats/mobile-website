@@ -1,1 +1,5 @@
-﻿<a class="scheduleLink" href="#">5:00<span class="scheduleText">p</span></a>
+﻿<% if(selected === true) { %>
+    <a class="scheduleLink" href="#"><%= value.textSimple %><span class="scheduleText"><%= value.amText %></span></a>
+<% } else { %>
+    <div class="scheduleCanceled"><%= value.textSimple %><span class="scheduleText"><%= value.amText %></span></div>
+<% } %>

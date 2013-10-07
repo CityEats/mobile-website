@@ -23,12 +23,15 @@
             var that = this;
             
             var showTimingBar = this.model.get('showTimingBar'),
+                showTimes = this.model.get('showTimes'),
                 party = this.model.get('party'),
                 date = this.model.get('date'),
-                time = this.model.get('time');            
-            
+                time = this.model.get('time');
+
             if (showTimingBar === true) {
-                this.rerenderTime(true);
+
+                if (showTimes === true) this.rerenderTime(true);
+
                 if (typeof party != 'undefined') {
                     this.ui.party.val(party);
                 }
@@ -44,19 +47,6 @@
 
                 var datepicker = this.ui.date,
                     dateLabel = this.ui.dateLabel;                
-
-                //this.ui.date.datepicker({
-                //    minDate: new Date(),
-                //    maxDate: "+90d",
-                //    dateFormat: 'yy-mm-dd',
-                //    onSelect: function (dateText) {
-                //        var selectedDate = datepicker.datepicker('getDate');
-                //        that.setDateText(selectedDate, dateLabel);
-                //        that.searchParametersChanged();
-                //    }
-                //});
-
-                //this.ui.date.datepicker('setDate', date);
 
                 that.setDateText(date, this.ui.dateLabel);
                 this.searchParametersChanged(true);
@@ -83,8 +73,8 @@
             }
         },
 
-        datePickerClick: function () {
-            //this.ui.date.datepicker('show');
+        datePickerClick: function (evt) {
+            evt.preventDefault();
             this.trigger('datePickerClicked', this.model.get('date'));
         },
 
@@ -115,16 +105,17 @@
         },
 
         searchParametersChanged: function (onRender) {
-            var party = this.options.defaults.party,
-                date = this.options.defaults.date,
-                time = this.options.defaults.time,
-                isChanged = false;
-            
+            var party, date, time, isChanged = false;
+
             this.model.set('party', parseInt(this.ui.party.val(), 10));
             this.model.set('time', this.ui.time.val());
             if (this.options.showFindButton !== true) {
                 return true;
             }
+
+            party = this.options.defaults.party;
+            date = this.options.defaults.date;
+            time = this.options.defaults.time;
             
             if (party.toString().toLowerCase() == this.model.get('party').toString().toLowerCase()) {
                 this.ui.party.removeClass('updated');
@@ -151,7 +142,7 @@
                 this.ui.searchSubmit.show();
             } else {
                 this.ui.searchSubmit.hide();
-            }            
+            }
         },
 
         refreshResults: function () {            
@@ -170,52 +161,8 @@
         },
 
         rerenderTime: function (isToday) {
-            var times = [];
 
-            var start = new Date(2000, 1, 1, 0, 0); //12:00am
-            var end = new Date(2000, 1, 1, 23, 45); //11:45pm
-            var selected = new Date(2000, 1, 1, 19, 00); //7:00pm
-            if (isToday) {
-                selected = new Date();
-                var min = selected.getMinutes();
-                if (min != 0 && min != 15 && min != 30 && min != 45) {
-                    if (min > 0 && min < 15) {
-                        min = 15;
-                    } else if (min > 15 && min < 30) {
-                        min = 30;
-                    } else if (min > 30 && min < 45) {
-                        min = 45;
-                    } else {
-                        min = 60;
-                    }
-                    selected.setMinutes(min);
-                }
-            }
-
-            while (start <= end) {
-                var time = {},
-                    h = start.getHours(),
-                    m = start.getMinutes(),
-                    am = h < 12;
-
-                if (h == selected.getHours() && m == selected.getMinutes()) {
-                    time.selected = true;
-                }
-
-                h = am ? h : (h - 12);
-                if (am && h == 0) {
-                    h = 12;
-                }
-
-                m = m < 10 ? '0' + m : m;
-
-                time.text = h + ':' + m + (am ? 'a' : 'p');
-                time.value = start.getHours() + ':' + m;
-
-                times.push(time);
-                start.setMinutes(start.getMinutes() + 15);
-            }
-
+            var times = Helper.getTimes();
             var select = _(times).map(function (item) { return '<option value="' + item.value + '" ' + (item.selected ? 'selected' : '') + '>' + item.text + '</option>' });
 
             this.ui.time.empty().append(select);

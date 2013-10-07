@@ -49,7 +49,8 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
             'restaurants/:num/:num/party/:num/date/:num/time/:num/reviews': 'restauranReviews',
             'restaurants/:num/:num/menus': 'restauranMenushort',
             'restaurants/:num/:num/party/:num/date/:num/time/:num/menus': 'restauranMenus',
-            'restaurants/:num/book-it': 'restauranBookIt',
+            'restaurants/:num/:num/book-it': 'restauranBookItShort',
+            'restaurants/:num/:num/party/:num/date/:num/time/:num/book-it': 'restauranBookIt',
             'restaurants/:num/exclusive-eats': 'restaurantExclusiveEats',
             'restaurants/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
             'restaurants/:num/:num/complete-reservation/:num': 'completeReservation',
@@ -280,7 +281,7 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                             time: '19:00'
                         },
                     });
-
+                    //xxx
                     module.calendarView = new module.CalendarView({ date: newDate || date });
                     module.calendarTopBarView = new module.TopBarView({
                         model: module.calendarTopBar,
@@ -625,12 +626,20 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
         },
 
         buildRestaurantBaseInfo: function (cityId, id, party, date, time, fromRestaurants, module, menu, callback) {
-            var module = require('modules/restaurant/info');
-            var start = new Date(date + ' ' + time);
-            var end = new Date(date + ' ' + time);
+            var module = module || require('modules/restaurant/info');
+            var start, end;
 
-            start.setMinutes(start.getMinutes() - 15);
-            end.setMinutes(end.getMinutes() + 15);
+            if (time) {
+                start = new Date(date + ' ' + time);
+                end = new Date(date + ' ' + time);
+                start.setMinutes(start.getMinutes() - 15);
+                end.setMinutes(end.getMinutes() + 15);
+            } else {
+                //if time is not specified - set start-end interval to all day
+                start = new Date(date);                
+                end = new Date(date);
+                end.setHours(23, 45);
+            }
 
             app.execute('GetRestaurant', id, start, end, party, time, function (err, restaurant) {
                 if (err == null) {
@@ -641,22 +650,23 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
                         ('restaurants/' + cityId) :
                         ('search-results/' + cityId + '/party/' + party + '/date/' + date + '/time/' + time));
 
-                    module.topMenuView = new module.TopMenuView({
-                        model: new module.KeyValue({ key: menu }),
-                        urlBase: fromRestaurants === true ?
-                        ('restaurants/' + cityId + '/' + id + '/') :
-                        ('restaurants/' + cityId + '/' + id + '/' + '/party/' + party + '/date/' + date + '/time/' + time)
-                    });
+                    if (module.TopMenuView) {
+                        module.topMenuView = new module.TopMenuView({
+                            model: new module.KeyValue({ key: menu }),
+                            urlBase: fromRestaurants === true ?
+                            ('restaurants/' + cityId + '/' + id + '/') :
+                            ('restaurants/' + cityId + '/' + id + '/' + '/party/' + party + '/date/' + date + '/time/' + time)
+                        });
+                    }
 
                     module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
 
                     module.contentLayout = new module.ContentLayout;
 
                     app.topBar.show(module.topBarBlock);
                     app.content.show(module.contentLayout);
 
-                    module.contentLayout.topMenu.show(module.topMenuView);
+                    if (module.topMenuView) module.contentLayout.topMenu.show(module.topMenuView);
 
                     callback(restaurant);
                 }
@@ -754,32 +764,57 @@ function (app, Marionette, FooterView, ErrorView, Helper) {
 
             var module = require('modules/restaurant/info');
 
-            this.buildRestaurantBaseInfo(cityId, id, party, date, time, fromRestaurants, module, 2, function (restaurant) {
-                console.log(restaurant.getMenuCollection());
+            this.buildRestaurantBaseInfo(cityId, id, party, date, time, fromRestaurants, module, 2, function (restaurant) {                
                 module.reviewsView = new module.menus.MenusView({ collection: restaurant.getMenuCollection() });
                 module.contentLayout.restaurantContent.show(module.reviewsView);
             });
         },
 
-        restauranBookIt: function (num) {
+        restauranBookItShort: function (cityId, id) {
+            //new Date(2013, 8, 11))
+            this.restauranBookIt(cityId, id, 2, Helper.formatDate(new Date), '19:00', true);
+        },
+
+        restauranBookIt: function (cityId, id, party, date, time, fromRestaurants, newParty, newDate) {
+            //xxx
             this.setup();
+            var that = this;
+            var module = require('modules/restaurant/bookIt');            
+            this.buildRestaurantBaseInfo(cityId, id, newParty || party, newDate || date, null, fromRestaurants, module, 3, function (restaurant) {
 
-            var module = require('modules/restaurant/bookIt');
+                module.topBar.set('leftUrl', fromRestaurants === true ?
+                        ('restaurants/' + cityId + '/' + id + '/info') :
+                        ('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/info'));
 
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
+                module.chooseTimeView = new module.ChooseTimeView({ model: module.getSearchModel(newParty || party, newDate || date) });
+                module.nextDaysView = new module.NextDaysView({ collection: module.getNextDays(newDate || date) });
+                module.scheduleItemsView = new module.ScheduleItemsView({ collection: restaurant.getFullSlots() });
+                
+                module.contentLayout.chooseTime.show(module.chooseTimeView);
+                module.contentLayout.schedule.show(module.scheduleItemsView);
+                module.contentLayout.nextDays.show(module.nextDaysView);
 
-            module.chooseTimeView = new module.ChooseTimeView;
-            module.nextDaysView = new module.NextDaysView;
-            module.scheduleItemsView = new module.ScheduleItemsView;
+                module.calendarView = new module.CalendarView({ date: newDate || date });
 
-            module.contentLayout = new module.ContentLayout;
+                module.chooseTimeView.on('datePickerClicked', function () {
+                    module.calendarView.on('btnLeftClick', function () {
+                        that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, newParty, newDate);
+                    });
 
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
+                    app.topBar.show(module.calendarView);
+                    app.content.show(module.calendarView);
 
-            module.contentLayout.chooseTime.show(module.chooseTimeView);
-            module.contentLayout.schedule.show(module.scheduleItemsView);
-            module.contentLayout.nextDays.show(module.nextDaysView);
+                    module.calendarView.on('dateSelected', function (selectedDate) {
+                        module.chooseTimeView.model.set('date', selectedDate);
+                        that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, module.chooseTimeView.model.get('party'), selectedDate);
+                    });
+                });
+
+                module.nextDaysView.on('newDayView:dateSelected', function (sender, selectedDate) {
+                    module.chooseTimeView.model.set('date', selectedDate);
+                    that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, module.chooseTimeView.model.get('party'), selectedDate);
+                });
+            });
         },
 
         restaurantExclusiveEats: function (num) {

@@ -19,8 +19,6 @@
                 onSelect: function (dateText) {
                     var selectedDate = datepicker.datepicker('getDate');                    
                     that.trigger('dateSelected', selectedDate);
-                    //that.setDateText(selectedDate, dateLabel);
-                    //that.searchParametersChanged();
                 }
             });
 

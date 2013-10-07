@@ -1,5 +1,5 @@
-﻿define(['underscore', 'backbone', 'modules/helper', 'collections/reviews', 'collections/menus'],
-	function (_, Backbone, Helper, Reviews, Menus) {
+﻿define(['underscore', 'backbone', 'modules/helper', 'collections/reviews', 'collections/menus', 'collections/dictionary'],
+	function (_, Backbone, Helper, Reviews, Menus, Dictionary) {
 	    var Restaurant = Backbone.Model.extend({	       
 	        defaults: {
 	            distance: 5,
@@ -75,12 +75,12 @@
                         h = time.getHours(),
 	                    m = time.getMinutes();
 	                    var position = 0
-	                    if (h < selectedHour || m < selectedMin) {
+	                    if (h < selectedHour || (h == selectedHour && m < selectedMin)) {
 	                        position = 0;
 	                    } else if (h == selectedHour && m == selectedMin) {
 	                        position = 1;
 	                    }
-	                    else if (h > selectedHour || m > selectedMin) {
+	                    else if (h > selectedHour || (h == selectedHour && m > selectedMin)) {
 	                        position = 2;
 	                    }
 
@@ -156,6 +156,22 @@
 
 	            this.menusCollection.reset(_.map(this.get('menus'), function (item) { return item.menu; }));
 	            return this.menusCollection;
+	        },
+
+	        getFullSlots: function () {
+	            var times = Helper.getTimes(),
+	                slots = this.get('slots');
+
+	            return new Dictionary(_.map(slots, function (item) {
+	                var time = new Date(item),
+	                    formated = Helper.formatTime(time.getHours(), time.getMinutes());
+
+	                return {
+	                    key: formated.value,
+	                    value: formated,
+	                    selected: _.some(times, function (slot) { return slot.value == formated.value })
+	                }
+	            }));
 	        }
 	    });
 

@@ -27,6 +27,7 @@ function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, CalendarView, Cont
 
                 return new SearchBar({
                     showTimingBar: true,
+                    showTimes: true,
                     party: party,
                     date: date,
                     time: time

@@ -9,7 +9,15 @@
 
         goToCompleteReservation: function (evt) {
             evt.preventDefault();
-            var url = 'restaurants/5/complete-reservation';
+            var url;
+            var time = this.$(evt.target).data('time');
+            if (time && time.length > 0) {
+                url = this.options.infoUrl;
+            }
+            else {
+                url = 'restaurants/5/complete-reservation';
+            }
+            
             app.router.navigate(url, { trigger: true });
         }
     });
