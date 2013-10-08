@@ -13,20 +13,24 @@
             'click .btnFindTable': 'goToSearchResults',
             'click .btnBrowseAll': 'goToBrowseAll',
             'click .btnUser': 'goToUser',
+            'click .btnLogOut': 'btnLogOutClick'
         },
 
         ui: {
             pnlLogin: '.pnlLogin',
-            pnlUser: '.pnlUser'
+            pnlUser: '.pnlUser',
+            pnlLogOut: '.pnlLogOut'            
         },
 
         onRender: function () {
             if (this.options.user) {
                 this.ui.pnlUser.show();
+                this.ui.pnlLogOut.show();
                 this.ui.pnlLogin.hide();
                 this.ui.pnlUser.find('.btnText').text(this.options.user);
             } else {
                 this.ui.pnlUser.hide();
+                this.ui.pnlLogOut.hide();
                 this.ui.pnlLogin.show();
             }
         },
@@ -56,9 +60,14 @@
             this.goTo(evt, 'restaurants/' + cityId);
         },
 
-        goTo: function (evt, url) {
-            app.router.navigate(url, { trigger: true });
+        btnLogOutClick: function (evt) {
             evt.preventDefault();
+            console.log('sigon out is not implemented');
+        },
+
+        goTo: function (evt, url) {
+            evt.preventDefault();
+            app.router.navigate(url, { trigger: true });            
         }
     });
 
