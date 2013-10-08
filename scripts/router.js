@@ -349,7 +349,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             end.setMinutes(end.getMinutes() + 15);
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
-            
+
             module.searchBar = new module.SearchBarView({
                 model: module.getSearchModel(newParty || party, newDate || date, newTime || time),
                 defaults: {
@@ -363,16 +363,21 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             var getRestaurantsHandler = function (err, data) {
                 if (err) return that.errorPartial();
 
-                module.restaurantsView = new module.RestaurantsView({ collection: data });
+                module.restaurantsView = new module.RestaurantsView({
+                    collection: data,
+                    party: module.searchBar.model.get('party'),
+                    date: newDate || date,
+                    time: module.searchBar.model.get('time')
+                });
 
                 if (module.contentLayout == null) {
                     //render only at first time                        
                     module.contentLayout = new module.ContentLayout;
-                    module.calendarView = new module.CalendarView({ date: newDate || date });;
+                    module.calendarView = new module.CalendarView({ date: newDate || date });
                     module.calendarTopBarView = new module.TopBarView({
                         model: module.calendarTopBar,
                         leftClickEvent: 'btnLeftClick'
-                    })
+                    });
 
                     app.content.show(module.contentLayout);
                     module.contentLayout.searchBar.show(module.searchBar);
@@ -528,10 +533,11 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                     this.resetFilter();
                 }, module.contentLayout);                
 
-                if (filter.get('cuisineIds').length > 0 || filter.get('neighborhoodIds').length > 0) {
-                    module.topBarBlock.showRightButton();
+                
+                if (filter.isDefault()) {                    
+                    module.topBarBlock.hideRightButton(); 
                 } else {
-                    module.topBarBlock.hideRightButton();
+                    module.topBarBlock.showRightButton();
                 }
             });
         },

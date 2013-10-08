@@ -18,8 +18,16 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
             evt.preventDefault();
 
             var id = this.model.get('id'),
-                cityid = this.model.get('metro').id;
-            app.router.navigate('restaurants/' + cityid + '/'+ id + '/info', { trigger: true });
+                cityId = this.model.get('metro').id,
+                url;
+
+            if (this.options.showSimple === true) {
+                url = 'restaurants/' + cityId + '/' + id + '/info';
+            } else {
+                url = 'restaurants/' + cityId + '/' + id + '/party/' + this.options.party + '/date/' + this.options.date + '/time/' + this.options.time + '/info';
+            }
+
+            app.router.navigate(url, { trigger: true });
         },
 
         gotoReservation: function (evt) {

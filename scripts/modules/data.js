@@ -64,6 +64,8 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
             filterRestaurants: function (restaurants, searchQuery, filter) {
                 var cuisineIds = [], neighborhoodIds = [], prices = [], sortBy;
 
+                if (typeof restaurants == 'undefined' || restaurants == null) return null;
+
                 if (filter != null) {
                     cuisineIds = filter.get('cuisineIds');
                     neighborhoodIds = filter.get('neighborhoodIds');

@@ -4,9 +4,7 @@
         itemView: RestaurantView,
         emptyView: NoResultsView,
         itemViewOptions: function (model, i) {            
-            return {
-                showSimple: this.options.showSimple
-            };
+            return this.options;
         }
     });
 
