@@ -52,23 +52,23 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             'restaurants/:num/:num/party/:num/date/:num/time/:num/menus': 'restauranMenus',
             'restaurants/:num/:num/book-it': 'restauranBookItShort',
             'restaurants/:num/:num/party/:num/date/:num/time/:num/book-it': 'restauranBookIt',
-            'restaurants/:num/exclusive-eats': 'restaurantExclusiveEats',
-            'restaurants/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
-            'restaurants/:num/:num/complete-reservation/:num': 'completeReservation',
-            'restaurants/:num/reservation-card-info': 'reservationCardInfo',
-            'restaurants/:num/reservation-confirmed': 'reservationConfirmed',
-            'restaurants/:num/reservation-canceled': 'reservationCanceled',
-            'profile': 'profile',
-            'profile/edit': 'profileEdit',
-            'profile/reservations': 'profileReservations',
-            'profile/canceled': 'profileCanceled',
-            'profile/past': 'profilePast',
-            'profile/upcoming': 'profileupcoming',
+            //'restaurants/:num/exclusive-eats': 'restaurantExclusiveEats',
+            //'restaurants/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
+            //'restaurants/:num/:num/complete-reservation/:num': 'completeReservation',
+            //'restaurants/:num/reservation-card-info': 'reservationCardInfo',
+            //'restaurants/:num/reservation-confirmed': 'reservationConfirmed',
+            //'restaurants/:num/reservation-canceled': 'reservationCanceled',
+            //'profile': 'profile',
+            //'profile/edit': 'profileEdit',
+            //'profile/reservations': 'profileReservations',
+            //'profile/canceled': 'profileCanceled',
+            //'profile/past': 'profilePast',
+            //'profile/upcoming': 'profileupcoming',
             '*path': '404'
         },
 
         setup: function () {
-            if (app.footer) { return true; }
+            if (app.footer) return true;
 
             app.footerView = new FooterView;
 
@@ -687,7 +687,12 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                 module.infoView = new module.info.InfoView;
                 module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
-                module.bookView = new module.info.BookView({ model: restaurant });
+                module.bookView = new module.info.BookView({
+                    model: restaurant,
+                    infoUrl: fromRestaurants === true ?
+                        ('restaurants/' + cityId + '/' + id + '/book-it') :
+                        ('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it')
+                });
                 module.exclusiveEatsOfferView = new module.info.ExclusiveEatsOfferView;
                 module.imagesView = new module.info.ImagesView({ model: restaurant });
                 module.mainView = new module.info.MainView({ model: restaurant });
@@ -695,14 +700,14 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                 var highlights = restaurant.highlights();
                 if (highlights.length > 0) {
-                    module.highlights = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Highlights', value: highlights }) })
+                    module.highlights = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Highlights', value: highlights }) });
                 } else {
                     module.highlights = null;
                 }
 
                 var goodToKnow = restaurant.goodToKnow();
                 if (goodToKnow.length > 0) {
-                    module.goodToKnow = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Good to Know', value: goodToKnow }) })
+                    module.goodToKnow = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Good to Know', value: goodToKnow }) });
                 } else {
                     module.goodToKnow = null;
                 }
@@ -739,7 +744,6 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                 } else {
                     module.infoView.fullOverviewBox.close();
                 }
-
             });
         },
 

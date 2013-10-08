@@ -12,10 +12,10 @@
             var url;
             var time = this.$(evt.target).data('time');
             if (time && time.length > 0) {
-                url = this.options.infoUrl;
-            }
-            else {
                 url = 'restaurants/5/complete-reservation';
+            }
+            else {                
+                url = this.options.infoUrl;
             }
             
             app.router.navigate(url, { trigger: true });
