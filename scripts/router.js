@@ -292,7 +292,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                 module.searchBar.on('datePickerClicked', function () {
                     module.calendarTopBarView.on('btnLeftClick', function () {
-                        that.findTable(cityId, date, newDate);
+                        that.findTable(cityId, date, module.searchBar.model.get('party'), newDate, module.searchBar.model.get('time'));
                     });
 
                     app.topBar.show(module.calendarTopBarView);
@@ -300,7 +300,6 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                     module.calendarView.on('dateSelected', function (selectedDate) {
                         module.searchBar.model.set('date', selectedDate);
-
                         that.findTable(cityId, date, module.searchBar.model.get('party'), selectedDate, module.searchBar.model.get('time'));
                     });
                 });
@@ -320,11 +319,12 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             app.topBar.show(module.topBarBlock);            
         },
 
-        searchResults: function (cityId, party, date, time, newParty, newDate, newTime) {
+        searchResults: function (cityId, party, date, time, newParty, newDate, newTime, searchQuery) {
             this.setup();
             var that = this,
                 module = require('modules/searchResults'),
-                filter = app.request('GetFilterSimple', cityId);
+                filter = app.request('GetFilterSimple', cityId),
+                rendered = false;
 
             var currentCity = app.request('GetCurrentCity');
             if (currentCity == null) {
@@ -351,13 +351,33 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
             module.searchBar = new module.SearchBarView({
-                model: module.getSearchModel(newParty || party, newDate || date, newTime || time),
+                model: module.getSearchModel(newParty || party, newDate || date, newTime || time, searchQuery),
                 defaults: {
                     party: party,
                     date: date,
                     time: time
                 },
                 showFindButton: true
+            });
+
+            module.contentLayout = new module.ContentLayout;
+            module.calendarView = new module.CalendarView({ date: newDate || date });
+            module.calendarTopBarView = new module.TopBarView({
+                model: module.calendarTopBar,
+                leftClickEvent: 'btnLeftClick'
+            });
+
+            module.searchBar.on('datePickerClicked', function () {
+                app.topBar.show(module.calendarTopBarView);
+                app.content.show(module.calendarView);
+
+                module.calendarTopBarView.on('btnLeftClick', function () {
+                    that.searchResults(cityId, party, date, time, module.searchBar.model.get('party'), newDate, module.searchBar.model.get('time'), module.searchBar.model.get('searchQuery'));
+                });
+
+                module.calendarView.on('dateSelected', function (selectedDate) {
+                    that.searchResults(cityId, party, date, time, module.searchBar.model.get('party'), Helper.formatDate(selectedDate), module.searchBar.model.get('time'), module.searchBar.model.get('searchQuery'));
+                });
             });
 
             var getRestaurantsHandler = function (err, data) {
@@ -370,48 +390,27 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                     time: module.searchBar.model.get('time')
                 });
 
-                if (module.contentLayout == null) {
-                    //render only at first time                        
-                    module.contentLayout = new module.ContentLayout;
-                    module.calendarView = new module.CalendarView({ date: newDate || date });
-                    module.calendarTopBarView = new module.TopBarView({
-                        model: module.calendarTopBar,
-                        leftClickEvent: 'btnLeftClick'
-                    });
-
+                if (!rendered) {
                     app.content.show(module.contentLayout);
                     module.contentLayout.searchBar.show(module.searchBar);
-
-                    module.searchBar.on('datePickerClicked', function () {
-                        module.calendarTopBarView.on('btnLeftClick', function () {
-                            that.searchResults(cityId, party, date, time, newDate);
-                        });
-
-                        app.topBar.show(module.calendarTopBarView);
-                        app.content.show(module.calendarView);
-
-                        module.calendarView.on('dateSelected', function (selectedDate) {
-                            module.searchBar.model.set('date', selectedDate);
-                            that.searchResults(cityId, party, date, time, module.searchBar.model.get('party'), Helper.formatDate(selectedDate), module.searchBar.model.get('time'));
-                        });
-                    });
+                    app.topBar.show(module.topBarBlock);
+                    rendered = true;
                 }
 
                 module.contentLayout.resultsHolder.show(module.restaurantsView);
-                app.topBar.show(module.topBarBlock);
             };
 
-            module.searchBar.on('searchParametersChanged', function (data) {
-                var startChanged = new Date(data.date + ' ' + data.time);
-                var endChanged = new Date(startChanged);
-
-                startChanged.setMinutes(startChanged.getMinutes() - 15);
-                endChanged.setMinutes(endChanged.getMinutes() + 15);
-
-                app.execute('GetRestaurants', cityId, startChanged, endChanged, data.party, data.time, data.searchQuery,  filter, getRestaurantsHandler);
+            module.searchBar.on('filterParametersChanged', function (data) {
+                //apply party size, date and time filter (ie redirect with new query string)
+                app.router.navigate('search-results/' + cityId + '/party/' + data.party + '/date/' + data.date + '/time/' + data.time, { trigger: true });
             });
-            
-            app.execute('GetRestaurants', cityId, start, end, party, time, null, filter, getRestaurantsHandler);
+
+            module.searchBar.on('searchParametersChanged', function (data) {
+                //apply search filter
+                app.execute('GetRestaurants', cityId, start, end, party, time, data.searchQuery, filter, getRestaurantsHandler);
+            });
+
+            app.execute('GetRestaurants', cityId, start, end, party, time, searchQuery, filter, getRestaurantsHandler);
         },
 
         browseAll: function (cityId) {
@@ -472,7 +471,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                 app.topBar.show(module.topBarBlock);
             };
 
-            module.searchBarView.on('searchParametersChanged', function (data) {                
+            module.searchBarView.on('searchParametersChanged', function (data) {
                 app.execute('GetRestaurantsByMetro', cityId, filter, data.searchQuery, getRestaurantsHandler);
             });
 

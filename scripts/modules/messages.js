@@ -168,14 +168,10 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
 
     app.commands.setHandler('GetRestaurants', function (cityId, start, end, party, time, filter, searchQuery, callback) {        
         app.execute('GetRestaurantsByMetro', cityId, searchQuery, filter, function (err, restaurants) {
-            if (err) {
-                return callback(err);
-            }
+            if (err) return callback(err);
 
             app.execute('API:GetAvailableSlots', cityId, start, end, party, function (err, slots) {
-                if (err) {
-                    return callback(err);
-                }
+                if (err) return callback(err);
 
                 var result = new Restaurants(
                     restaurants.filter(function (restaurant) {
@@ -221,14 +217,10 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
 
     app.commands.setHandler('GetRestaurant', function (id, start, end, party, time, callback) {
         Data.getRestaurantExtended(id, function (err, restaurant) {
-            if (err) {
-                return callback(err);
-            }
+            if (err) return callback(err);
 
             app.execute('API:GetAvailableSlotsForRestaurant', id, start, end, party, function (err, slots) {
-                if (err) {
-                    return callback(err);
-                }                
+                if (err) return callback(err);
                 
                 if (slots.length > 0) {
                     restaurant.set('slots', slots[0].slots);

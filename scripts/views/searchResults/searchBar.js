@@ -7,7 +7,8 @@
             'click .searchFormButton': 'btnSearchClick',
             'click .btnFindTable': 'btnFindTableClick',
             'click .datePicker': 'datePickerClick',
-            'change .partySize, .time': 'searchParametersChanged'
+            'change .partySize, .time': 'filterParametersChanged',
+            'change .partySize': 'partySizeChanged',
         },
         ui: {
             party: '.partySize',
@@ -26,30 +27,35 @@
                 showTimes = this.model.get('showTimes'),
                 party = this.model.get('party'),
                 date = this.model.get('date'),
-                time = this.model.get('time');
+                time = this.model.get('time'),
+                query = this.model.get('query');
 
             if (showTimingBar === true) {
-
                 if (showTimes === true) this.rerenderTime(true);
 
-                if (typeof party != 'undefined') {
-                    this.ui.party.val(party);
-                }
+                if (typeof party != 'undefined') this.ui.party.val(party);
 
                 if (typeof date != 'undefined') {
                     this.ui.dateLabel.text(date);
                     this.ui.date.val(date);
                 }
 
-                if (typeof time != 'undefined') {
-                    this.ui.time.val(time);
+                if (typeof time != 'undefined') this.ui.time.val(time);
+
+                if (typeof query != 'undefined') {
+                    this.ui.txtSearch.val(query)
+                    if (query.length > 0) {
+                        this.ui.btnSearchClear.show();
+                    } else {
+                        this.ui.btnSearchClear.hide();
+                    }
                 }
 
                 var datepicker = this.ui.date,
                     dateLabel = this.ui.dateLabel;                
 
                 that.setDateText(date, this.ui.dateLabel);
-                this.searchParametersChanged(true);
+                this.filterParametersChanged(true);
             }
         },
 
@@ -80,35 +86,35 @@
 
         btnClearClick: function (evt) {            
             evt.preventDefault();
-            this.searchQuery = '';
             this.ui.txtSearch.val('');
             this.ui.btnSearchClear.hide();
 
-            this.refreshResults();
+            this.searchChanged();
         },
 
         btnSearchClick: function (evt) {
             evt.preventDefault();
-            this.searchQuery = this.ui.txtSearch.val();
-            if (this.searchQuery.length > 0) {
+            
+            if (this.ui.txtSearch.val().length > 0) {
                 this.ui.btnSearchClear.show();
             } else {
                 this.ui.btnSearchClear.hide();
             }
 
-            this.refreshResults();
+            this.searchChanged();
         },
 
         btnFindTableClick: function (evt) {
             evt.preventDefault();
-            this.refreshResults();
+            this.filterChanged();
         },
 
-        searchParametersChanged: function (onRender) {
+        filterParametersChanged: function (onRender) {
             var party, date, time, isChanged = false;
 
             this.model.set('party', parseInt(this.ui.party.val(), 10));
             this.model.set('time', this.ui.time.val());
+
             if (this.options.showFindButton !== true) {
                 return true;
             }
@@ -142,26 +148,37 @@
                 this.ui.searchSubmit.show();
             } else {
                 this.ui.searchSubmit.hide();
-            }
+            }            
         },
 
-        refreshResults: function () {            
+        partySizeChanged: function () {
+            this.trigger('partySizeChanged', parseInt(this.ui.party.val(), 10));
+        },
+
+        filterChanged: function () {
             var date = this.model.get('date'),
                 dateFormated;
+
             if (date) {
                 dateFormated = Helper.formatDate(date);
             }
 
-            this.trigger('searchParametersChanged', {
+            this.trigger('filterParametersChanged', {
                 party: this.ui.party.val(),
                 date: dateFormated,
-                time: this.ui.time.val(),
-                searchQuery: this.searchQuery
+                time: this.ui.time.val()
+            });
+        },
+
+        searchChanged: function () {
+            this.model.set('searchQuery', this.ui.txtSearch.val());
+
+            this.trigger('searchParametersChanged', {
+                searchQuery: this.ui.txtSearch.val()
             });
         },
 
         rerenderTime: function (isToday) {
-
             var times = Helper.getTimes();
             var select = _(times).map(function (item) { return '<option value="' + item.value + '" ' + (item.selected ? 'selected' : '') + '>' + item.text + '</option>' });
 

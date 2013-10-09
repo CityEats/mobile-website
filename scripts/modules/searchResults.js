@@ -28,7 +28,7 @@ function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, CalendarView, Cont
                 leftUrl: '',
                 title: 'Date'
             }),
-            getSearchModel: function (party, date, time) {
+            getSearchModel: function (party, date, time, query) {
                 if (typeof date == 'string') {
                     date = new Date(date);
                 }
@@ -39,7 +39,8 @@ function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, CalendarView, Cont
                     showTimes: true,
                     party: party,
                     date: date,
-                    time: time
+                    time: time,
+                    query: query
                 });
             },
             ContentLayout: ContentLayout,
