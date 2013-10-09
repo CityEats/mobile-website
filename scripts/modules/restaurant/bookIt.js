@@ -23,6 +23,13 @@ function ($, _, Backbone, app, Helper, TopBar, SearchBar, Dictionary, TopBarView
                 leftUrl: '',
                 title: 'Station Grill'
             }),
+
+            calendarTopBar: new TopBar({
+                leftText: 'Cancel',
+                leftUrl: '',
+                title: 'Date'
+            }),
+
             getSearchModel: function (party, date, time) {
                 if (typeof date == 'string') {
                     date = new Date(date);

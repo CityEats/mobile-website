@@ -805,12 +805,17 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                 module.calendarView = new module.CalendarView({ date: newDate || date });
 
+                module.calendarTopBarView = new module.TopBarView({
+                    model: module.calendarTopBar,
+                    leftClickEvent: 'btnLeftClick'
+                });
+
                 module.chooseTimeView.on('datePickerClicked', function () {
-                    module.calendarView.on('btnLeftClick', function () {
-                        that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, newParty, newDate);
+                    module.calendarTopBarView.on('btnLeftClick', function () {
+                        that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, module.chooseTimeView.model.get('party'), newDate);
                     });
 
-                    app.topBar.show(module.calendarView);
+                    app.topBar.show(module.calendarTopBarView);
                     app.content.show(module.calendarView);
 
                     module.calendarView.on('dateSelected', function (selectedDate) {
@@ -822,6 +827,10 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                 module.nextDaysView.on('newDayView:dateSelected', function (sender, selectedDate) {
                     module.chooseTimeView.model.set('date', selectedDate);
                     that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, module.chooseTimeView.model.get('party'), selectedDate);
+                });
+
+                module.chooseTimeView.on('partySizeChanged', function (partySize) {                                        
+                    that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, partySize, newDate);
                 });
             });
         },
