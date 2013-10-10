@@ -663,7 +663,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                         model: new module.KeyValue({ key: menu }),
                         urlBase: fromRestaurants === true ?
                         ('restaurants/' + cityId + '/' + id + '/') :
-                        ('restaurants/' + cityId + '/' + id + '/' + '/party/' + party + '/date/' + date + '/time/' + time)
+                        ('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/')
                     });
                 }
 
