@@ -33,7 +33,7 @@
 
         onRender: function () {
             //fb link
-            var fbLink = "/auth/facebook?callback_url=/back";
+            var fbLink = "/auth/facebook?callback_url=/auth/facebook/callback/back";
             this.ui.fbLoginBtn.attr('href', fbLink);
 
             //render years
