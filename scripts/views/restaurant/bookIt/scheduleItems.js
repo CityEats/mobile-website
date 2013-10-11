@@ -2,7 +2,10 @@
 
     var ItemView = Marionette.CollectionView.extend({
         tagName: 'ul',
-        itemView: ScheduleItemView
+        itemView: ScheduleItemView,
+        itemViewOptions: function (model, i) {
+            return this.options;
+        }
     });
 
     return ItemView;

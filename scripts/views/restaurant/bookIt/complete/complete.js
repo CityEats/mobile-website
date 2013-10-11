@@ -3,18 +3,18 @@
     var ContentLayout = Backbone.Marionette.Layout.extend({
         template: _.template(contentHtml),
         regions: {
-            //about: '.aboutBox',
-            //select: '.exclusiveEatsSelect',
-            //book: '.bookBox'
-        },
-        events: {
-            'click .btnComplete': 'goToCardInfo'
+            restaurantInfo: '#restaurantInfo',
+            userInfo: '#userInfo',
+            additionalInfo: '#additionalInfo',
         },
 
-        goToCardInfo: function (evt) {
+        events: {
+            'click .btnComplete': 'btnCompleteClick'
+        },
+
+        btnCompleteClick: function (evt) {
             evt.preventDefault();
-            var url = 'restaurants/5/reservation-card-info';
-            app.router.navigate(url, { trigger: true });
+            this.trigger('completeClicked');
         },
     });
 

@@ -28,18 +28,7 @@
 	            },
 
 	            formatPhone: function () {
-	                if (this.phone_number.length > 5) {
-	                    return [
-                            '(',
-                            this.phone_number.substr(0, 3),
-                            ') ',
-                            this.phone_number.substr(3, 3),
-                            '-',
-                            this.phone_number.substr(6)
-	                    ].join('');
-	                } else {
-	                    return this.phone_number;
-	                }
+	                return Helper.formatPhone(this.phone_number);
 	            },
 
 	            slotsFormated: function () {
@@ -83,11 +72,11 @@
 	                    else if (h > selectedHour || (h == selectedHour && m > selectedMin)) {
 	                        position = 2;
 	                    }
-
+	                    console.log(Helper.formatTime(h, m));
 	                    result[position] = {
 	                        text: Helper.formatTime(h, m).textSimple,
 	                        amText: Helper.formatTime(h, m).amText,
-	                        value: this.slots[i],
+	                        value: Helper.formatTime(h, m).value,
 	                        isEmpty: false
 	                    };                        
 	                }
@@ -103,6 +92,10 @@
 	                }
 
 	                return result;
+	            },
+
+	            slotFormated: function (index) {
+	                return Helper.formatDateShort2(this.slots[index]);
 	            },
 
 	            thumbImage: function () {
@@ -124,6 +117,10 @@
 	                    return null;
 	                }
 	            },
+
+	            selectedTimeFormated: function () {
+	                return  Helper.formatTime(this.selectedTime)
+	            }
 	        },
 
 	        highlights: function () {
@@ -172,7 +169,7 @@
 	                    selected: _.some(times, function (slot) { return slot.value == formated.value })
 	                }
 	            }));
-	        }
+	        },            
 	    });
 
 	    return Restaurant;

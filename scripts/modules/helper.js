@@ -1,10 +1,9 @@
 ﻿define([	
 	'underscore',
-	'backbone',
 	'app'	
 ],
 
-function (_, Backbone, app) {
+function (_, app) {
     var monthNamesShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     var daysOfWeek = ['Sunday', 'Monday', 'Tuesday ', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
      
@@ -68,6 +67,12 @@ function (_, Backbone, app) {
             },
 
             formatTime: function (hours, minutes) {
+                if (typeof minutes == 'undefined' && typeof hours == 'string') {
+                    var times = hours.split(':'),
+                        hours = parseInt(times[0], 10),
+                        minutes = parseInt(times[1], 10);
+                }
+
                 var am = hours < 12;
                 var h = am ? hours : (hours - 12);
                 if (am && h == 0) {
@@ -79,7 +84,8 @@ function (_, Backbone, app) {
                     value: hours + ':' + m,
                     textSimple: h + ':' + m,
                     amText: am ? 'a' : 'p',
-                    amTextFull: am ? 'am' : 'pm'
+                    amTextFull: am ? 'am' : 'pm',
+                    valueSimpleAmTextFull: h + ':' + m + (am ? 'am' : 'pm'),
                 };
             },
 
@@ -104,7 +110,14 @@ function (_, Backbone, app) {
                 }
                 return daysOfWeek[date.getDay()] + ' ' + monthNamesShort[date.getMonth()] + ' ' + getNumber(date.getDate());
             },
-            
+
+            formatDateShort2: function (date) {
+                if (typeof date == 'string') {
+                    date = new Date(date);
+                }
+
+                return daysOfWeek[date.getDay()].substr(0, 3) + ', ' + monthNamesShort[date.getMonth()] + ' ' + getNumber(date.getDate());
+            },
 
             equalDates: function (date1, date2) {
                 if (typeof date1 == 'string') {
@@ -176,7 +189,22 @@ function (_, Backbone, app) {
                 }
 
                 return times;
-            }
+            },
+
+            formatPhone: function (phone_number) {
+                if (phone_number.length > 5) {
+                    return [
+                        '(',
+                        phone_number.substr(0, 3),
+                        ') ',
+                        phone_number.substr(3, 3),
+                        '-',
+                        phone_number.substr(6)
+                    ].join('');
+                } else {
+                    return phone_number;
+                }
+            },
         });
     });
 });

@@ -4,15 +4,15 @@
         tagName: 'li',
         className: 'scheduleItem',
         template: _.template(itemHtml),
-        //events: {
-        //    'click .scheduleLink': 'goToCompleteReservation'
-        //},
+        events: {
+            'click .scheduleLink': 'goToCompleteReservation'
+        },
 
-        //goToCompleteReservation: function (evt) {
-        //    evt.preventDefault();
-        //    var url = 'restaurants/5/complete-reservation';
-        //    app.router.navigate(url, { trigger: true });
-        //}
+        goToCompleteReservation: function (evt) {
+            evt.preventDefault()
+            var url = this.options.completeUrl + this.model.get('key');
+            app.router.navigate(url, { trigger: true });
+        }
     });
 
     return ItemView;

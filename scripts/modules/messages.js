@@ -229,7 +229,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                 }
 
                 if (time) {
-                    restaurant.set('selectedTime', time);
+                    restaurant.set('selectedTime', time);                    
                 }
 
                 if (party) {
@@ -266,7 +266,19 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
             },
             geoOptions
         );
-    });    
+    });
+
+    //reservations
+    app.commands.setHandler('API:CompleteReservation', function (id, reservation, callback) {
+        var handler = postJSONStatic(API_PATH + '/restaurants/' + id + '/locks', reservation);
+        handler(callback);
+    });
+
+    app.commands.setHandler('CompleteReservation', function (id, reservation, callback) {
+        app.execute('API:CompleteReservation', id, reservation, function (err, response) {
+            callback(err, response);
+        });
+    });
 
     return {};
 });

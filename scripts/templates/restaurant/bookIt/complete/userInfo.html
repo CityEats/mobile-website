@@ -1,0 +1,53 @@
+﻿<div class="btnHolder" id="pnLogIn">
+    <a href="#" class="btn pale btnLogIn">Log In</a>
+</div>
+
+<%if (typeof email != 'undefined') { %>
+<div id="pnlAccountInfo">
+    <h4 class="reservationSubTitle">Your account info</h4>
+    <div class="roundedBox">
+        <div class="roundedBoxRow">
+            <div class="reservationData">
+                <p><%= getFullName() %></p>
+                <p class="reservationGreyText"><%= email %></p>
+                <p class="reservationGreyText"><%= formatPhone() %></p>
+                <div class="reservationDataButtons">
+                    <div class="reservationDataButtonLeft">
+                        <a href="#" class="btnSoft small btnSomeoneElse">Reserving for someone else?</a>
+                    </div>
+                    <div class="reservationDataButtonRight">
+                        <a href="#" class="btnSoft small btnEditProfile">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<% } %>
+<div id="pnlReservationInfo">
+    <h4 class="reservationSubTitle">Enter reservation info</h4>
+    <div class="pnlForMyself hide">
+        <div class="reservationDataButtonLeft">
+            <a href="#" class="btnSoft small btnForMyself">I’m reserving for myself</a>
+        </div>            
+        <br />
+    </div>
+    <div class="roundedBox">
+        <div class="roundedBoxRow">
+            <input class="textField blank txtFirstName" type="text" placeholder="First Name" />
+            <p class="textError txtFirstNameError hide">Error</p>
+        </div>
+        <div class="roundedBoxRow">
+            <input class="textField blank txtLastName" type="text" placeholder="Last Name" />
+            <p class="textError txtLastNameError hide">Error</p>
+        </div>
+        <div class="roundedBoxRow">
+            <input class="textField blank txtEmail" type="email" placeholder="Email" />
+            <p class="textError txtEmailError hide">Error</p>
+        </div>
+        <div class="roundedBoxRow">
+            <input class="textField blank txtPhone" type="tel" placeholder="Phone" />
+            <p class="textError txtPhoneError hide">Error</p>
+        </div>        
+    </div>
+</div>

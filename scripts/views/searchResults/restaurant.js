@@ -32,10 +32,14 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
 
         gotoReservation: function (evt) {
             evt.preventDefault();
-            var time = this.$(evt.target).data('time');
+            var selected = this.$(evt.target).data('time');
             var id = this.model.get('id'),
-                cityid = this.model.get('metro').id;
-            app.router.navigate('restaurants/' + cityid + '/' + id + '/complete-reservation/' + time, { trigger: true });
+                date = this.options.date,
+                time = this.options.time,
+                cityId = this.options.cityId,
+                party = this.options.party;
+
+            app.router.navigate('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/search/complete-reservation/' + selected, { trigger: true });
         }
     });
 
