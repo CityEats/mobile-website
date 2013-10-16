@@ -272,6 +272,31 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                         return callback ? callback(err, currentUser) : null;
                     });
                 }
+            },
+
+            saveReservation: function (lockId, reservation) {
+                var reservations = this.getReservations(),
+                    created = new Date;
+                created.setDate(created.getDate() - 1);
+                created = created.getTime();
+
+                for (var item in reservations) {
+                    if (reservations.hasOwnProperty(item) && reservations[item].createdAt < created) delete reservations[item];
+                }
+
+                reservations[lockId] = reservation;
+                reservations[lockId].createdAt = (new Date).getTime();
+
+                localStorage.setItem('Reservations', JSON.stringify(reservations));
+            },
+
+            getReservation: function (lockId, reservation) {
+                return this.getReservations()[lockId];
+            },
+
+            getReservations: function () {
+                var result = localStorage.getItem('Reservations');
+                return result ? JSON.parse(result) : {};
             }
         });
     });

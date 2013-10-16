@@ -78,6 +78,18 @@ function (app, Marionette, Backbone, _, BasicItemView, itemHtml) {
             }
 
             return isValid;
+        },
+
+        getModel: function () {
+            if (!this.validate()) return null;
+
+            return this.model || {
+                isNotAuthorized: true,
+                firstName: this.ui.txtFirstName.val(),
+                lastName: this.ui.txtLastName.val(),
+                email: this.ui.txtEmail.val(),
+                phone: this.ui.txtPhone.val(),
+            };
         }
     });
 
