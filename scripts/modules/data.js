@@ -125,9 +125,9 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
 
             getMetros: function (callback, lat, lng) {
                 if (metros == null) {
-                    app.execute('API:GetMetros', lat, lng, function (err, data) {                        
+                    app.execute('API:GetMetros', lat, lng, function (err, data) {
                         if (err == null) {
-                            metros = new Cities(data.metros);
+                            metros = new Cities(_.where(data.metros, { active: true }));
                         }
                         if (lat && lng && metros.length > 0 && app.request('GetCurrentCity') == null) {
                             app.execute('SetCurrentCity', metros.at(0))

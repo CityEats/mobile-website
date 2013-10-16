@@ -113,7 +113,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                         module.contentLayout = new module.ContentLayout({ hasCurrentCity: !!currentCity });
                         app.content.show(module.contentLayout);
                         currentCity.set('isCurrent', true);
-                        cities = new module.Cities(cities.without(currentCity));
+                        cities = new module.Cities(cities.filter(function (city) { return city.get('id') != currentCity.get('id') }));
                         module.contentLayout.currentCity.show(new module.CityView({ model: currentCity }));
                     } else {
                         module.contentLayout = new module.ContentLayout;
@@ -952,8 +952,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                             app.execute('LockReservation', id, reservation, function (err, lockResponse) {
                                 if (err) return that.errorPartial();
 
-                                app.execute('ConfirmReservation', id, lockResponse.lock_id, reservation, function (err, response) {
-                                    debugger
+                                app.execute('ConfirmReservation', id, lockResponse.lock_id, reservation, function (err, response) {                                    
                                     if (err) return that.errorPartial();
 
                                     app.router.navigate('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + filterTime + '/' + from + '/confirmed-reservation/' + time + '/' + lockResponse.lock_id, { trigger: true });
