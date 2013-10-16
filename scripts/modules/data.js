@@ -92,8 +92,10 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                         searchQuery = searchQuery.toLowerCase();
                         var name = restaurant.get('name').toLowerCase(),
                             cuisines = _(restaurant.get('cuisine_types')).map(function (item) { return item.name; }).join(' | ').toLowerCase();
-
-                        filteredByQuery = name.indexOf(searchQuery) != -1 || cuisines.indexOf(searchQuery) != -1;
+                            
+                        filteredByQuery = name.indexOf(searchQuery) != -1 ||
+                            cuisines.indexOf(searchQuery) != -1 ||
+                            restaurant.get('neighborhood').name.toLowerCase().indexOf(searchQuery) != -1;
                     }
 
                     return filteredByCuisine && filteredByNeighborhood && filteredByPrice && filteredByQuery;
