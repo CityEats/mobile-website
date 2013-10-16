@@ -10,8 +10,9 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
         tagName: 'article',
         className: 'resultsListItem',
         events: {
+            'click' : 'rootClick',
             'click .resultsListTitle a': 'goToRestaurantInfo',
-            'click .btnSlot': 'gotoReservation'
+            'click .btnSlot': 'gotoReservation',
         },
 
         goToRestaurantInfo: function (evt) {
@@ -40,7 +41,13 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
                 party = this.options.party;
 
             app.router.navigate('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/search/complete-reservation/' + selected, { trigger: true });
-        }
+        },
+
+        rootClick: function (evt) {
+            if (this.options.showSimple === true) {
+                this.goToRestaurantInfo(evt);
+            }
+        },
     });
 
     return ItemView;
