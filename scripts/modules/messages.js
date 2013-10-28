@@ -13,7 +13,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     var API_PATH = '/api/v2',
         API_PATH1 = '/api/v1',
         API_KEY = 'k2Rw6FRzFcuS0suyVIRk96mOIyKEhtH89Fvqz377htFrymvd7IfIPonvzmt87v3';
-    
+
     var getJSONStatic = function (url) {
         return function (callback) {
             $.getJSON(url)
@@ -21,7 +21,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                     if (callback) callback(null, response);
                 })
                 .error(function (response) {
-                    if (callback)callback(response);
+                    if (callback) callback(response);
                 });
         };
     };
@@ -83,16 +83,16 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
 
     app.reqres.setHandler('GetFilterSimple', function (cityid) {
         return Data.getFilterSimple(cityid);
-    });    
+    });
 
     app.commands.setHandler('ResetFilter', function (cityid) {
-        Data.resetFilter(cityid);        
+        Data.resetFilter(cityid);
     });
 
     //cities
     app.commands.setHandler('API:GetMetros', function (lat, lng, callback) {
-        var handler = (lat && lng) ?            
-            getJSONStatic(API_PATH + '/metros?lat=' + lat + '&lng=' + lng): 
+        var handler = (lat && lng) ?
+            getJSONStatic(API_PATH + '/metros?lat=' + lat + '&lng=' + lng) :
             getJSONStatic(API_PATH + '/metros');
         handler(callback);
     });
@@ -154,7 +154,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     });
 
     app.commands.setHandler('API:GetUser', function (callback) {
-        var handler = getJSONStatic(API_PATH + '/user');        
+        var handler = getJSONStatic(API_PATH + '/user');
         handler(callback);
     });
 
@@ -170,9 +170,9 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         Data.signOut();
     });
 
-    app.commands.setHandler('GetCurrentUser', function (callback) {        
+    app.commands.setHandler('GetCurrentUser', function (callback) {
         Data.getCurrentUser(callback);
-    });    
+    });
 
     //restaurants
     app.commands.setHandler('API:GetAvailableSlots', function (cityId, start, end, party, callback) {
@@ -184,7 +184,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         handler(callback);
     });
 
-    app.commands.setHandler('GetRestaurants', function (cityId, start, end, party, time, filter, searchQuery, callback) {        
+    app.commands.setHandler('GetRestaurants', function (cityId, start, end, party, time, filter, searchQuery, callback) {
         app.execute('GetRestaurantsByMetro', cityId, searchQuery, filter, function (err, restaurants) {
             if (err) return callback(err);
 
@@ -224,7 +224,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         handler(callback);
     });
 
-    app.commands.setHandler('API:GetAvailableSlotsForRestaurant', function (id, start, end, party, callback) {        
+    app.commands.setHandler('API:GetAvailableSlotsForRestaurant', function (id, start, end, party, callback) {
         var handler = getJSONStatic(API_PATH +
             '/restaurants/' + id +
             '/available_slots?start_time=' + Helper.formatDateForApi(start) +
@@ -239,7 +239,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
 
             app.execute('API:GetAvailableSlotsForRestaurant', id, start, end, party, function (err, slots) {
                 if (err) return callback(err);
-                
+
                 if (slots.length > 0) {
                     restaurant.set('slots', slots[0].slots);
                 } else {
@@ -247,7 +247,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                 }
 
                 if (time) {
-                    restaurant.set('selectedTime', time);                    
+                    restaurant.set('selectedTime', time);
                 }
 
                 if (party) {
@@ -256,7 +256,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
 
                 callback(null, restaurant);
             });
-        });        
+        });
     });
 
     app.commands.setHandler('API:GetRestaurantsByMetro', function (metroId, perPage, pageNumber, callback) {
@@ -274,9 +274,9 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
             maximumAge: 30000,
             timeout: 15000
         };
-        
+
         navigator.geolocation.getCurrentPosition(
-            function success(data) {                
+            function success(data) {
                 Data.getMetros(callback, data.coords.latitude, data.coords.longitude);
             },
             function error(data) {
@@ -311,20 +311,17 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
                 party_size: reservation.party,
                 reserved_for: reservation.slotDate,
                 lock_id: lockId,
+                promo_code: '',
+                special_request: ''
             }
         };
-        if (reservation.user.isNotAuthorized != true) {
-            request.reservation['user'] = { id: reservation.user.get('id') };
-            request.reservation['email'] = reservation.user.get('email');
-            request.reservation['first_name'] = reservation.user.get('first_name');
-            request.reservation['last_name'] = reservation.user.get('last_name');
-            request.reservation['phone_number'] = reservation.user.get('phone_number');
-        } else {
-            request.reservation['email'] = reservation.user.email;
-            request.reservation['first_name'] = reservation.user.firstName;
-            request.reservation['last_name'] = reservation.user.lastName;
-            request.reservation['phone_number'] = reservation.user.phone;
-        }
+
+        if (reservation.user.isAuthorized === true) request.reservation['user'] = { id: reservation.user.id };
+
+        request.reservation['email'] = reservation.user.email;
+        request.reservation['first_name'] = reservation.user.firstName;
+        request.reservation['last_name'] = reservation.user.lastName;
+        request.reservation['phone_number'] = reservation.user.phone;
 
         var handler = postJSONStatic(API_PATH1 + '/iorders', request);
         handler(callback);

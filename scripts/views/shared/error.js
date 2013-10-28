@@ -5,6 +5,11 @@
         events: {
             'click .btnRefresh': 'btnRefreshClick',
         },
+        serializeData: function() {
+            return {
+                error : this.options.error || 'An error has occurred, please try refresh data'
+            };
+        },
 
         btnRefreshClick: function (evt) {           
             evt.preventDefault();

@@ -48,12 +48,14 @@ function (app, Marionette, Backbone, _, BasicItemView, itemHtml) {
             this.ui.pnlAccountInfo.hide();
             this.ui.pnlReservationInfo.show();
             this.ui.pnlForMyself.show();
+            this.isSomeoneElse = true;
         },
 
         btnForMyselfClick: function (evt) {
             evt.preventDefault();
             this.ui.pnlAccountInfo.show();
             this.ui.pnlReservationInfo.hide();
+            this.isSomeoneElse = false;
         },
 
         validate: function () {
@@ -83,12 +85,14 @@ function (app, Marionette, Backbone, _, BasicItemView, itemHtml) {
         getModel: function () {
             if (!this.validate()) return null;
 
-            return this.model || {
-                isNotAuthorized: true,
-                firstName: this.ui.txtFirstName.val(),
-                lastName: this.ui.txtLastName.val(),
-                email: this.ui.txtEmail.val(),
-                phone: this.ui.txtPhone.val(),
+            var isAuthorized = this.model != null && this.isSomeoneElse != true;
+            return {
+                isAuthorized: isAuthorized,
+                firstName: isAuthorized ? this.model.get('first_name') : this.ui.txtFirstName.val(),
+                lastName: isAuthorized ? this.model.get('last_name') : this.ui.txtLastName.val(),
+                email: isAuthorized ? this.model.get('email') : this.ui.txtEmail.val(),
+                phone: isAuthorized ? this.model.get('phone_number') : this.ui.txtPhone.val(),
+                id: isAuthorized ? this.model.get('id') : null,
             };
         }
     });

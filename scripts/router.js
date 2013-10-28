@@ -940,6 +940,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                     module.contentLayout.additionalInfo.show(module.contentLayout.additionalInfoView);
                     
                     module.contentLayout.on('completeClicked', function () {
+                        var view = this;
                         if (module.contentLayout.userInfoView.validate()) {
                             var reservation = {
                                 user: module.contentLayout.userInfoView.getModel(),
@@ -952,10 +953,18 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                             app.execute('LockReservation', id, reservation, function (err, lockResponse) {
                                 if (err) return that.errorPartial();
 
-                                app.execute('ConfirmReservation', id, lockResponse.lock_id, reservation, function (err, response) {                                    
-                                    if (err) return that.errorPartial();
-
-                                    app.router.navigate('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + filterTime + '/' + from + '/confirmed-reservation/' + time + '/' + lockResponse.lock_id, { trigger: true });
+                                app.execute('ConfirmReservation', id, lockResponse.lock_id, reservation, function (err, response) {
+                                    if (err == null) {
+                                        app.router.navigate('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + filterTime + '/' + from + '/confirmed-reservation/' + time + '/' + lockResponse.lock_id, { trigger: true });
+                                    }
+                                    else {
+                                        var error = Helper.getErrorMessage(err);
+                                        if (error) {
+                                            view.showError(error, null, 'main');
+                                        } else {
+                                            that.errorPartial();
+                                        }
+                                    }
                                 });
                             });
                         }
@@ -1086,9 +1095,9 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             app.content.show(new NotFoundView);            
         },
 
-        errorPartial: function (holder) {
+        errorPartial: function (holder, error) {
             holder = holder || app.content;
-            var errorView = new ErrorView;
+            var errorView = new ErrorView({ error: error });
             holder.show(errorView);
             return false;
         },
