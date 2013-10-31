@@ -60,23 +60,7 @@
         },
 
         setDateText: function (date, label) {
-            var current = new Date;
-
-            if (current.getDate() == date.getDate() &&
-                current.getMonth() == date.getMonth() &&
-                current.getFullYear() == date.getFullYear()) {
-                    label.text('Today');
-            } else {
-                current.setDate(current.getDate() + 1);
-                if (current.getDate() == date.getDate() &&
-                    current.getMonth() == date.getMonth() &&
-                    current.getFullYear() == date.getFullYear()) {
-                        label.text('Tomorrow');
-                }
-                else {                    
-                    label.text(Helper.formatDate(date));
-                }
-            }
+            label.text(Helper.formatDateRelative(date));
         },
 
         datePickerClick: function (evt) {

@@ -7,8 +7,9 @@
     'models/city',
     'models/restaurant',
     'collections/restaurants',
+    'collections/reservations',
 ],
-function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
+function ($, _, app, Data, Helper, City, Restaurant, Restaurants, Reservations) {
 
     var API_PATH = '/api/v2',
         API_PATH1 = '/api/v1',
@@ -27,14 +28,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     };
 
     var postJSONStatic = function (url, data) {
-        return function (callback) {
-            //$.post(url, JSON.stringify(data))
-            //    .success(function (response) {
-            //        if (callback) callback(null, response);
-            //    })
-            //    .error(function (response) {
-            //        if (callback) callback(response);
-            //    });
+        return function (callback) {            
             console.log('POST: ' + JSON.stringify(data));
             $.ajax({
                 type: 'POST',
@@ -234,28 +228,34 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     });
 
     app.commands.setHandler('GetRestaurant', function (id, start, end, party, time, callback) {
+        if (typeof start == 'function' && typeof end == 'undefined') callback = start;
+
+
         Data.getRestaurantExtended(id, function (err, restaurant) {
             if (err) return callback(err);
+            if (typeof end != 'undefined'&& typeof party != 'undefined' && typeof time != 'undefined') {
+                app.execute('API:GetAvailableSlotsForRestaurant', id, start, end, party, function (err, slots) {
+                    if (err) return callback(err);
 
-            app.execute('API:GetAvailableSlotsForRestaurant', id, start, end, party, function (err, slots) {
-                if (err) return callback(err);
+                    if (slots.length > 0) {
+                        restaurant.set('slots', slots[0].slots);
+                    } else {
+                        restaurant.set('slots', []);
+                    }
 
-                if (slots.length > 0) {
-                    restaurant.set('slots', slots[0].slots);
-                } else {
-                    restaurant.set('slots', []);
-                }
+                    if (time) {
+                        restaurant.set('selectedTime', time);
+                    }
 
-                if (time) {
-                    restaurant.set('selectedTime', time);
-                }
+                    if (party) {
+                        restaurant.set('party', party);
+                    }
 
-                if (party) {
-                    restaurant.set('party', party);
-                }
-
+                    callback(null, restaurant);
+                });
+            } else {
                 callback(null, restaurant);
-            });
+            }            
         });
     });
 
@@ -292,11 +292,11 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         handler(callback);
     });
 
-    app.commands.setHandler('LockReservation', function (id, reservation, callback) {
-        app.execute('API:LockReservation', id, { party_size: reservation.party, time: Helper.formatDateForApi(reservation.slotDate) }, function (err, response) {
+    app.commands.setHandler('LockReservation', function (id, lock, callback) {
+        app.execute('API:LockReservation', id, { party_size: lock.party, time: Helper.formatDateForApi(lock.slotDate) }, function (err, response) {
             if (err == null) {
-                //save reservation data                
-                Data.saveReservation(response.lock_id, reservation);
+                //save lock data                
+                Data.saveLock(response.lock_id, lock);
             }
 
             callback(err, response);
@@ -330,9 +330,9 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
     app.commands.setHandler('ConfirmReservation', function (id, lockId, reservation, callback) {
         app.execute('API:ConfirmReservation', id, lockId, reservation, function (err, response) {
             if (err == null) {
-                var reservation = Data.getReservation(lockId, reservation);
-                reservation.reservationResponse = reservation;
-                Data.saveReservation(lockId, reservation);
+                var lock = Data.getLock(lockId);
+                lock.reservationResponse = reservation;
+                Data.saveLock(lockId, lock);
             }
 
             callback(err, response);
@@ -350,5 +350,42 @@ function ($, _, app, Data, Helper, City, Restaurant, Restaurants) {
         });
     });
 
+    app.commands.setHandler('API:GetReservations', function (callback) {
+        var handler = getJSONStatic(API_PATH + '/reservations');
+        handler(callback);
+    });
+
+    app.commands.setHandler('GetReservations', function (callback) {
+        app.execute('API:GetReservations', function (err, response) {
+            if (err == null) {                
+                if (response.reservations) {
+                    Data.saveReservations(response.reservations);
+                    callback(null, new Reservations(response.reservations));
+                } else {
+                    callback(null, response);
+                }
+            } else {
+                callback(err);
+            }
+        });
+    });
+
+    app.commands.setHandler('GetReservation', function (id, callback) {
+        Data.getReservation(id, callback);
+    });
+
+    app.commands.setHandler('API:RemoveReservation', function (id, callback) {
+        callback();
+    });
+
+    app.commands.setHandler('RemoveReservation', function (id, callback) {
+        app.execute('API:RemoveReservation', id, function (err, response) {
+            if(err) return callback(err);
+
+            Data.removeReservation(id);
+            callback(null);
+        });
+    });
+    
     return {};
 });

@@ -39,14 +39,6 @@ function (_, app) {
                     + ':' + pad(date.getUTCSeconds())
                     + '-' + String((date.getUTCMilliseconds() / 1000).toFixed(3)).slice(2, 5)
                     + 'Z';
-                //return date.getFullYear()
-                //    + '-' + pad(date.getMonth() + 1)
-                //    + '-' + pad(date.getDate())
-                //    + 'T' + pad(date.getHours())
-                //    + ':' + pad(date.getMinutes())
-                //    + ':' + pad(date.getSeconds())
-                //    + '-' + String((date.getMilliseconds() / 1000).toFixed(3)).slice(2, 5)
-                //    + 'Z';
             },
 
             ratingClass: function (rating) {
@@ -67,10 +59,15 @@ function (_, app) {
             },
 
             formatTime: function (hours, minutes) {
-                if (typeof minutes == 'undefined' && typeof hours == 'string') {
-                    var times = hours.split(':'),
-                        hours = parseInt(times[0], 10),
-                        minutes = parseInt(times[1], 10);
+                if (typeof minutes == 'undefined') {
+                    if (typeof hours == 'string') {
+                        var times = hours.split(':'),
+                            hours = parseInt(times[0], 10),
+                            minutes = parseInt(times[1], 10);
+                    } else if (typeof hours == 'object') {
+                        minutes = hours.getMinutes();
+                        hours = hours.getHours();
+                    }
                 }
 
                 var am = hours < 12;
@@ -117,6 +114,37 @@ function (_, app) {
                 }
 
                 return daysOfWeek[date.getDay()].substr(0, 3) + ', ' + monthNamesShort[date.getMonth()] + ' ' + getNumber(date.getDate());
+            },
+
+            formatDateShort3: function (date) {
+                if (typeof date == 'string') {
+                    date = new Date(date);
+                }
+
+                return daysOfWeek[date.getDay()].substr(0, 3) + ' ' + monthNamesShort[date.getMonth()] + ', ' + getNumber(date.getDate());
+            },
+
+            formatDateRelative: function (date, simple) {
+                if (typeof date == 'string') {
+                    date = new Date(date);
+                }
+                var current = new Date;
+
+                if (current.getDate() == date.getDate() &&
+                    current.getMonth() == date.getMonth() &&
+                    current.getFullYear() == date.getFullYear()) {
+                    return 'Today';
+                } else {
+                    current.setDate(current.getDate() + 1);
+                    if (current.getDate() == date.getDate() &&
+                        current.getMonth() == date.getMonth() &&
+                        current.getFullYear() == date.getFullYear()) {
+                        return 'Tomorrow';
+                    }
+                    else {
+                        return simple ? this.formatDateShort3(date) : this.formatDate(date);
+                    }
+                }
             },
 
             equalDates: function (date1, date2) {

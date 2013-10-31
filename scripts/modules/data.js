@@ -7,22 +7,25 @@
     'models/keyValue',
     'models/user',
     'models/restaurant',
+    'models/reservation',
     'collections/dictionary',
     'collections/restaurants',
     'collections/cities'
 ],
 
-function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionary, Restaurants, Cities) {
+function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservation, Dictionary, Restaurants, Cities) {
     var restaurantsByMetro = {},
         restaurantExtended = {},
         cuisinesByMetro = {},
         neighborhoodsByMetro = {},
         metros = null,
         filters = {},
-        currentUser = null;
+        currentUser = null,
+        reservations = {},
+        locks = {};
 
     return app.module('Data', function (Data) {
-        _.extend(Data, {            
+        _.extend(Data, {
             getRestaurantsByMetro: function (metroId, filter, searchQuery, callback) {
                 var that = this;
                 var restaurants = restaurantsByMetro[metroId];
@@ -31,7 +34,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                         if (err == null) {
                             restaurantsByMetro[metroId] = restaurants = new Restaurants(data.restaurants);
                         }
-                        
+
                         return callback ? callback(err, that.filterRestaurants(restaurants, searchQuery, filter)) : null;
                     });
                 } else {
@@ -39,13 +42,13 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                 }
             },
 
-            getRestaurantExtended: function (id, callback) {                
+            getRestaurantExtended: function (id, callback) {
                 var restaurant = restaurantExtended[id];
                 if (typeof restaurant == 'undefined') {
                     app.execute('API:GetRestaurantExtended', id, function (err, resposneRestaurant) {
                         if (err == null) {
                             app.execute('API:GetRestaurant', id, function (err, resposneExtRestaurant) {
-                                if (err == null) {                                    
+                                if (err == null) {
                                     _.extend(resposneRestaurant, resposneExtRestaurant.restaurants);
                                     restaurantExtended[id] = restaurant = new Restaurant(resposneRestaurant);
                                 }
@@ -92,7 +95,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                         searchQuery = searchQuery.toLowerCase();
                         var name = restaurant.get('name').toLowerCase(),
                             cuisines = _(restaurant.get('cuisine_types')).map(function (item) { return item.name; }).join(' | ').toLowerCase();
-                            
+
                         filteredByQuery = name.indexOf(searchQuery) != -1 ||
                             cuisines.indexOf(searchQuery) != -1 ||
                             restaurant.get('neighborhood').name.toLowerCase().indexOf(searchQuery) != -1;
@@ -120,7 +123,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                         //Popular                        
                         return new Restaurants(restaurants.sortBy('popularity').reverse());
                     }
-                }                
+                }
             },
 
             getMetros: function (callback, lat, lng) {
@@ -227,27 +230,27 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                 filters[cityId] = filter;
             },
 
-            signUp: function (user, callback) {                
+            signUp: function (user, callback) {
                 app.execute('API:SignUp', { user: user }, function (err, data) {
                     currentUser = null;
                     if (err == null) {
                         app.execute('GetCurrentUser');
-                        return callback(err, true);                        
+                        return callback(err, true);
                         //"{"user":{"id":931,"first_name":"Max","last_name":"K","email":"max@max.com","phone_number":"3102762251","created_at":"2013-09-13T14:57:08Z","badges":{"Available":[],"Completed":[]},"avatar_url":"default_normal_avatar.gif","favorite_cuisine_types":[],"favorite_neighborhoods":[]}}"
                     } else {
                         return callback(err, false);
-                        
+
                     }
                 });
             },
 
             signIn: function (user, callback) {
-                user['remember_me'] = 1;                
-                app.execute('API:SignIn', { user: user }, function (err, data) {                    
+                user['remember_me'] = 1;
+                app.execute('API:SignIn', { user: user }, function (err, data) {
                     currentUser = null;
                     if (err == null) {
                         app.execute('GetCurrentUser');
-                        return callback(err, true);                        
+                        return callback(err, true);
                         //"{"avatar_content_type":null,"avatar_file_name":null,"avatar_file_size":null,"avatar_updated_at":null,"birthday":null,"cached_slug":"maxk","concierge_hotel_name":null,"created_at":"2013-09-13T14:57:08Z","dietary_restrictions":null,"disabled_at":null,"email":"max@max.com","first_favorite_food":null,"first_favorite_neighborhood":null,"first_name":"Max","id":931,"invitation_accepted_at":null,"invitation_sent_at":null,"invitation_token":null,"invited_by_id":null,"invited_by_message":null,"invited_by_type":null,"is_hotel_concierge":false,"last_name":"K","location":"New York, NY","phone_number":"3102762251","postal_code":"11222","private_history":null,"referral_awarded":false,"referral_type_id":null,"reviewer":null,"search_opt_out":false,"second_favorite_food":null,"second_favorite_neighborhood":null,"terms_of_service_id":1,"terms_of_service_ip":"91.247.221.51","third_favorite_food":null,"third_favorite_neighborhood":null,"unique_id":"95f98c1d4cd2a7bbc1fde59ce38d1f5e","updated_at":"2013-09-13T15:11:49Z","success":true}"
                     } else {
                         return callback(err, false);
@@ -256,11 +259,11 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                 });
             },
 
-            signOut: function(){
+            signOut: function () {
                 currentUser = null;
             },
 
-            getCurrentUser: function (callback) {                
+            getCurrentUser: function (callback) {
                 if (currentUser) {
                     return callback ? callback(null, currentUser) : null;
                 } else {
@@ -276,30 +279,35 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Dictionar
                 }
             },
 
-            saveReservation: function (lockId, reservation) {
-                var reservations = this.getReservations(),
-                    created = new Date;
-                created.setDate(created.getDate() - 1);
-                created = created.getTime();
+            saveLock: function (lockId, lock) {                
+                locks[lockId] = lock;
+            },
 
-                for (var item in reservations) {
-                    if (reservations.hasOwnProperty(item) && reservations[item].createdAt < created) delete reservations[item];
+            getLock: function (lockId) {
+                return locks[lockId];
+            },            
+
+            saveReservations: function (items) {
+                for (var i = 0; i < items.length; i++) {
+                    reservations[items[i].id] = items[i];
                 }
-
-                reservations[lockId] = reservation;
-                reservations[lockId].createdAt = (new Date).getTime();
-
-                localStorage.setItem('Reservations', JSON.stringify(reservations));
             },
 
-            getReservation: function (lockId, reservation) {
-                return this.getReservations()[lockId];
+            getReservation: function (id, callback) {
+                var reservation = reservations[id];
+                if (reservation) return callback(null, new Reservation(reservation));
+
+                app.execute('GetReservations', function (err, items) {
+                    if (err) return callback(err);
+                    reservation = items.get(id);
+                    if (reservation) return callback(null, reservation);
+                    else return callback(null, null);
+                });
             },
 
-            getReservations: function () {
-                var result = localStorage.getItem('Reservations');
-                return result ? JSON.parse(result) : {};
-            }
+            removeReservation: function (id) {
+                if (reservations[id]) delete reservations[id];
+            },
         });
     });
 });

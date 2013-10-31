@@ -9,7 +9,7 @@
         },
 
         goToCompleteReservation: function (evt) {
-            evt.preventDefault()
+            evt.preventDefault();
             var url = this.options.completeUrl + this.model.get('key');
             app.router.navigate(url, { trigger: true });
         }

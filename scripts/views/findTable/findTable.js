@@ -48,7 +48,7 @@
         },
 
         goToUser: function (evt) {
-            this.goTo(evt, '');
+            this.goTo(evt, 'profile');
         },
 
         goToSearchResults: function (evt) {

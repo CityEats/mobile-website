@@ -14,7 +14,7 @@ function ($, _, Backbone, app, TopBar, TopBarView, ContentLayout, EditView) {
         _.extend(Profile, {
             topBar: new TopBar({
                 leftText: 'Home',
-                leftUrl: '',               
+                leftUrl: 'back',               
                 title: 'Account'
             }),
             topBarEdit: new TopBar({

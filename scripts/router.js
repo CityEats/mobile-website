@@ -63,12 +63,10 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             //'restaurants/:num/reservation-card-info': 'reservationCardInfo',
             //'restaurants/:num/reservation-confirmed': 'reservationConfirmed',
             //'restaurants/:num/reservation-canceled': 'reservationCanceled',
-            //'profile': 'profile',
+            'profile': 'profile',
             //'profile/edit': 'profileEdit',
-            //'profile/reservations': 'profileReservations',
-            //'profile/canceled': 'profileCanceled',
-            //'profile/past': 'profilePast',
-            //'profile/upcoming': 'profileupcoming',
+            'profile/reservations': 'profileReservations',
+            'profile/reservations/:num': 'profileReservation',
             '*path': '404'
         },
 
@@ -842,7 +840,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                 module.nextDaysView.on('newDayView:dateSelected', function (sender, selectedDate) {
                     module.chooseTimeView.model.set('date', selectedDate);
-                    that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, module.chooseTimeView.model.get('party'), selectedDate);
+                    that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, module.chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
                 });
 
                 module.chooseTimeView.on('partySizeChanged', function (partySize) {                                        
@@ -1013,20 +1011,26 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
         profile: function () {
             this.setup();
+            var that = this;
 
             var module = require('modules/profile');
 
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
+            app.execute('GetCurrentUser', function (err, currentUser) {
+                if (err) return that.errorPartial();
 
-            module.contentLayout = new module.ContentLayout;
+                if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
+                module.topBarBlock = new module.TopBarView({ model: module.topBar });
+                console.log(currentUser);
+                module.contentLayout = new module.ContentLayout({ model: currentUser });
+
+                app.topBar.show(module.topBarBlock);
+                app.content.show(module.contentLayout);
+            });            
         },
 
         profileEdit: function () {
             this.setup();
-
             var module = require('modules/profile');
 
             module.topBarBlock = new module.TopBarView({ model: module.topBarEdit });
@@ -1039,54 +1043,66 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
         profileReservations: function () {
             this.setup();
+            var that = this;
 
-            var module = require('modules/reservations');
+            var module = require('modules/reservations');            
 
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
+            app.execute('GetReservations', function (err, data) {
+                if (err) return that.errorPartial();                
+                
+                if (data.error) {
+                    that.errorPartial(null, data.error);
+                } else {
+                    module.topBarBlock = new module.TopBarView({ model: module.topBar });
+                    module.contentLayout = new module.ContentLayout({ collection: data });
 
-            module.contentLayout = new module.ContentLayout;
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
+                    app.topBar.show(module.topBarBlock);
+                    app.content.show(module.contentLayout);
+                }
+            });
         },
 
-        profileCanceled: function () {
+        profileReservation: function (id) {
             this.setup();
-
             var module = require('modules/reservations');
 
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
+            app.execute('GetCurrentUser', function (err, currentUser) {
+                if (err) return that.errorPartial();
 
-            module.contentLayout = new module.CanceledView;
+                if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
-        },
+                app.execute('GetReservation', id, function (err, reservation) {
+                    if (err) return that.errorPartial();
+                    if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true });
 
-        profilePast: function () {
-            this.setup();
+                    var title;
+                    if (reservation.isUpcoming()) title = 'Upcoming Reservation';
+                    else if (reservation.isPast()) title = 'Past Reservation';
+                    else if (reservation.isCanceled()) title = 'Canceled Reservation';
 
-            var module = require('modules/reservations');
+                    module.detailsTopBar.set('title', title);
+                    module.details = new module.DetailsView({ model: reservation, user: currentUser })
+                    module.topBarBlock = new module.TopBarView({ model: module.detailsTopBar });
+                    module.contentLayout = module.details;
 
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
+                    app.topBar.show(module.topBarBlock);
+                    app.content.show(module.contentLayout);
 
-            module.contentLayout = new module.PastView;
+                    module.details.on('btnCancelClicked', function () {
+                        app.execute('RemoveReservation', reservation.get('id'), function (err) {
+                            if (err) return that.errorPartial();
+                        });
+                    });
 
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
-        },
-
-        profileupcoming: function () {
-            this.setup();
-
-            var module = require('modules/reservations');
-
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-            module.contentLayout = new module.UpcomingView;
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
+                    module.details.on('btnModifyClicked', function () {
+                        app.execute('GetRestaurant', reservation.get('restaurant_id'), function (err, restaurant) {
+                            if (err) return that.errorPartial();
+                            console.log(restaurant)
+                            app.router.navigate('restaurants/' + restaurant.get('metro').id + '/' + restaurant.get('id') + '/book-it', { trigger: true });
+                        });
+                    });                    
+                });
+            });
         },
 
         '404': function () {
