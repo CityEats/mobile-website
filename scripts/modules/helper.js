@@ -164,7 +164,8 @@ function (_, app) {
             getErrorMessage: function (err) {
                 if (err.responseText && err.responseText.length > 0) {
                     var text = JSON.parse(err.responseText);
-                    return text.error;
+                    if (text.error) return typeof text.error == 'string' ? text.error : text.error[0]; //if error is an array;
+                    else return null;
                 }
                 return null;
             },

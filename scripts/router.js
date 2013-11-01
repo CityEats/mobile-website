@@ -58,7 +58,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             //'restaurants/:num/exclusive-eats': 'restaurantExclusiveEats',
             //'restaurants/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
             'restaurants/:num/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num': 'completeReservation',
-            'restaurants/:num/:num/party/:num/date/:num/time/:num/:from/confirmed-reservation/:num/:code': 'reservationConfirmed',
+            //'restaurants/:num/:num/party/:num/date/:num/time/:num/:from/confirmed-reservation/:num/:num': 'reservationConfirmed',
+            'restaurants/:num/:num/confirmed-reservation/:num/:num': 'reservationConfirmed',
             //'restaurants/:num/:num/complete-reservation/:num': 'completeReservation',
             //'restaurants/:num/reservation-card-info': 'reservationCardInfo',
             //'restaurants/:num/reservation-confirmed': 'reservationConfirmed',
@@ -891,20 +892,15 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
             bookItUrl = 'restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it';
             switch (from) {
-                case 'search':
-                    returnUrl = 'search-results/' + cityId + '/party/' + party + '/date/' + date + '/time/' + time
+                case 'search': returnUrl = 'search-results/' + cityId + '/party/' + party + '/date/' + date + '/time/' + time;
                     break;
-                case 'info':
-                    returnUrl = 'restaurants/' + cityId + '/' + id + '/info';
+                case 'info': returnUrl = 'restaurants/' + cityId + '/' + id + '/info';
                     break;
-                case 'info-ext':
-                    returnUrl = 'restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/info';
+                case 'info-ext': returnUrl = 'restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/info';
                     break;
-                case 'book-it-ext':
-                    returnUrl = bookItUrl;
+                case 'book-it-ext': returnUrl = bookItUrl;
                     break;
-                case 'book-it':
-                    returnUrl = 'restaurants/' + cityId + '/' + id + '/book-it';
+                case 'book-it': returnUrl = 'restaurants/' + cityId + '/' + id + '/book-it';
             }
 
             var module = require('modules/restaurant/completeReservation');
@@ -938,9 +934,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                     module.contentLayout.additionalInfo.show(module.contentLayout.additionalInfoView);
                     
                     module.contentLayout.on('completeClicked', function () {
-                        var view = this;
                         if (module.contentLayout.userInfoView.validate()) {
-                            var reservation = {
+                            var lock = {
                                 user: module.contentLayout.userInfoView.getModel(),
                                 additionalInfo: module.contentLayout.additionalInfoView.getModel(),
                                 party: party,
@@ -948,17 +943,19 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                                 restaurantId: id
                             };
 
-                            app.execute('LockReservation', id, reservation, function (err, lockResponse) {
+                            app.execute('LockReservation', id, lock, function (err, lockResponse) {
                                 if (err) return that.errorPartial();
 
-                                app.execute('ConfirmReservation', id, lockResponse.lock_id, reservation, function (err, response) {
+                                app.execute('ConfirmReservation', id, lockResponse.lock_id, lock, function (err, response) {
                                     if (err == null) {
-                                        app.router.navigate('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + filterTime + '/' + from + '/confirmed-reservation/' + time + '/' + lockResponse.lock_id, { trigger: true });
+                                        //app.router.navigate('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + filterTime + '/' + from + '/confirmed-reservation/' + time + '/' + lockResponse.lock_id, { trigger: true });
+                                        app.router.navigate('restaurants/' + cityId + '/' + id + '/confirmed-reservation/' + lockResponse.lock_id + '/' + response.order.ts_reservation_id, { trigger: true });
                                     }
                                     else {
+                                        
                                         var error = Helper.getErrorMessage(err);
                                         if (error) {
-                                            view.showError(error, null, 'main');
+                                            that.errorPartial(null, error);
                                         } else {
                                             that.errorPartial();
                                         }
@@ -971,16 +968,72 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             });
         },
 
-        reservationConfirmed: function (cityId, id, party, date, filterTime, from, time, code) {            
+        //reservationConfirmed: function (cityId, id, party, date, filterTime, from, time, code) {            
+        //    this.setup();
+
+        //    var module = require('modules/restaurant/confirmReservation');
+
+
+        //    app.execute('GetReservation', id, lockResponse.lock_id, reservation, function (err, response) { });
+
+        //    module.topBarBlock = new module.TopBarView({ model: module.topBar });
+
+        //    module.contentLayout = new module.ContentLayout;
+
+        //    app.topBar.show(module.topBarBlock);
+        //    app.content.show(module.contentLayout);
+    //},
+        reservationConfirmed: function (cityId, restaurantId, lockId, id) {
             this.setup();
+            var that = this;
 
             var module = require('modules/restaurant/confirmReservation');
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
+            //TODO: try to cancel reservation and fix error )
+            app.execute('GetCurrentUser', function (err, currentUser) {
+                if (err) return that.errorPartial();
 
-            module.contentLayout = new module.ContentLayout;
+                module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
+                if (currentUser == null) {
+                    var preReservation = app.request('GetLock', lockId);
+                    if (preReservation == null) return app.router.navigate('login', { trigger: true });
+
+                    var showViews = function (orderId) {
+                        app.topBar.show(module.topBarBlock);
+                        app.content.show(module.contentLayout);
+
+                        module.contentLayout.on('btnCancelClicked', function () {
+                            app.execute('CancelReservation', id, function (err) {
+                                if (err) return that.errorPartial();
+                                app.router.navigate('profile/reservations', { trigger: true });
+                            });
+                        });
+
+                        module.contentLayout.on('btnModifyClicked', function () {
+                            app.execute('GetRestaurant', restaurantId, function (err, restaurant) {
+                                if (err) return that.errorPartial();
+                                app.router.navigate('restaurants/' + cityId + '/' + restaurantId + '/book-it', { trigger: true });
+                            });
+                        });
+                    };
+
+                    app.execute('GetRestaurant', restaurantId, function (err, restaurant) {
+                        if (err) return that.errorPartial();
+                        console.log(restaurant)
+                        module.contentLayout = new module.ContentLayout({ model: preReservation, isLock: true, isConfirmedView: true, restaurant: restaurant.get('name'), points: 200 });
+                        showViews();
+                    });
+                } else {
+                    app.execute('GetReservation', id, function (err, reservation) {
+                        if (err) return that.errorPartial(null, err);
+                        if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true, isConfirmedView: true });
+
+                        module.contentLayout = new module.ContentLayout({ model: reservation, user: currentUser })
+
+                        showViews();
+                    });
+                }
+            });
         },
 
         reservationCardInfo: function (num) {
@@ -1047,14 +1100,14 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
             var module = require('modules/reservations');            
 
-            app.execute('GetReservations', function (err, data) {
+            app.execute('GetReservations', function (err, reservations) {
                 if (err) return that.errorPartial();                
                 
-                if (data.error) {
-                    that.errorPartial(null, data.error);
+                if (reservations.error) {
+                    that.errorPartial(null, reservations.error);
                 } else {
                     module.topBarBlock = new module.TopBarView({ model: module.topBar });
-                    module.contentLayout = new module.ContentLayout({ collection: data });
+                    module.contentLayout = new module.ContentLayout({ collection: reservations });
 
                     app.topBar.show(module.topBarBlock);
                     app.content.show(module.contentLayout);
@@ -1064,11 +1117,11 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
         profileReservation: function (id) {
             this.setup();
+            var that = this;
             var module = require('modules/reservations');
 
             app.execute('GetCurrentUser', function (err, currentUser) {
                 if (err) return that.errorPartial();
-
                 if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
                 app.execute('GetReservation', id, function (err, reservation) {
@@ -1089,15 +1142,15 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                     app.content.show(module.contentLayout);
 
                     module.details.on('btnCancelClicked', function () {
-                        app.execute('RemoveReservation', reservation.get('id'), function (err) {
-                            if (err) return that.errorPartial();
+                        app.execute('CancelReservation', reservation.get('order_id'), function (err) {
+                            if (err) return that.errorPartial();                            
+                            app.router.navigate('profile/reservations', { trigger: true });
                         });
                     });
 
                     module.details.on('btnModifyClicked', function () {
                         app.execute('GetRestaurant', reservation.get('restaurant_id'), function (err, restaurant) {
-                            if (err) return that.errorPartial();
-                            console.log(restaurant)
+                            if (err) return that.errorPartial();                            
                             app.router.navigate('restaurants/' + restaurant.get('metro').id + '/' + restaurant.get('id') + '/book-it', { trigger: true });
                         });
                     });                    
@@ -1113,6 +1166,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
         errorPartial: function (holder, error) {
             holder = holder || app.content;
+            error = typeof error == 'string' ? error : null; //error shoud be only string
             var errorView = new ErrorView({ error: error });
             holder.show(errorView);
             return false;

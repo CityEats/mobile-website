@@ -5,16 +5,17 @@
 	'app',
     'models/topBar',
     'views/shared/topBar',    
-    'views/restaurant/bookIt/complete/confirmed'
+    'views/account/reservations/details'
 ],
 
 function ($, _, Backbone, app, TopBar, TopBarView, ContentLayout) {
     return app.module('ConfirmReservation', function (CompleteReservation) {
         _.extend(CompleteReservation, {
             topBar: new TopBar({
-                leftText: 'Back',
-                leftUrl: '',
-                title: 'Book It'
+                rightText: 'Done',
+                rightUrl: 'back',                
+                rightCss: 'blue',
+                title: 'Reservation Confirmed'
             }),
             ContentLayout: ContentLayout,
             TopBarView: TopBarView

@@ -285,7 +285,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
 
             getLock: function (lockId) {
                 return locks[lockId];
-            },            
+            },
 
             saveReservations: function (items) {
                 for (var i = 0; i < items.length; i++) {
@@ -305,8 +305,8 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 });
             },
 
-            removeReservation: function (id) {
-                if (reservations[id]) delete reservations[id];
+            clearReservation: function (id) {
+                reservations = {};
             },
         });
     });

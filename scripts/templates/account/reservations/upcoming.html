@@ -13,9 +13,9 @@
     <div class="roundedBoxRow">
         <div class="reservationData">
             <h4 class="reservationSubTitle">Your contact info</h4>
-            <p><%= user.getFullName() %></p>
+            <p><%= getFullName() %></p>
             <p class="reservationGreyText"><%= user.email %></p>
-            <p class="reservationGreyText"><%= user.formatPhone() %></p>
+            <p class="reservationGreyText"><%= formatPhone() %></p>
         </div>
     </div>
     <div class="roundedBoxRow">
@@ -35,6 +35,7 @@
         </div>
     </div>
 </div>
+<% if (!isLock) { %>
 <div class="roundedBox">
     <div class="roundedBoxRow">
         <div class="reminder reminderBookIt">
@@ -54,3 +55,11 @@
     </div>
 </div>
 <a href="#" class="btn pale btnShare">Share Reservation</a>
+<% } else if (points > 0) { %>
+    <div class="emptyBox">
+        <div class="reservationPoints">
+            <div class="reservationPointsNumber"><%= points %></div>
+            <div class="reservationPointsHolder">Points Rewarded for <br />this Reservation</div>
+        </div>
+    </div>
+<% } %>

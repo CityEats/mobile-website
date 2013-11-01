@@ -1,7 +1,9 @@
 ﻿<div class="topBarInner">    
     <% if (typeof(leftUrl) != "undefined") { %>    
         <a class="topBarLink linkLeft <%= (typeof(leftCss) != 'undefined') ? rightCss : '' %>" href="#"><%= leftText %></a>
-    <%} if (typeof(rightUrl) != "undefined") {%>
+    <%}  else { %>
+    <span/>
+    <% } if (typeof(rightUrl) != "undefined") {%>
         <a class="topBarLink linkRight <%= (typeof(rightCss) != 'undefined') ? rightCss : '' %>" href="#"><%= rightText %></a>
     <% }%>
     <div class="topBarHolder">
