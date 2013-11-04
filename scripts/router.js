@@ -914,8 +914,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                 app.execute('GetCurrentUser', function (err, currentUser) {
                     if (err) return that.errorPartial();
                     
-                    if (restaurant.get('slots').length == 0) return app.router.navigate(returnUrl, { trigger: true });
-                    console.log(restaurant.get('slots'));
+                    if (restaurant.get('slots').length == 0) return app.router.navigate(returnUrl, { trigger: true });                    
 
                     module.contentLayout = new module.ContentLayout;
 
@@ -949,7 +948,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                                 app.execute('ConfirmReservation', id, lockResponse.lock_id, lock, function (err, response) {
                                     if (err == null) {
                                         //app.router.navigate('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + filterTime + '/' + from + '/confirmed-reservation/' + time + '/' + lockResponse.lock_id, { trigger: true });
-                                        app.router.navigate('restaurants/' + cityId + '/' + id + '/confirmed-reservation/' + lockResponse.lock_id + '/' + response.order.ts_reservation_id, { trigger: true });
+                                        app.router.navigate('restaurants/' + cityId + '/' + id + '/confirmed-reservation/' + lockResponse.lock_id + '/' + response.order.id, { trigger: true });
                                     }
                                     else {
                                         
@@ -994,42 +993,40 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                 module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
+                var showViews = function (orderId) {
+                    app.topBar.show(module.topBarBlock);
+                    app.content.show(module.contentLayout);
+
+                    module.contentLayout.on('btnCancelClicked', function () {
+                        app.execute('CancelReservation', id, function (err) {
+                            if (err) return that.errorPartial();
+                            app.router.navigate('profile/reservations', { trigger: true });
+                        });
+                    });
+
+                    module.contentLayout.on('btnModifyClicked', function () {
+                        app.execute('GetRestaurant', restaurantId, function (err, restaurant) {
+                            if (err) return that.errorPartial();
+                            app.router.navigate('restaurants/' + cityId + '/' + restaurantId + '/book-it', { trigger: true });
+                        });
+                    });
+                };
+
                 if (currentUser == null) {
                     var preReservation = app.request('GetLock', lockId);
                     if (preReservation == null) return app.router.navigate('login', { trigger: true });
-
-                    var showViews = function (orderId) {
-                        app.topBar.show(module.topBarBlock);
-                        app.content.show(module.contentLayout);
-
-                        module.contentLayout.on('btnCancelClicked', function () {
-                            app.execute('CancelReservation', id, function (err) {
-                                if (err) return that.errorPartial();
-                                app.router.navigate('profile/reservations', { trigger: true });
-                            });
-                        });
-
-                        module.contentLayout.on('btnModifyClicked', function () {
-                            app.execute('GetRestaurant', restaurantId, function (err, restaurant) {
-                                if (err) return that.errorPartial();
-                                app.router.navigate('restaurants/' + cityId + '/' + restaurantId + '/book-it', { trigger: true });
-                            });
-                        });
-                    };
-
+               
                     app.execute('GetRestaurant', restaurantId, function (err, restaurant) {
-                        if (err) return that.errorPartial();
-                        console.log(restaurant)
+                        if (err) return that.errorPartial();                        
                         module.contentLayout = new module.ContentLayout({ model: preReservation, isLock: true, isConfirmedView: true, restaurant: restaurant.get('name'), points: 200 });
                         showViews();
                     });
                 } else {
-                    app.execute('GetReservation', id, function (err, reservation) {
+                    app.execute('GetReservation', parseInt(id, 10), function (err, reservation) {
                         if (err) return that.errorPartial(null, err);
                         if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true, isConfirmedView: true });
 
                         module.contentLayout = new module.ContentLayout({ model: reservation, user: currentUser })
-
                         showViews();
                     });
                 }
@@ -1073,8 +1070,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                 if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
-                module.topBarBlock = new module.TopBarView({ model: module.topBar });
-                console.log(currentUser);
+                module.topBarBlock = new module.TopBarView({ model: module.topBar });                
                 module.contentLayout = new module.ContentLayout({ model: currentUser });
 
                 app.topBar.show(module.topBarBlock);
@@ -1124,7 +1120,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                 if (err) return that.errorPartial();
                 if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
-                app.execute('GetReservation', id, function (err, reservation) {
+                app.execute('GetReservation', parseInt(id, 10), function (err, reservation) {
                     if (err) return that.errorPartial();
                     if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true });
 

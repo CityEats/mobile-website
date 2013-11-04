@@ -29,8 +29,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     };
 
     var postJSONStatic = function (url, data) {
-        return function (callback) {
-            console.log('POST: ' + JSON.stringify(data));
+        return function (callback) {            
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -329,13 +328,12 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     });
 
     app.commands.setHandler('ConfirmReservation', function (restaurantId, lockId, reservation, callback) {
-        app.execute('API:ConfirmReservation', restaurantId, lockId, reservation, function (err, response) {            
+        app.execute('API:ConfirmReservation', restaurantId, lockId, reservation, function (err, response) {
             if (err == null) {
                 var lock = Data.getLock(lockId);
                 lock.reservationResponse = response;
                 Data.saveLock(lockId, lock);
             }
-
             callback(err, response);
         });
     });
@@ -378,7 +376,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         });
     });
 
-    app.commands.setHandler('GetReservation', function (id, callback) {
+    app.commands.setHandler('GetReservation', function (id, callback) {        
         Data.getReservation(id, callback);
     });
 

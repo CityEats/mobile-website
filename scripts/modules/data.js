@@ -287,9 +287,9 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 return locks[lockId];
             },
 
-            saveReservations: function (items) {
+            saveReservations: function (items) {                
                 for (var i = 0; i < items.length; i++) {
-                    reservations[items[i].id] = items[i];
+                    reservations[items[i].order_id] = items[i];
                 }
             },
 
@@ -299,7 +299,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
 
                 app.execute('GetReservations', function (err, items) {
                     if (err) return callback(err);
-                    reservation = items.get(id);
+                    reservation = items.findWhere({ order_id: id });
                     if (reservation) return callback(null, reservation);
                     else return callback(null, null);
                 });

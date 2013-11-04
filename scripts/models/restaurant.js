@@ -72,7 +72,6 @@
 	                    else if (h > selectedHour || (h == selectedHour && m > selectedMin)) {
 	                        position = 2;
 	                    }
-	                    console.log(Helper.formatTime(h, m));
 	                    result[position] = {
 	                        text: Helper.formatTime(h, m).textSimple,
 	                        amText: Helper.formatTime(h, m).amText,
