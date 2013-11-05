@@ -230,7 +230,6 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     app.commands.setHandler('GetRestaurant', function (id, start, end, party, time, callback) {
         if (typeof start == 'function' && typeof end == 'undefined') callback = start;
 
-
         Data.getRestaurantExtended(id, function (err, restaurant) {
             if (err) return callback(err);
             if (typeof end != 'undefined' && typeof party != 'undefined' && typeof time != 'undefined') {

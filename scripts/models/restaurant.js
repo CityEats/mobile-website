@@ -1,6 +1,6 @@
 ﻿define(['underscore', 'backbone', 'modules/helper', 'collections/reviews', 'collections/menus', 'collections/dictionary'],
 	function (_, Backbone, Helper, Reviews, Menus, Dictionary) {
-	    var Restaurant = Backbone.Model.extend({	       
+	    var Restaurant = Backbone.Model.extend({
 	        defaults: {
 	            distance: 5,
 
@@ -11,7 +11,7 @@
 	            cuisine_types: [],
 
 	            cuisinesText: function (separator) {
-                    separator = separator || ' / ';
+	                separator = separator || ' / ';
 	                return _(this.cuisine_types).map(function (item) { return item.name; }).join(separator);
 	            },
 
@@ -32,7 +32,7 @@
 	            },
 
 	            slotsFormated: function () {
-                    
+
 	                var times = this.selectedTime.split(':');
 	                var selectedHour = parseInt(times[0], 10),
                         selectedMin = parseInt(times[1], 10);
@@ -56,7 +56,7 @@
 	                        text: Helper.formatTime(plus15.getHours(), plus15.getMinutes()).textSimple,
 	                        amText: Helper.formatTime(plus15.getHours(), plus15.getMinutes()).amText
 	                    }
-	                ];	                
+	                ];
 
 	                var result = new Array(3);
 	                for (var i = 0; i < this.slots.length; i++) {
@@ -77,7 +77,7 @@
 	                        amText: Helper.formatTime(h, m).amText,
 	                        value: Helper.formatTime(h, m).value,
 	                        isEmpty: false
-	                    };                        
+	                    };
 	                }
 
 	                for (var i = 0; i < result.length; i++) {
@@ -111,21 +111,21 @@
 
 	            geoImageUrl: function () {
 	                if (this.address.lat && this.address.lng) {
-	                    return 'http://maps.googleapis.com/maps/api/staticmap?center=' + this.address.lat + ',' + this.address.lng + '&zoom=12&size=292x73&sensor=false&&markers=color:red%7Clabel:R%7C' + this.address.lat + ','+ this.address.lng ;
+	                    return 'http://maps.googleapis.com/maps/api/staticmap?center=' + this.address.lat + ',' + this.address.lng + '&zoom=12&size=292x73&sensor=false&&markers=color:red%7Clabel:R%7C' + this.address.lat + ',' + this.address.lng;
 	                } else {
 	                    return null;
 	                }
 	            },
 
 	            selectedTimeFormated: function () {
-	                return  Helper.formatTime(this.selectedTime)
+	                return Helper.formatTime(this.selectedTime)
 	            }
 	        },
 
 	        highlights: function () {
 	            var result = _.find(this.get('lists'), function (item) { return item.list.title.toLowerCase() === 'highlights'; });
 	            if (result) {
-	                return (result.list.description || '').split('\n');	                
+	                return (result.list.description || '').split('\n');
 	            } else {
 	                return [];
 	            }
@@ -156,19 +156,19 @@
 
 	        getFullSlots: function () {
 	            var times = Helper.getTimes(),
-	                slots = this.get('slots');
+	                slots = _.map(this.get('slots'), function (item) { return Helper.formatTime(new Date(item)) });
 
-	            return new Dictionary(_.map(slots, function (item) {
-	                var time = new Date(item),
+	            return new Dictionary(_.map(times, function (item) {
+	                var time = new Date('2000-01-01 ' + item.value),
 	                    formated = Helper.formatTime(time.getHours(), time.getMinutes());
 
 	                return {
 	                    key: formated.value,
 	                    value: formated,
-	                    selected: _.some(times, function (slot) { return slot.value == formated.value })
+	                    selected: _.some(slots, function (slot) { return slot.value == formated.value })
 	                }
 	            }));
-	        },            
+	        },
 	    });
 
 	    return Restaurant;
