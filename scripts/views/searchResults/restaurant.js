@@ -6,13 +6,19 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
         getTemplate: function () {            
             return this.options.showSimple ? _.template(restaurantSimpleHtml) : _.template(restaurantHtml);
         },
-
         tagName: 'article',
         className: 'resultsListItem',
+        ui: {
+            rateit: '.rateit'
+        },
         events: {
             'click' : 'rootClick',
             'click .resultsListTitle a': 'goToRestaurantInfo',
             'click .btnSlot': 'gotoReservation',
+        },
+
+        onRender: function () {
+            this.ui.rateit.rateit();
         },
 
         goToRestaurantInfo: function (evt) {

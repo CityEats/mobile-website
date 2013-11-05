@@ -5,7 +5,8 @@
         className: 'review',
         template: _.template(reviewItemHtml),
         ui: {
-            btnShowMore: '.btnShowMore'
+            btnShowMore: '.btnShowMore',
+            rateit: '.rateit'
         },
         events: {
             'click .btnShowMore': 'showMoreClick'
@@ -19,7 +20,9 @@
 
         onRender: function () {
             if (this.fullContent.length < this.model.maxLength) this.ui.btnShowMore.hide();
-        },        
+
+            this.ui.rateit.rateit();
+        },
 
         showMoreClick: function (evt) {
             evt.preventDefault();

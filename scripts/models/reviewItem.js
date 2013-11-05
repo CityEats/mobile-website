@@ -15,10 +15,6 @@
 	            title: '',
 	            username: '',
 
-	            ratingClass: function () {
-	                return Helper.ratingClass(parseInt(this.overall_rating, 10));
-	            },	            
-
 	            date: function () {
 	                return Helper.formatDateLong(this.created_at);
 	            }

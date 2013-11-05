@@ -1,5 +1,5 @@
 ﻿<h3 class="reviewTitle"><%= title %></h3>
-<div class="rating <%= ratingClass() %>"></div>
+<div class="rateit rating" data-rateit-value="<%= overall_rating %>" data-rateit-ispreset="true" data-rateit-readonly="true" data-rateit-starwidth="14" data-rateit-starheight="14"></div>
 <p class="reviewMeta">By <%= username %>  -  <%= date() %></p>
 <p><%= madlibs %> 
 <a href="#" class="btnShowMore">Read More</a></p>

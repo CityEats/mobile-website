@@ -9,7 +9,8 @@ require.config({
         'backbone.babysitter': 'vendors/backbone.marionette/core/amd/backbone.babysitter',
         text: 'vendors/require/text',
         urlArgs: "bust=" + (new Date()).getTime(),
-        basicItemView: 'views/shared/basicItemView'
+        basicItemView: 'views/shared/basicItemView',
+        rateIt: 'vendors/plugins/rateit/jquery.rateit.min'
     },
     shim: {
         jquery: {
@@ -21,12 +22,16 @@ require.config({
         backbone: {
             deps: ['jquery', 'underscore'],
             exports: 'Backbone'
+        },
+        rateIt: {
+            deps: ['jquery'],
+            exports: 'rateIt'
         }
     },
 });
 
 require(
-  ['jquery', 'app', 'router', 'backbone'],
+  ['jquery', 'app', 'router', 'backbone', 'rateIt'],
   function ($, app, Router, Backbone) {
       this.app = app;
 

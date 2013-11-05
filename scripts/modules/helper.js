@@ -39,24 +39,7 @@ function (_, app) {
                     + ':' + pad(date.getUTCSeconds())
                     + '-' + String((date.getUTCMilliseconds() / 1000).toFixed(3)).slice(2, 5)
                     + 'Z';
-            },
-
-            ratingClass: function (rating) {
-                switch (rating) {
-                    case 2:
-                        return 'two';
-                    case 3:
-                        return 'three';
-                    case 4:
-                        return 'four';
-                    case 5:
-                        return 'five';
-                    case 1:
-                        return 'one';
-                    default:
-                        return '';
-                }
-            },
+            },           
 
             formatTime: function (hours, minutes) {
                 if (typeof minutes == 'undefined') {

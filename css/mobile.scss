@@ -1482,48 +1482,6 @@ p {
     border-left: 0;
 }
 
-.rating {
-    width: 71px;
-    height: 14px;
-    background: url(../img/rating.png) -5px -5px no-repeat;
-    &.one {
-        background-position: -5px -24px;
-    }
-    &.two {
-        background-position: -5px -43px;
-    }
-    &.three {
-        background-position: -5px -62px;
-    }
-    &.four {
-        background-position: -5px -81px;
-    }
-    &.five {
-        background-position: -5px -100px;
-    }
-    &.small {
-        width: 50px;
-        height: 10px;
-        background: url(../img/ratingSmall.png) -6px -5px no-repeat;
-        margin: 2px 0 0 auto;
-        &.one {
-            background-position: -6px -20px;
-        }
-        &.two {
-            background-position: -6px -35px;
-        }
-        &.three {
-            background-position: -6px -50px;
-        }
-        &.four {
-            background-position: -6px -65px;
-        }
-        &.five {
-            background-position: -6px -80px;
-        }
-    }
-}
-
 /* Cuisines */
 .cuisines {
     margin: -10px;
@@ -2099,15 +2057,7 @@ only screen and (min-resolution: 192dpi) {
     .followUsLinksLink {
         background-image: url(../img/icon-followUs@2.png);
         background-size: 143px 51px;
-    }
-    .rating {
-        background-image: url(../img/rating@2.png);
-        background-size: 81px 119px;
-    }
-    .rating.small {
-        background-image: url(../img/ratingSmall@2.png);
-        background-size: 61px 95px;
-    }
+    }    
     .mainBoxTextListItem {
         background-image: url(../img/bullet@2.png);
         background-size: 3px 3px;

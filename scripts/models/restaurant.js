@@ -23,10 +23,6 @@
 	                return (new Array(5 - this.price_rating + 1)).join('$');
 	            },
 
-	            ratingClass: function () {
-	                return Helper.ratingClass(parseInt(this.rating, 10));
-	            },
-
 	            formatPhone: function () {
 	                return Helper.formatPhone(this.phone_number);
 	            },

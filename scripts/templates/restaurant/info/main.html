@@ -3,7 +3,7 @@
         <div class="column2 restaurantInfoMainTop">
             <div class="column">
                 <div class="restaurantInfoPrice"><span class="restaurantInfoPriceActive"><%= priceSymbols() %></span><%= priceSymbolsReverse() %></div>
-                <div class="rating <%= ratingClass() %>""></div>
+                <div class="rateit rating" data-rateit-value="<%= rating %>" data-rateit-ispreset="true" data-rateit-readonly="true" data-rateit-starwidth="14" data-rateit-starheight="14"></div>
             </div>
             <div class="column">
                 <a href="#" class="btn small grey"><%= formatPhone()%></a>
