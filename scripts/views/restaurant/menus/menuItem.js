@@ -1,4 +1,4 @@
-﻿define(['marionette', 'underscore', 'views/restaurant/menus/categoryItem', 'text!templates/restaurant/menus/menuItem.html', 'collections/menuCategories'], function (Marionette, _, CategoryItemView, MenuItemHtml, c) {
+﻿define(['marionette', 'underscore', 'views/restaurant/menus/categoryItem', 'text!templates/restaurant/menus/menuItem.html'], function (Marionette, _, CategoryItemView, MenuItemHtml) {
 
     var ItemView = Marionette.CompositeView.extend({
         className: 'menuItem hide',
@@ -10,7 +10,7 @@
             'click .restaurantReviewsNext': 'btnNextClick'
         },
 
-        modelEvents:{
+        modelEvents: {
             'show': 'showMe',
             'hide': 'hideMe'
         },
@@ -32,10 +32,10 @@
         hideMe: function () {
             this.$el.hide();
         },
-            
+
         initialize: function () {
             this.collection = this.model.getMenuCategories();
-        }        
+        }
     });
 
     return ItemView;

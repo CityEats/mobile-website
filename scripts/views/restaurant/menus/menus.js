@@ -1,7 +1,8 @@
-﻿define(['marionette', 'underscore', 'views/restaurant/menus/menuItem'], function (Marionette, _, MenuItemView) {
+﻿define(['marionette', 'underscore', 'views/restaurant/menus/menuItem', 'views/shared/noResults'], function (Marionette, _, MenuItemView, NoItemsView) {
 
     var ItemView = Marionette.CollectionView.extend({        
         itemView: MenuItemView,
+        emptyView: NoItemsView,
         collectionEvents: {
             'showPrev': 'showPrev',
             'showNext': 'showNext'

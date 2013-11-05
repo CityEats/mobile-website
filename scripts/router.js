@@ -787,8 +787,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             var module = require('modules/restaurant/info');
 
             this.buildRestaurantBaseInfo(cityId, id, party, date, time, fromRestaurants, module, 2, function (restaurant) {                
-                module.reviewsView = new module.menus.MenusView({ collection: restaurant.getMenuCollection() });
-                module.contentLayout.restaurantContent.show(module.reviewsView);
+                module.menusView = new module.menus.MenusView({ collection: restaurant.getMenuCollection() });
+                module.contentLayout.restaurantContent.show(module.menusView);
             });
         },
 
