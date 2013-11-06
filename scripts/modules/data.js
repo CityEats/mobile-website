@@ -259,8 +259,13 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 });
             },
 
-            signOut: function () {
-                currentUser = null;
+            signOut: function (callback) {
+                app.execute('API:SignOut', function (err) {
+                    if (err) return callback(err);
+
+                    currentUser = null;
+                    callback(null);
+                });                
             },
 
             getCurrentUser: function (callback) {

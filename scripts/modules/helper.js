@@ -9,13 +9,9 @@ function (_, app) {
      
     function getNumber(num) {
         switch (num) {
-            case 1:
-                return '1st';
-            case 2:
-                return '2nd';            
-            default:
-                return num + 'th';
-
+            case 1: return '1st';
+            case 2: return '2nd';
+            default: return num + 'th';
         }
     }
 
@@ -55,9 +51,8 @@ function (_, app) {
 
                 var am = hours < 12;
                 var h = am ? hours : (hours - 12);
-                if (am && h == 0) {
-                    h = 12;
-                }
+
+                if (am && h == 0) h = 12;
 
                 var m = minutes < 10 ? '0' + minutes : minutes;
                 return {

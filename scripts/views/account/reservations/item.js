@@ -5,12 +5,12 @@
         tagName: 'li',
         className: 'accountReservationItem',
         events: {
-            'click .accountReservationLink': 'goToReservations'
+            'click .accountReservationLink': 'goToReservation'
         },
 
-        goToReservations: function (evt) {
+        goToReservation: function (evt) {
             evt.preventDefault();
-            var url = 'profile/reservations/' + this.model.get('id');
+            var url = 'profile/reservations/' + this.model.get('order_id');
 
             app.router.navigate(url, { trigger: true });
         }

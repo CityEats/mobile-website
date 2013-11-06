@@ -21,9 +21,9 @@ define([
     'modules/restaurant/confirmReservation',
     'modules/profile',
     'modules/reservations',
-    'modules/messages',
-    
+    'modules/messages',    
 ],
+
 function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
     var fbAppId = '488317004581923',
         fbRedirectUri = 'https://qa-beta.cityeats.com/api/v2/facebook_auth';
@@ -55,9 +55,11 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             'restaurants/:num/:num/party/:num/date/:num/time/:num/menus': 'restauranMenus',
             'restaurants/:num/:num/book-it': 'restauranBookItShort',
             'restaurants/:num/:num/party/:num/date/:num/time/:num/book-it': 'restauranBookIt',
+            'restaurants/:num/:num/party/:num/date/:num/time/:num/book-it/modify/:code/:url': 'restauranBookIt',
             //'restaurants/:num/exclusive-eats': 'restaurantExclusiveEats',
             //'restaurants/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
             'restaurants/:num/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num': 'completeReservation',
+            'restaurants/:num/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num/modify/:code/:url': 'completeReservation',
             //'restaurants/:num/:num/party/:num/date/:num/time/:num/:from/confirmed-reservation/:num/:num': 'reservationConfirmed',
             'restaurants/:num/:num/confirmed-reservation/:num/:num': 'reservationConfirmed',
             //'restaurants/:num/:num/complete-reservation/:num': 'completeReservation',
@@ -266,11 +268,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             app.execute('GetCuisines', cityId); //preload cuisines;
 
             var currentCity = app.request('GetCurrentCity');
-
-            if (currentCity == null) {
-                app.router.navigate('', { trigger: true });
-                return;
-            }            
+            if (currentCity == null) return app.router.navigate('', { trigger: true });
 
             app.execute('GetCurrentUser', function (err, currentUser) {
                 if (err) return that.errorPartial();
@@ -322,12 +320,16 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                     var url = 'search-results/' + cityId + '/party/' + partySize + '/date/' + Helper.formatDate(date) + '/time/' + time;
                     app.router.navigate(url, { trigger: true });
+                }).on('logOut', function () {
+                    app.execute('SignOut', function (err) {
+                        if (err) return that.errorPartial();
+                        app.router.navigate('find-table/' + cityId, { trigger: true });
+                    });
                 });
-
             });
 
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
-            app.topBar.show(module.topBarBlock);            
+            app.topBar.show(module.topBarBlock);
         },
 
         searchResults: function (cityId, party, date, time, newParty, newDate, newTime, searchQuery) {
@@ -338,10 +340,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                 rendered = false;
 
             var currentCity = app.request('GetCurrentCity');
-            if (currentCity == null) {
-                app.router.navigate('', { trigger: true });
-                return;
-            }
+            if (currentCity == null) return app.router.navigate('', { trigger: true });
 
             module.topBar.set('rightUrl', 'search-results/' + cityId + '/party/' + party + '/date/' + date + '/time/' + time + '/filter');
             module.topBar.set('title', currentCity.get('display_name'));
@@ -793,10 +792,10 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
         },
 
         restauranBookItShort: function (cityId, id) {
-            this.restauranBookIt(cityId, id, 2, Helper.formatDate(new Date), '19:00', true);
+            this.restauranBookIt(cityId, id, 2, Helper.formatDate(new Date), '19:00', null, null, true);
         },
 
-        restauranBookIt: function (cityId, id, party, date, time, fromRestaurants, newParty, newDate) {            
+        restauranBookIt: function (cityId, id, party, date, time, code, url, fromRestaurants, newParty, newDate) {
             this.setup();
             var that = this,
                 module = require('modules/restaurant/bookIt');
@@ -811,7 +810,16 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                 module.nextDaysView = new module.NextDaysView({ collection: module.getNextDays(newDate || date) });
                 module.scheduleItemsView = new module.ScheduleItemsView({
                     collection: restaurant.getFullSlots(),
-                    completeUrl: 'restaurants/' + cityId + '/' + id + '/party/' + (newParty || party) + '/date/' + (newDate || date) + '/time/' + time + '/' + (fromRestaurants ? 'book-it' : 'book-it-ext') + '/complete-reservation/'
+                    completeUrlTemplate: [
+                        'restaurants/', cityId,
+                        '/', id,
+                        '/party/', (newParty || party),
+                        '/date/', (newDate || date),
+                        '/time/', time,
+                        '/', (fromRestaurants ? 'book-it' : 'book-it-ext'),
+                        '/complete-reservation/##time##',
+                        (code ? ('/modify/' + code + '/' + encodeURIComponent(url)) : '')
+                    ].join('')
                 });
                 
                 module.contentLayout.chooseTime.show(module.chooseTimeView);
@@ -827,7 +835,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                 module.chooseTimeView.on('datePickerClicked', function () {
                     module.calendarTopBarView.on('btnLeftClick', function () {
-                        that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, module.chooseTimeView.model.get('party'), Helper.formatDate(newDate));
+                        that.restauranBookIt(cityId, id, party, date, time, code, url, fromRestaurants, module.chooseTimeView.model.get('party'), Helper.formatDate(newDate));
                     });
 
                     app.topBar.show(module.calendarTopBarView);
@@ -835,17 +843,17 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                     module.calendarView.on('dateSelected', function (selectedDate) {
                         module.chooseTimeView.model.set('date', selectedDate);
-                        that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, module.chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
+                        that.restauranBookIt(cityId, id, party, date, time, code, url, fromRestaurants, module.chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
                     });
                 });
 
                 module.nextDaysView.on('newDayView:dateSelected', function (sender, selectedDate) {
                     module.chooseTimeView.model.set('date', selectedDate);
-                    that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, module.chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
+                    that.restauranBookIt(cityId, id, party, date, time, code, url, fromRestaurants, module.chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
                 });
 
                 module.chooseTimeView.on('partySizeChanged', function (partySize) {                                        
-                    that.restauranBookIt(cityId, id, party, date, time, fromRestaurants, partySize, newDate);
+                    that.restauranBookIt(cityId, id, party, date, time, code, url, fromRestaurants, partySize, newDate);
                 });
             });
         },
@@ -883,8 +891,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             app.content.show(module.contentLayout);
         },
 
-        completeReservation: function (cityId, id, party, date, filterTime, from, time) {
-            
+        completeReservation: function (cityId, id, party, date, filterTime, from, time, code, url) {
             this.setup();
             var that = this,
                 slotDate = new Date(date + ' ' + time),
@@ -934,33 +941,42 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                     
                     module.contentLayout.on('completeClicked', function () {
                         if (module.contentLayout.userInfoView.validate()) {
-                            var lock = {
-                                user: module.contentLayout.userInfoView.getModel(),
-                                additionalInfo: module.contentLayout.additionalInfoView.getModel(),
-                                party: party,
-                                slotDate: slotDate,
-                                restaurantId: id
-                            };
+                            if (code) {
+                                //update reservation after it modified
+                                app.execute('UpdateReservation', code, { reservation: { party_size: party, reserved_for: Helper.formatDateForApi(slotDate) } }, function (err) {                                    
+                                    if (err) return that.errorPartial();
 
-                            app.execute('LockReservation', id, lock, function (err, lockResponse) {
-                                if (err) return that.errorPartial();
-
-                                app.execute('ConfirmReservation', id, lockResponse.lock_id, lock, function (err, response) {
-                                    if (err == null) {
-                                        //app.router.navigate('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + filterTime + '/' + from + '/confirmed-reservation/' + time + '/' + lockResponse.lock_id, { trigger: true });
-                                        app.router.navigate('restaurants/' + cityId + '/' + id + '/confirmed-reservation/' + lockResponse.lock_id + '/' + response.order.id, { trigger: true });
-                                    }
-                                    else {
-                                        
-                                        var error = Helper.getErrorMessage(err);
-                                        if (error) {
-                                            that.errorPartial(null, error);
-                                        } else {
-                                            that.errorPartial();
-                                        }
-                                    }
+                                    app.router.navigate(url, { trigger: true });
                                 });
-                            });
+
+                            } else {
+                                //create new reservation
+                                var lock = {
+                                    user: module.contentLayout.userInfoView.getModel(),
+                                    additionalInfo: module.contentLayout.additionalInfoView.getModel(),
+                                    party: party,
+                                    slotDate: slotDate,
+                                    restaurantId: id
+                                };
+
+                                app.execute('LockReservation', id, lock, function (err, lockResponse) {
+                                    if (err) return that.errorPartial();
+
+                                    app.execute('ConfirmReservation', id, lockResponse.lock_id, lock, function (err, response) {
+                                        if (err == null) {
+                                            app.router.navigate('restaurants/' + cityId + '/' + id + '/confirmed-reservation/' + lockResponse.lock_id + '/' + response.order.id, { trigger: true });
+                                        }
+                                        else {
+                                            var error = Helper.getErrorMessage(err);
+                                            if (error) {
+                                                that.errorPartial(null, error);
+                                            } else {
+                                                that.errorPartial();
+                                            }
+                                        }
+                                    });
+                                });
+                            }
                         }
                     });
                 });
@@ -1004,10 +1020,12 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                         });
                     });
 
-                    module.contentLayout.on('btnModifyClicked', function () {
+                    module.contentLayout.on('btnModifyClicked', function (code, party, date, time) {
                         app.execute('GetRestaurant', restaurantId, function (err, restaurant) {
                             if (err) return that.errorPartial();
-                            app.router.navigate('restaurants/' + cityId + '/' + restaurantId + '/book-it', { trigger: true });
+
+                            var backUrl = encodeURIComponent(Backbone.history.fragment); //curent url
+                            app.router.navigate('restaurants/' + cityId + '/' + restaurantId + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code + '/' + backUrl, { trigger: true });
                         });
                     });
                 };
@@ -1144,10 +1162,12 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                         });
                     });
 
-                    module.details.on('btnModifyClicked', function () {
+                    module.details.on('btnModifyClicked', function (code, party, date, time) {
                         app.execute('GetRestaurant', reservation.get('restaurant_id'), function (err, restaurant) {
-                            if (err) return that.errorPartial();                            
-                            app.router.navigate('restaurants/' + restaurant.get('metro').id + '/' + restaurant.get('id') + '/book-it', { trigger: true });
+                            if (err) return that.errorPartial();
+
+                            var backUrl = encodeURIComponent(Backbone.history.fragment); //curent url
+                            app.router.navigate('restaurants/' + restaurant.get('metro').id + '/' + restaurant.get('id') + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code + '/' + backUrl, { trigger: true });
                         });
                     });                    
                 });

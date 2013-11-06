@@ -63,9 +63,13 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
             }
         },
 
-        btnModifyClick: function (evt) {
+        btnModifyClick: function (evt) {            
             evt.preventDefault();
-            this.trigger('btnModifyClicked');
+            var reservedDate = new Date(this.model.get('reserved_for')),
+                time = Helper.formatTime(reservedDate),
+                date = Helper.formatDate(reservedDate);
+
+            this.trigger('btnModifyClicked', this.model.get('confirmation_code'), this.model.get('party_size'), date, time.value);
         }
     });
 

@@ -62,7 +62,7 @@
 
         btnLogOutClick: function (evt) {
             evt.preventDefault();
-            console.log('sigon out is not implemented');
+            this.trigger('logOut');
         },
 
         goTo: function (evt, url) {

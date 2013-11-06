@@ -10,7 +10,7 @@
 
         goToCompleteReservation: function (evt) {
             evt.preventDefault();
-            var url = this.options.completeUrl + this.model.get('key');
+            var url = this.options.completeUrlTemplate.replace('##time##', this.model.get('key'));
             app.router.navigate(url, { trigger: true });
         }
     });

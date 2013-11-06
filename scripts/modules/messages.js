@@ -49,7 +49,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
             $.ajax({
                 type: 'PUT',
                 url: url,
-                data: data,
+                data: JSON.stringify(data),
                 contentType: 'application/json'
             }).success(function (response) {
                 if (callback) callback(null, response);
@@ -147,6 +147,11 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         handler(callback);
     });
 
+    app.commands.setHandler('API:SignOut', function (callback) {
+        var handler = getJSONStatic(API_PATH + '/users/sign_out.json');
+        handler(callback);
+    }); 
+
     app.commands.setHandler('API:GetUser', function (callback) {
         var handler = getJSONStatic(API_PATH + '/user');
         handler(callback);
@@ -160,8 +165,8 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         Data.signIn(user, callback);
     });
 
-    app.commands.setHandler('SignOut', function () {
-        Data.signOut();
+    app.commands.setHandler('SignOut', function (callback) {
+        Data.signOut(callback);
     });
 
     app.commands.setHandler('GetCurrentUser', function (callback) {
@@ -397,6 +402,20 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         var lock = Data.getLock(lockId);
         if (lock) return new Reservation(lock);
         else return null;
+    });
+
+    app.commands.setHandler('API:UpdateReservation', function (code, reservation, callback) {
+        var handler = putJSONStatic(API_PATH + '/reservations/' + code, reservation);
+        handler(callback);
+    });
+
+    app.commands.setHandler('UpdateReservation', function (code, reservation, callback) {
+        app.execute('API:UpdateReservation', code, reservation, function (err, response) {
+            if (err) return callback(err);
+
+            Data.saveReservations([response.reservation]);
+            return callback(null, new Reservation(response.reservation));
+        });
     });
 
     return {};
