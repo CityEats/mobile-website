@@ -323,7 +323,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                 }).on('logOut', function () {
                     app.execute('SignOut', function (err) {
                         if (err) return that.errorPartial();
-                        app.router.navigate('find-table/' + cityId, { trigger: true });
+
+                        that.findTable(cityId, date, newParty, newDate, newTime);
                     });
                 });
             });
