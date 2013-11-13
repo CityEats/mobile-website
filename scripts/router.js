@@ -4,6 +4,7 @@ define([
     'views/shared/footer',
     'views/shared/error',
     'views/shared/404',
+    'views/shared/loading',
     'modules/helper',
 	'modules/cities',
     'modules/login',
@@ -24,7 +25,7 @@ define([
     'modules/messages',    
 ],
 
-function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
+function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Helper) {
     var fbAppId = '488317004581923',
         fbRedirectUri = 'https://qa-beta.cityeats.com/api/v2/facebook_auth';
 
@@ -39,7 +40,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             //'contact-us': 'contactUs',
             //'forgot-password': 'forgotPassword',
             'find-table/:num': 'findTable',
-            'search-results/:num/party/:num/date/:num/time/:num': 'searchResults',            
+            'search-results/:num/party/:num/date/:num/time/:num': 'searchResults',
             'restaurants/:num': 'browseAll',
             'restaurants/:num/filter': 'restaurantsFilter',
             'search-results/:num/party/:num/date/:num/time/:num/filter': 'searchResultsFilter',
@@ -76,13 +77,20 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
         setup: function () {
             if (app.footer) return true;
 
+            var that = this;
             app.footerView = new FooterView;
+            app.loadingView = new LoadingView;
 
             app.addRegions({ topBar: '#topBar' });
             app.addRegions({ content: '#content' });
             app.addRegions({ footer: '#footer' });
+            app.addRegions({ loading: '#loading' });
 
             app.footer.show(app.footerView);
+
+            app.vent
+                .on('showLoading', function () { that.toggleLoading(true); })
+                .on('showLoading', function () { that.toggleLoading(false); });
         },
 
         index: function () {
@@ -319,6 +327,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                     var time = module.searchBar.model.get('time');
 
                     var url = 'search-results/' + cityId + '/party/' + partySize + '/date/' + Helper.formatDate(date) + '/time/' + time;
+                    that.toggleLoading(true);
                     app.router.navigate(url, { trigger: true });
                 }).on('logOut', function () {
                     app.execute('SignOut', function (err) {
@@ -334,7 +343,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
         },
 
         searchResults: function (cityId, party, date, time, newParty, newDate, newTime, searchQuery) {
-            this.setup();
+            this.setup();            
+
             var that = this,
                 module = require('modules/searchResults'),
                 filter = app.request('GetFilterSimple', cityId),
@@ -393,6 +403,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
             var getRestaurantsHandler = function (err, data) {
                 if (err) return that.errorPartial();
+                that.toggleLoading(false);
 
                 module.restaurantsView = new module.RestaurantsView({
                     collection: data,
@@ -940,6 +951,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
 
                         module.contentLayout.on('completeClicked', function () {
                             if (module.contentLayout.userInfoView.validate()) {
+                                that.toggleLoading(true);
                                 var lock = {
                                     user: module.contentLayout.userInfoView.getModel(),
                                     additionalInfo: module.contentLayout.additionalInfoView.getModel(),
@@ -1022,6 +1034,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
                 var showViews = function (orderId) {
                     app.topBar.show(module.topBarBlock);
                     app.content.show(module.contentLayout);
+                    that.toggleLoading();
 
                     module.contentLayout.on('btnCancelClicked', function () {
                         app.execute('CancelReservation', id, function (err) {
@@ -1218,8 +1231,15 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, Helper) {
             error = typeof error == 'string' ? error : null; //error shoud be only string
             var errorView = new ErrorView({ error: error });
             holder.show(errorView);
+
+            this.toggleLoading(false);
             return false;
         },
+
+        toggleLoading: function (show) {            
+            if (show) app.loading.show(app.loadingView);
+            else app.loading.close();
+        }
     });
 
     return Router;
