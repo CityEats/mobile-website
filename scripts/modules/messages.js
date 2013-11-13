@@ -296,49 +296,49 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         handler(callback);
     });
 
-    app.commands.setHandler('LockReservation', function (restaurantId, lock, callback) {
-        app.execute('API:LockReservation', restaurantId, { party_size: lock.party, time: Helper.formatDateForApi(lock.slotDate) }, function (err, response) {
-            if (err == null) {
-                //save lock data                
-                Data.saveLock(response.lock_id, lock);
-            }
-
-            callback(err, response);
-        });
-    });
-
-    app.commands.setHandler('API:ConfirmReservation', function (restaurantId, lockId, reservation, callback) {
+    app.commands.setHandler('API:ConfirmReservation', function (restaurantId, lockId, reservation, callback) {        
         var request = {
             restaurant_id: restaurantId,
-            key: API_KEY,
-            reservation: {
-                party_size: reservation.party,
-                reserved_for: reservation.slotDate,
-                lock_id: lockId,
-                promo_code: '',
-                special_request: ''
-            }
+            key: API_KEY
         };
 
-        if (reservation.user.isAuthorized === true) request.reservation['user'] = { id: reservation.user.id };
-
-        request.reservation['email'] = reservation.user.email;
-        request.reservation['first_name'] = reservation.user.firstName;
-        request.reservation['last_name'] = reservation.user.lastName;
-        request.reservation['phone_number'] = reservation.user.phone;
+        _.extend(request, getReservationReguest(reservation));
 
         var handler = postJSONStatic(API_PATH1 + '/iorders', request);
         handler(callback);
     });
 
-    app.commands.setHandler('ConfirmReservation', function (restaurantId, lockId, reservation, callback) {
-        app.execute('API:ConfirmReservation', restaurantId, lockId, reservation, function (err, response) {
-            if (err == null) {
-                var lock = Data.getLock(lockId);
-                lock.reservationResponse = response;
-                Data.saveLock(lockId, lock);
-            }
-            callback(err, response);
+    app.commands.setHandler('ConfirmReservation', function (restaurantId, reservation, callback) {
+        app.execute('API:LockReservation', restaurantId, { party_size: reservation.party, time: Helper.formatDateForApi(reservation.slotDate) }, function (err, lockResponse) {
+            if (err) return callback(err);
+            
+            app.execute('API:ConfirmReservation', restaurantId, lockResponse.lock_id, reservation, function (err, responseReservation) {
+                if (err) return callback(err);
+
+                app.execute('GetRestaurant', restaurantId, function (err, restaurant) {
+                    if (err) return callback(err);
+
+                    var order = responseReservation.order;
+                    var resertvationData = {
+                        order_id: order.id,
+                        confirmation_code: order.confirmation_code,
+                        party_size: reservation.party,
+                        reserved_for: Helper.formatDateForApi(reservation.slotDate),
+                        restaurant_name: restaurant.get('name'),
+                        special_request: reservation.additionalInfo.specialRequests,
+                        promo_code: reservation.additionalInfo.promoCode,
+                        email: reservation.user.email,
+                        first_name: reservation.user.firstName,
+                        last_name: reservation.user.lastName,
+                        phone_number: reservation.user.phone,
+                        email_reminder: order.email_reminder,
+                        sms_reminder: order.sms_reminder,
+                    };                    
+
+                    Data.saveReservations([resertvationData]);
+                    callback(err, new Reservation(resertvationData));
+                });
+            });
         });
     });
 
@@ -380,8 +380,8 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         });
     });
 
-    app.commands.setHandler('GetReservation', function (id, callback) {        
-        Data.getReservation(id, callback);
+    app.commands.setHandler('GetReservation', function (code, callback) {        
+        Data.getReservation(code, callback);
     });
 
     app.commands.setHandler('CancelReservation', function (orderId, callback) {
@@ -410,13 +410,37 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     });
 
     app.commands.setHandler('UpdateReservation', function (code, reservation, callback) {
-        app.execute('API:UpdateReservation', code, reservation, function (err, response) {
+        var request = getReservationReguest(reservation);
+
+        app.execute('API:UpdateReservation', code, request, function (err, response) {
             if (err) return callback(err);
 
             Data.saveReservations([response.reservation]);
             return callback(null, new Reservation(response.reservation));
         });
-    });
+    });    
+
+    //utilities
+    var getReservationReguest = function (reservation) {
+        var request = {
+            reservation: {
+                party_size: reservation.party,
+                reserved_for: reservation.slotDate,
+                promo_code: reservation.additionalInfo.promoCode,
+                special_request: reservation.additionalInfo.specialRequests,
+                email_reminder: reservation.additionalInfo.emailReminder,
+                sms_reminder: reservation.additionalInfo.smsReminder,
+                email: reservation.user.email,
+                first_name: reservation.user.firstName,
+                last_name: reservation.user.lastName,
+                phone_number: reservation.user.phone
+            }
+        };
+
+        if (reservation.user.isAuthorized === true) request.reservation['user'] = { id: reservation.user.id };
+
+        return request;
+    };
 
     return {};
 });

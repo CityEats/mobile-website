@@ -254,7 +254,6 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                         //"{"avatar_content_type":null,"avatar_file_name":null,"avatar_file_size":null,"avatar_updated_at":null,"birthday":null,"cached_slug":"maxk","concierge_hotel_name":null,"created_at":"2013-09-13T14:57:08Z","dietary_restrictions":null,"disabled_at":null,"email":"max@max.com","first_favorite_food":null,"first_favorite_neighborhood":null,"first_name":"Max","id":931,"invitation_accepted_at":null,"invitation_sent_at":null,"invitation_token":null,"invited_by_id":null,"invited_by_message":null,"invited_by_type":null,"is_hotel_concierge":false,"last_name":"K","location":"New York, NY","phone_number":"3102762251","postal_code":"11222","private_history":null,"referral_awarded":false,"referral_type_id":null,"reviewer":null,"search_opt_out":false,"second_favorite_food":null,"second_favorite_neighborhood":null,"terms_of_service_id":1,"terms_of_service_ip":"91.247.221.51","third_favorite_food":null,"third_favorite_neighborhood":null,"unique_id":"95f98c1d4cd2a7bbc1fde59ce38d1f5e","updated_at":"2013-09-13T15:11:49Z","success":true}"
                     } else {
                         return callback(err, false);
-
                     }
                 });
             },
@@ -294,17 +293,17 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
 
             saveReservations: function (items) {                
                 for (var i = 0; i < items.length; i++) {
-                    reservations[items[i].order_id] = items[i];
+                    reservations[items[i].confirmation_code] = items[i];
                 }
             },
 
-            getReservation: function (id, callback) {
-                var reservation = reservations[id];
+            getReservation: function (code, callback) {
+                var reservation = reservations[code];
                 if (reservation) return callback(null, new Reservation(reservation));
 
                 app.execute('GetReservations', function (err, items) {
                     if (err) return callback(err);
-                    reservation = items.findWhere({ order_id: id });
+                    reservation = items.findWhere({ confirmation_code: code});
                     if (reservation) return callback(null, reservation);
                     else return callback(null, null);
                 });

@@ -33,7 +33,6 @@ function (_, app) {
                     + 'T' + pad(date.getUTCHours())
                     + ':' + pad(date.getUTCMinutes())
                     + ':' + pad(date.getUTCSeconds())
-                    + '-' + String((date.getUTCMilliseconds() / 1000).toFixed(3)).slice(2, 5)
                     + 'Z';
             },           
 

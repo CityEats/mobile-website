@@ -10,7 +10,7 @@
 
         goToReservation: function (evt) {
             evt.preventDefault();
-            var url = 'profile/reservations/' + this.model.get('order_id');
+            var url = 'profile/reservations/' + this.model.get('confirmation_code');
 
             app.router.navigate(url, { trigger: true });
         }

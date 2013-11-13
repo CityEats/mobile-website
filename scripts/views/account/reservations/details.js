@@ -16,26 +16,43 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
             'click .btnShare': 'btnShareClick',
         },
 
+        ui: {
+            cbSmsReminder: '.cbSmsReminder',
+            cbEmailReminder: '.cbEmailReminder',
+        },
+
+        onRender: function () {
+            if (this.options.isConfirmedView || this.model.isUpcoming()) {
+                this.ui.cbSmsReminder.attr('checked', this.model.get('sms_reminder'));
+                this.ui.cbEmailReminder.attr('checked', this.model.get('email_reminder'));
+            }
+        },
+
         templateHelpers: {
             getDate: function () {
-                return Helper.formatDateShort2(this.isLock ? this.slotDate : this.reserved_for);
+                //return Helper.formatDateShort2(this.isLock ? this.slotDate : this.reserved_for);
+                return Helper.formatDateShort2(this.reserved_for); 
             },
 
             getTime: function () {
-                var time = Helper.formatTime(this.isLock ? this.slotDate : new Date(this.reserved_for));
+                //var time = Helper.formatTime(this.isLock ? this.slotDate : new Date(this.reserved_for));
+                var time = Helper.formatTime(new Date(this.reserved_for));
                 return time.textSimple + time.amTextFull;
             },
 
             getFullName: function () {
-                if (this.user.getFullName) return this.user.getFullName();
-                if (this.isLock) return this.user.firstName + ' ' + this.user.lastName;
-
-                return '';
+                if (this.user && this.user.getFullName) return this.user.getFullName();
+                else return this.first_name + ' ' + this.last_name;
             },
 
             formatPhone: function () {
-                return this.isLock ? Helper.formatPhone(this.user.phone) : this.user.formatPhone();
+                //return this.isLock ? Helper.formatPhone(this.user.phone) : this.user.formatPhone();
+                return Helper.formatPhone(this.user && this.user.phone_number ? this.user.phone_number : this.phone_number);
             },
+
+            formatEmail: function () {                
+                return this.user && this.user.email ? this.user.email : this.email;
+            }
         },
 
         serializeData: function () {
@@ -65,11 +82,24 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
 
         btnModifyClick: function (evt) {            
             evt.preventDefault();
-            var reservedDate = new Date(this.model.get('reserved_for')),
-                time = Helper.formatTime(reservedDate),
-                date = Helper.formatDate(reservedDate);
+            var reservedDate, time, date, code, party, orderId;
+            if (this.options.isLock) {
+                reservedDate = new Date(this.model.get('slotDate'));
+                party = this.model.get('party');
+                code = this.model.get('reservationResponse').order.confirmation_code;
+            } else {
+                reservedDate = new Date(this.model.get('reserved_for'));
+                party = this.model.get('party_size');
+                code = this.model.get('confirmation_code');
+                orderId = this.model.get('order_id');
+            }
 
-            this.trigger('btnModifyClicked', this.model.get('confirmation_code'), this.model.get('party_size'), date, time.value);
+            console.log(this.model);
+
+            time = Helper.formatTime(reservedDate);
+            date = Helper.formatDate(reservedDate);
+
+            this.trigger('btnModifyClicked', code, orderId, party, date, time.value);
         }
     });
 

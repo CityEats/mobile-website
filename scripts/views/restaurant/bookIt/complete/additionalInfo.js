@@ -16,6 +16,16 @@
                 smsReminder: this.ui.cbSmsReminder.is(':checked'),
                 emailReminder: this.ui.cbEmailReminder.is(':checked')
             };
+        },
+        
+        onRender: function () {
+            if (this.options.reservation) {
+                //edit reservation
+                this.ui.txtSpecialRequests.val(this.options.reservation.get('special_request'));
+                this.ui.txtPromoCode.val(this.options.reservation.get('promo_code'));
+                this.ui.cbSmsReminder.attr('checked', this.options.reservation.get('sms_reminder'));
+                this.ui.cbEmailReminder.attr('checked', this.options.reservation.get('email_reminder'));
+            }
         }
     });
 

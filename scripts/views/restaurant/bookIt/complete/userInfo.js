@@ -29,11 +29,36 @@ function (app, Marionette, Backbone, _, BasicItemView, itemHtml) {
         },
 
         onRender: function () {
-            if (this.model == null) {
-                this.ui.pnlAccountInfo.hide();
+            if (this.options.reservation) {
+                //edit reservation
+                var first_name = this.options.reservation.get('first_name'),
+                    last_name = this.options.reservation.get('last_name'),
+                    email = this.options.reservation.get('email'),
+                    phone = this.options.reservation.get('phone_number');
+                
+                if (this.model != null &&
+                    this.model.get('first_name') == first_name &&
+                    this.model.get('last_name') == last_name &&
+                    this.model.get('email') == email &&
+                    this.model.get('phone_number') == phone) {
+
+                    this.ui.pnLogIn.hide();
+                    this.ui.pnlReservationInfo.hide();
+                } else {
+                    if (this.model != null) this.btnSomeoneElseClick();
+
+                    this.ui.txtFirstName.val(first_name);
+                    this.ui.txtLastName.val(last_name);
+                    this.ui.txtEmail.val(email);
+                    this.ui.txtPhone.val(phone);
+                }
             } else {
-                this.ui.pnLogIn.hide();
-                this.ui.pnlReservationInfo.hide();
+                if (this.model == null) {
+                    this.ui.pnlAccountInfo.hide();
+                } else {
+                    this.ui.pnLogIn.hide();
+                    this.ui.pnlReservationInfo.hide();
+                }
             }
         },
 
@@ -44,7 +69,8 @@ function (app, Marionette, Backbone, _, BasicItemView, itemHtml) {
         },
 
         btnSomeoneElseClick: function (evt) {
-            evt.preventDefault();
+            if (evt) evt.preventDefault();
+
             this.ui.pnlAccountInfo.hide();
             this.ui.pnlReservationInfo.show();
             this.ui.pnlForMyself.show();
