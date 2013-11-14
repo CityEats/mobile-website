@@ -1,4 +1,4 @@
-﻿define(['marionette', 'underscore', 'text!templates/account/profile/about.html'], function (Marionette, _, itemHtml) {
+﻿define(['marionette', 'app', 'underscore', 'text!templates/account/profile/about.html'], function (Marionette, app, _, itemHtml) {
 
     var ItemView = Marionette.ItemView.extend({
         template: _.template(itemHtml),
@@ -17,6 +17,7 @@
 
         btnReservationsClick: function (evt) {
             evt.preventDefault();
+            app.vent.trigger('showLoading');
             app.router.navigate('profile/reservations', { trigger: true });
         },
 

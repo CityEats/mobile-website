@@ -90,7 +90,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
 
             app.vent
                 .on('showLoading', function () { that.toggleLoading(true); })
-                .on('showLoading', function () { that.toggleLoading(false); });
+                .on('hideLoading', function () { that.toggleLoading(false); });
         },
 
         index: function () {
@@ -1162,7 +1162,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             var module = require('modules/reservations');            
 
             app.execute('GetReservations', function (err, reservations) {
-                if (err) return that.errorPartial(null, err);                
+                if (err) return that.errorPartial(null, err);
+                that.toggleLoading();
                 
                 if (reservations.error) {
                     that.errorPartial(null, reservations.error);
