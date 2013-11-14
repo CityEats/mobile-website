@@ -24,14 +24,12 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
         goToRestaurantInfo: function (evt) {
             evt.preventDefault();
 
-            var id = this.model.get('id'),
-                cityId = this.model.get('metro').id,
-                url;
+            var id = this.model.get('id'), url;
 
             if (this.options.showSimple === true) {
-                url = 'restaurants/' + cityId + '/' + id + '/info';
+                url = 'restaurants/' + id + '/info';
             } else {
-                url = 'restaurants/' + cityId + '/' + id + '/party/' + this.options.party + '/date/' + this.options.date + '/time/' + this.options.time + '/info';
+                url = 'restaurants/' + id + '/party/' + this.options.party + '/date/' + this.options.date + '/time/' + this.options.time + '/info';
             }
 
             app.router.navigate(url, { trigger: true });
@@ -43,10 +41,9 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
             var id = this.model.get('id'),
                 date = this.options.date,
                 time = this.options.time,
-                cityId = this.options.cityId,
                 party = this.options.party;
 
-            app.router.navigate('restaurants/' + cityId + '/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/search/complete-reservation/' + selected, { trigger: true });
+            app.router.navigate('restaurants/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/search/complete-reservation/' + selected, { trigger: true });
         },
 
         rootClick: function (evt) {

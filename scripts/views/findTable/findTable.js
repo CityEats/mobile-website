@@ -55,9 +55,8 @@
             this.trigger('findTableClicked');
         },
 
-        goToBrowseAll: function (evt) {
-            var cityId = this.model.get('id');
-            this.goTo(evt, 'restaurants/' + cityId);
+        goToBrowseAll: function (evt) {            
+            this.goTo(evt, 'restaurants');
         },
 
         btnLogOutClick: function (evt) {

@@ -12,7 +12,7 @@
         goToFindTable: function (evt) {
             var id = this.model.get('id')
             app.execute('SetCurrentCity', this.model);
-            app.router.navigate('find-table/' + id, { trigger: true });
+            app.router.navigate('find-table', { trigger: true });
             evt.preventDefault();
         }
     });
