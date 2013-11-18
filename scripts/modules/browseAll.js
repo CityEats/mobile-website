@@ -19,7 +19,7 @@ function ($, _, Backbone, app, Restaurant, TopBar, SearchBar, TopBarView, Restau
         _.extend(BrowseAll, {            
             topBar: new TopBar({
                 leftText: 'Home',
-                leftUrl: '',
+                leftUrl: '/find-table',
                 rightText: 'Filter',
                 subTitle: 'Search for a restaurant in:',
                 title: ''
