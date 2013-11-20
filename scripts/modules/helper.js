@@ -71,6 +71,28 @@ function (_, app) {
                 return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
             },
 
+            parseDate: function (date, time) {
+                var dateFormat = new RegExp('([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})');
+                if (typeof date == 'string') {
+                    if (dateFormat.test(date)) {
+                        var parsedDate = dateFormat.exec(date),
+                            parsedTime = time.split(':');
+
+                        if (parsedDate.length == 4) {
+                            return new Date(parseInt(parsedDate[1], 10),
+                                parseInt(parsedDate[2], 10) - 1,
+                                parseInt(parsedDate[3], 10),
+                                parseInt(parsedTime[0], 10),
+                                parseInt(parsedTime[1], 10));
+                        } else {
+                            return new Date(date + ' ' + time);
+                        }
+                    }
+                } else {
+                    return null;
+                }
+            },
+
             formatDateLong: function (date) {
                 if (typeof date == 'string') {
                     date = new Date(date);

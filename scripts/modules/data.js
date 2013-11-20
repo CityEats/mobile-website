@@ -291,21 +291,22 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 return locks[lockId];
             },
 
-            saveReservations: function (items) {                
+            saveReservations: function (items) {
                 for (var i = 0; i < items.length; i++) {
                     reservations[items[i].confirmation_code] = items[i];
                 }
             },
 
             getReservation: function (code, callback) {
-                var reservation = reservations[code];
+                var reservation = reservations[code],
+                    that = this;
                 if (reservation) return callback(null, new Reservation(reservation));
 
-                app.execute('GetReservations', function (err, items) {
+                app.execute('API:GetReservation', code, function (err, reservation) {
                     if (err) return callback(err);
-                    reservation = items.findWhere({ confirmation_code: code});
-                    if (reservation) return callback(null, reservation);
-                    else return callback(null, null);
+
+                    that.saveReservations([reservation]);
+                    callback(null, new Reservation(reservation));
                 });
             },
 

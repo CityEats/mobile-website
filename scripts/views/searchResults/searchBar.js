@@ -22,7 +22,6 @@
 
         onRender: function () {            
             var that = this;
-            
             var showTimingBar = this.model.get('showTimingBar'),
                 showTimes = this.model.get('showTimes'),
                 party = this.model.get('party'),
@@ -132,7 +131,7 @@
                 this.ui.searchSubmit.show();
             } else {
                 this.ui.searchSubmit.hide();
-            }            
+            }
         },
 
         partySizeChanged: function () {

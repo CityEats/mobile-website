@@ -380,6 +380,11 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         });
     });
 
+    app.commands.setHandler('API:GetReservation', function (code, callback) {
+        var handler = getJSONStatic(API_PATH + '/reservations/' + code);
+        handler(callback);
+    });
+
     app.commands.setHandler('GetReservation', function (code, callback) {        
         Data.getReservation(code, callback);
     });

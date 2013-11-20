@@ -326,7 +326,6 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                     var date = module.searchBar.model.get('date');
                     var partySize = module.searchBar.model.get('party');
                     var time = module.searchBar.model.get('time');
-
                     var url = 'search-results/party/' + partySize + '/date/' + Helper.formatDate(date) + '/time/' + time;
                     that.toggleLoading(true);
                     app.router.navigate(url, { trigger: true });
@@ -355,14 +354,14 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                 filter = app.request('GetFilterSimple', cityId),
                 rendered = false;
 
-            module.topBar.set('rightUrl', 'search-results/party/' + party + '/date/' + date + '/time/' + time + '/filter');
+            module.topBar.set('rightUrl', 'search-results/party/' + party + '/date/' + encodeURIComponent(date) + '/time/' + time + '/filter');
             module.topBar.set('title', currentCity.get('display_name'));
 
             if (filter && !filter.isDefault()) module.topBar.set('rightCss', 'red');
             else module.topBar.set('rightCss', '');
 
-            module.contentLayout = null;
-            var start = new Date(date + ' ' + time);
+            module.contentLayout = null;            
+            var start = Helper.parseDate(date, time);
             var end = new Date(start);
 
             start.setMinutes(start.getMinutes() - 15);
@@ -660,8 +659,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             if (!(cityId = this.checkCurrentCity())) return true; //set cityId to current.id or redirect to home if no current city specified
 
             if (time) {
-                start = new Date(date + ' ' + time);
-                end = new Date(date + ' ' + time);
+                start = Helper.parseDate(date, time);
+                end = Helper.parseDate(date, time);
                 start.setMinutes(start.getMinutes() - 15);
                 end.setMinutes(end.getMinutes() + 15);
             } else {
@@ -719,7 +718,16 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                     model: restaurant,
                     infoUrl: fromRestaurants === true ?
                         ('restaurants/'+ id + '/book-it') :
-                        ('restaurants/'+ id + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it')
+                        ('restaurants/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it'),
+                    completeUrlTemplate: [
+                        'restaurants/',
+                        id,
+                        '/party/', party,
+                        '/date/', date,
+                        '/time/', time,
+                        '/', (fromRestaurants ? 'book-it' : 'book-it-ext'),
+                        '/complete-reservation/##time##'                        
+                    ].join('')
                 });
                 module.exclusiveEatsOfferView = new module.info.ExclusiveEatsOfferView;
                 module.imagesView = new module.info.ImagesView({ model: restaurant });
@@ -887,7 +895,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         completeReservation: function (id, party, date, filterTime, from, time, code) {
             this.setup();
             var that = this,
-                slotDate = new Date(date + ' ' + time),
+                slotDate = Helper.parseDate(date, time),
                 returnUrl, bookItUrl;
 
             bookItUrl = 'restaurants/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it';
@@ -1156,7 +1164,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                         app.execute('GetRestaurant', reservation.get('restaurant_id'), function (err, restaurant) {
                             if (err) return that.errorPartial();
 
-                            app.router.navigate('restaurants/' + restaurant.get('metro').id + '/' + restaurant.get('id') + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code + '/' + reservationId, { trigger: true });
+                            app.router.navigate('restaurants/' + restaurant.get('id') + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code + '/' + reservationId, { trigger: true });
                         });
                     });
                 });

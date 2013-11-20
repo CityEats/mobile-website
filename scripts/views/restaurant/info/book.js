@@ -12,7 +12,7 @@
             var url;
             var time = this.$(evt.target).data('time');
             if (time && time.length > 0) {
-                url = 'restaurants/5/complete-reservation';
+                var url = this.options.completeUrlTemplate.replace('##time##', time);
             }
             else {                
                 url = this.options.infoUrl;
