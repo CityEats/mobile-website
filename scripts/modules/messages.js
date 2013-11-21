@@ -414,6 +414,11 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         handler(callback);
     });
 
+    app.commands.setHandler('API:UpdateReservationReminders', function (code, smsReminder, emailReminder, callback) {
+        var handler = putJSONStatic(API_PATH + '/reservations/' + code, { reservation: { sms_reminder: smsReminder, email_reminder: emailReminder } });
+        handler(callback);
+    });
+
     app.commands.setHandler('UpdateReservation', function (code, reservation, callback) {
         var request = getReservationReguest(reservation);
 
@@ -423,7 +428,16 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
             Data.saveReservations([response.reservation]);
             return callback(null, new Reservation(response.reservation));
         });
-    });    
+    });
+
+    app.commands.setHandler('UpdateReservationReminders', function (code, smsReminder, emailReminder, callback) {
+        app.execute('API:UpdateReservationReminders', code, smsReminder, emailReminder, function (err, response) {
+            if (err) return callback(err);
+
+            Data.saveReservations([response.reservation]);
+            return callback(null, new Reservation(response.reservation));
+        });
+    });
 
     //utilities
     var getReservationReguest = function (reservation) {

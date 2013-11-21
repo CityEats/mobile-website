@@ -14,6 +14,8 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
             'click .btnCancel': 'btnCancelClick',
             'click .btnModify': 'btnModifyClick',
             'click .btnShare': 'btnShareClick',
+            'click .cbSmsReminder': 'reminderChanged',
+            'click .cbEmailReminder': 'reminderChanged'
         },
 
         ui: {
@@ -94,12 +96,14 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
                 orderId = this.model.get('order_id');
             }
 
-            console.log(this.model);
-
             time = Helper.formatTime(reservedDate);
             date = Helper.formatDate(reservedDate);
 
             this.trigger('btnModifyClicked', code, orderId, party, date, time.value);
+        },
+
+        reminderChanged: function (evt) {
+            this.trigger('reminderChanged', this.ui.cbSmsReminder.is(':checked'), this.ui.cbEmailReminder.is(':checked'));
         }
     });
 

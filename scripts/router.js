@@ -994,10 +994,10 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
 
         reservationConfirmed: function (restaurantId, code) {
             this.setup();
-            var that = this;
+            var that = this,
+                changing = 0;
 
             var module = require('modules/restaurant/confirmReservation');
-            //TODO: try to cancel reservation and fix error )
             app.execute('GetCurrentUser', function (err, currentUser) {
                 if (err) return that.errorPartial();
 
@@ -1020,6 +1020,21 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                             if (err) return that.errorPartial();
 
                             app.router.navigate('restaurants/' + restaurantId + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code + '/' + reservationId, { trigger: true });
+                        });
+                    });
+
+                    module.contentLayout.on('reminderChanged', function (smsReminder, emailReminder) {
+                        changing++;
+                        that.toggleLoading(true);
+                        app.execute('UpdateReservationReminders', code, smsReminder, emailReminder, function (err, reservation) {
+                            if (err) {
+                                changing = 0;
+                                that.toggleLoading();
+                                return that.errorPartial(null, err);
+                            }
+                            changing--;
+
+                            if (changing <= 0) that.toggleLoading();
                         });
                     });
                 };
@@ -1129,8 +1144,9 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
 
         profileReservation: function (code) {
             this.setup();
-            var that = this;
-            var module = require('modules/reservations');
+            var that = this,
+                changing = 0,
+                module = require('modules/reservations');
 
             app.execute('GetCurrentUser', function (err, currentUser) {
                 if (err) return that.errorPartial();
@@ -1165,6 +1181,21 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                             if (err) return that.errorPartial();
 
                             app.router.navigate('restaurants/' + restaurant.get('id') + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code + '/' + reservationId, { trigger: true });
+                        });
+                    });
+
+                    module.details.on('reminderChanged', function (smsReminder, emailReminder) {
+                        changing++;
+                        that.toggleLoading(true);
+                        app.execute('UpdateReservationReminders', code, smsReminder, emailReminder, function (err, reservation) {
+                            if (err) {
+                                changing = 0;
+                                that.toggleLoading();
+                                return that.errorPartial(null, err);
+                            }
+                            changing--;
+
+                            if (changing <= 0) that.toggleLoading();
                         });
                     });
                 });
