@@ -32,12 +32,10 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
 
         templateHelpers: {
             getDate: function () {
-                //return Helper.formatDateShort2(this.isLock ? this.slotDate : this.reserved_for);
                 return Helper.formatDateShort2(this.reserved_for); 
             },
 
             getTime: function () {
-                //var time = Helper.formatTime(this.isLock ? this.slotDate : new Date(this.reserved_for));
                 var time = Helper.formatTime(new Date(this.reserved_for));
                 return time.textSimple + time.amTextFull;
             },
@@ -48,7 +46,6 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
             },
 
             formatPhone: function () {
-                //return this.isLock ? Helper.formatPhone(this.user.phone) : this.user.formatPhone();
                 return Helper.formatPhone(this.user && this.user.phone_number ? this.user.phone_number : this.phone_number);
             },
 
@@ -60,18 +57,12 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
         serializeData: function () {
             var result = this.model.toJSON();
             var extra = {
-                isConfirmedView: this.options.isConfirmedView,
-                isLock: this.options.isLock
+                isConfirmedView: this.options.isConfirmedView
             };
             
             if (this.options.user) extra['user'] = this.options.user.toJSON();
-            if (this.options.isLock) {
-                extra.restaurant_name = this.options.restaurant;
-                extra.party_size = this.model.get('party');
-                extra.special_request = this.model.get('additionalInfo').specialRequests;
-                extra.confirmation_code = this.model.get('reservationResponse').order.confirmation_code;
-                extra.points = this.options.points;
-            }
+            
+            extra.points = this.options.points;
             return _.extend(result, extra);
         },
 
@@ -82,19 +73,14 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
             }
         },
 
-        btnModifyClick: function (evt) {            
+        btnModifyClick: function (evt) {
             evt.preventDefault();
             var reservedDate, time, date, code, party, orderId;
-            if (this.options.isLock) {
-                reservedDate = new Date(this.model.get('slotDate'));
-                party = this.model.get('party');
-                code = this.model.get('reservationResponse').order.confirmation_code;
-            } else {
-                reservedDate = new Date(this.model.get('reserved_for'));
-                party = this.model.get('party_size');
-                code = this.model.get('confirmation_code');
-                orderId = this.model.get('order_id');
-            }
+
+            reservedDate = new Date(this.model.get('reserved_for'));
+            party = this.model.get('party_size');
+            code = this.model.get('confirmation_code');
+            orderId = this.model.get('order_id');
 
             time = Helper.formatTime(reservedDate);
             date = Helper.formatDate(reservedDate);

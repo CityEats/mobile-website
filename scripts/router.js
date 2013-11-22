@@ -1047,7 +1047,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                             if (err) return that.errorPartial(null, err);
                             if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true });
 
-                            module.contentLayout = new module.ContentLayout({ model: reservation, restaurant: restaurant.get('name'), isConfirmedView: true, points: 200 })
+                            module.contentLayout = new module.ContentLayout({ model: reservation, isConfirmedView: true, points: 200 })
                             showViews();
                         });
                     });
