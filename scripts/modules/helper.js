@@ -34,7 +34,7 @@ function (_, app) {
                     + ':' + pad(date.getUTCMinutes())
                     + ':' + pad(date.getUTCSeconds())
                     + 'Z';
-            },           
+            },
 
             formatTime: function (hours, minutes) {
                 if (typeof minutes == 'undefined') {

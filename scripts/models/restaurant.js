@@ -27,9 +27,10 @@
 	                return Helper.formatPhone(this.phone_number);
 	            },
 
-	            slotsFormated: function () {
+	            slotsFormated: function() {
 
-	                var times = this.selectedTime.split(':');
+	                var times = this.selectedTime.split(':'),
+	                    slots = this.slots;
 	                var selectedHour = parseInt(times[0], 10),
                         selectedMin = parseInt(times[1], 10);
 
@@ -37,7 +38,9 @@
 	                var minus15 = new Date(date),
                         plus15 = new Date(date);
 	                minus15.setMinutes(minus15.getMinutes() - 15);
-	                plus15.setMinutes(plus15.getMinutes() + 15);
+	                plus15.setMinutes(plus15.getMinutes() + 15);	                
+
+	                //unfortunately api returns all slots, but we need only 3 of them.	                
 
 	                var times = [
                         {
@@ -55,25 +58,26 @@
 	                ];
 
 	                var result = new Array(3);
-	                for (var i = 0; i < this.slots.length; i++) {
-	                    var time = new Date(this.slots[i]),
+	                for (var i = 0; i < slots.length; i++) {
+	                    var time = new Date(slots[i]),
                         h = time.getHours(),
 	                    m = time.getMinutes();
-	                    var position = 0
-	                    if (h < selectedHour || (h == selectedHour && m < selectedMin)) {
-	                        position = 0;
-	                    } else if (h == selectedHour && m == selectedMin) {
+
+	                    var position = -1
+	                    if (h == selectedHour && m == selectedMin)
 	                        position = 1;
-	                    }
-	                    else if (h > selectedHour || (h == selectedHour && m > selectedMin)) {
+	                    else if (h == minus15.getHours() && m == minus15.getMinutes())
+	                        position = 0;
+	                    else if (h == plus15.getHours() && m == plus15.getMinutes())
 	                        position = 2;
-	                    }
-	                    result[position] = {
-	                        text: Helper.formatTime(h, m).textSimple,
-	                        amText: Helper.formatTime(h, m).amText,
-	                        value: Helper.formatTime(h, m).value,
-	                        isEmpty: false
-	                    };
+
+	                    if (position >= 0)
+	                        result[position] = {
+	                            text: Helper.formatTime(h, m).textSimple,
+	                            amText: Helper.formatTime(h, m).amText,
+	                            value: Helper.formatTime(h, m).value,
+	                            isEmpty: false
+	                        };
 	                }
 
 	                for (var i = 0; i < result.length; i++) {
@@ -94,11 +98,8 @@
 	            },
 
 	            thumbImage: function () {
-	                if (this.images.length > 0) {
-	                    return this.images[0].thumb_mobile_app;
-	                } else {
-	                    return '';
-	                }
+	                if (this.images.length > 0) return this.images[0].thumb_mobile_app;
+	                else return '';
 	            },
 
 	            paymentsText: function () {
@@ -106,11 +107,8 @@
 	            },
 
 	            geoImageUrl: function () {
-	                if (this.address.lat && this.address.lng) {
-	                    return 'http://maps.googleapis.com/maps/api/staticmap?center=' + this.address.lat + ',' + this.address.lng + '&zoom=12&size=292x73&sensor=false&&markers=color:red%7Clabel:R%7C' + this.address.lat + ',' + this.address.lng;
-	                } else {
-	                    return null;
-	                }
+	                if (this.address.lat && this.address.lng) return 'http://maps.googleapis.com/maps/api/staticmap?center=' + this.address.lat + ',' + this.address.lng + '&zoom=12&size=292x73&sensor=false&&markers=color:red%7Clabel:R%7C' + this.address.lat + ',' + this.address.lng;
+	                else return null;
 	            },
 
 	            selectedTimeFormated: function () {
@@ -120,20 +118,14 @@
 
 	        highlights: function () {
 	            var result = _.find(this.get('lists'), function (item) { return item.list.title.toLowerCase() === 'highlights'; });
-	            if (result) {
-	                return (result.list.description || '').split('\n');
-	            } else {
-	                return [];
-	            }
+	            if (result) return (result.list.description || '').split('\n');
+	            else return [];
 	        },
 
 	        goodToKnow: function () {
 	            var result = _.find(this.get('lists'), function (item) { return item.list.title.toLowerCase() === 'good to know'; });
-	            if (result) {
-	                return (result.list.description || '').split('\n');
-	            } else {
-	                return [];
-	            }
+	            if (result) return (result.list.description || '').split('\n');
+	            else return [];
 	        },
 
 	        getReviewCollection: function () {

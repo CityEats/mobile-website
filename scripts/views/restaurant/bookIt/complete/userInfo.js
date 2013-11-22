@@ -28,20 +28,19 @@ function (app, Marionette, Backbone, _, BasicItemView, itemHtml) {
             'click .btnForMyself': 'btnForMyselfClick',
         },
 
-        onRender: function () {            
+        onRender: function () {
             if (this.options.reservation) {
                 //edit reservation
                 var first_name = this.options.reservation.get('first_name'),
                     last_name = this.options.reservation.get('last_name'),
                     email = this.options.reservation.get('email'),
                     phone = this.options.reservation.get('phone_number');
-            
+
                 if (this.model != null &&
                     this.model.get('first_name') == first_name &&
                     this.model.get('last_name') == last_name &&
                     this.model.get('email') == email &&
                     this.model.get('phone_number') == phone) {
-
                     this.ui.pnLogIn.hide();
                     this.ui.pnlReservationInfo.hide();
                 } else {
