@@ -26,14 +26,34 @@ function (_, app) {
         };
 
         _.extend(Helper, {
-            formatDateForApi: function (date) {
-                return date.getUTCFullYear()
-                    + '-' + pad(date.getUTCMonth() + 1)
-                    + '-' + pad(date.getUTCDate())
-                    + 'T' + pad(date.getUTCHours())
-                    + ':' + pad(date.getUTCMinutes())
-                    + ':' + pad(date.getUTCSeconds())
+            formatDateForApi: function (date, offset) {
+                var date = new Date(date);
+                if (offset) {
+                    date.setHours(date.getHours() - offset);
+                }
+                console.log(date);
+
+                //return date.getUTCFullYear()
+                //    + '-' + pad(date.getUTCMonth() + 1)
+                //    + '-' + pad(date.getUTCDate())
+                //    + 'T' + pad(date.getUTCHours())
+                //    + ':' + pad(date.getUTCMinutes())
+                //    + ':' + pad(date.getUTCSeconds())
+                //    + 'Z';
+                return date.getFullYear()
+                    + '-' + pad(date.getMonth() + 1)
+                    + '-' + pad(date.getDate())
+                    + 'T' + pad(date.getHours())
+                    + ':' + pad(date.getMinutes())
+                    + ':' + pad(date.getSeconds())
                     + 'Z';
+            },
+
+            newDate: function (dateString, offset) {
+                var date = new Date(dateString);
+                //date.setHours(date.getHours() + offset - (date.getTimezoneOffset() / 60));
+                date.setHours(date.getUTCHours() + offset);
+                return date;
             },
 
             formatTime: function (hours, minutes) {
@@ -64,9 +84,7 @@ function (_, app) {
             },
 
             formatDate: function (date) {
-                if (typeof date == 'string') {
-                    return date;
-                }
+                if (typeof date == 'string') return date;
 
                 return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
             },

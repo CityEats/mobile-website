@@ -709,7 +709,6 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         restauranInfo: function (id, party, date, time, fromRestaurants) {
             this.setup();
             var module = require('modules/restaurant/info')
-            
             this.buildRestaurantBaseInfo(id, party, date, time, fromRestaurants, module, 0, function (restaurant) {
                 module.infoView = new module.info.InfoView;
                 module.topBarBlock = new module.TopBarView({ model: module.topBar });
@@ -947,6 +946,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                                     additionalInfo: module.contentLayout.additionalInfoView.getModel(),
                                     party: party,
                                     slotDate: slotDate,
+                                    timeOffset: restaurant.get('current_time_offset'),
                                     restaurantId: id
                                 };
 

@@ -143,6 +143,19 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 }
             },
 
+            getMetro: function (id, callback) {
+                if (metros == null) {
+                    app.execute('API:GetMetros', null, null, function (err, data) {
+                        if (err == null) {
+                            metros = new Cities(_.where(data.metros, { active: true }));
+                        }
+                        return callback ? callback(err, metros.get(id)) : null;
+                    });
+                } else {
+                    return callback ? callback(null, metros.get(id)) : null;
+                }
+            },
+
             getCuisinesByMetro: function (metroId, callback) {
                 var cuisines = cuisinesByMetro[metroId];
                 if (typeof cuisines == 'undefined') {

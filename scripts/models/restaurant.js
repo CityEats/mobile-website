@@ -35,6 +35,7 @@
                         selectedMin = parseInt(times[1], 10);
 
 	                var date = new Date(2000, 1, 1, selectedHour, selectedMin);
+
 	                var minus15 = new Date(date),
                         plus15 = new Date(date);
 	                minus15.setMinutes(minus15.getMinutes() - 15);
@@ -57,11 +58,16 @@
 	                    }
 	                ];
 
+	                console.log('selectedHour & selectedMin ' + selectedHour + ' ' + selectedMin);
+
 	                var result = new Array(3);
 	                for (var i = 0; i < slots.length; i++) {
-	                    var time = new Date(slots[i]),
-                        h = time.getHours(),
-	                    m = time.getMinutes();
+	                    var time = Helper.newDate(slots[i], this.current_time_offset),
+                            h = time.getHours(),
+	                        m = time.getMinutes();
+
+	                    console.log('slots[i] ' + slots[i]);
+	                    console.log('time ' + time);
 
 	                    var position = -1
 	                    if (h == selectedHour && m == selectedMin)
@@ -142,9 +148,12 @@
 	            return this.menusCollection;
 	        },
 
-	        getFullSlots: function () {
+	        getFullSlots: function () {	            
 	            var times = Helper.getTimes(),
-	                slots = _.map(this.get('slots'), function (item) { return Helper.formatTime(new Date(item)) });
+                    that = this,
+	                slots = _.map(this.get('slots'), function (item) {
+	                    return Helper.formatTime(Helper.newDate(item, that.get('current_time_offset')))
+	                });
 
 	            return new Dictionary(_.map(times, function (item) {
 	                var time = new Date('2000-01-01 ' + item.value),

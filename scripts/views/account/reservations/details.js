@@ -36,7 +36,7 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
             },
 
             getTime: function () {
-                var time = Helper.formatTime(new Date(this.reserved_for));
+                var time = Helper.formatTime(Helper.newDate(this.reserved_for, this.current_time_offset));
                 return time.textSimple + time.amTextFull;
             },
 
