@@ -318,7 +318,6 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     app.commands.setHandler('ConfirmReservation', function (restaurantId, reservation, callback) {
         app.execute('GetRestaurant', restaurantId, function (err, restaurant) {
             if (err) return callback(err);
-            debugger
             app.execute('API:LockReservation', restaurantId, { party_size: reservation.party, time: Helper.formatDateForApi(reservation.slotDate, restaurant.get('current_time_offset')) }, function (err, lockResponse) {
                 if (err) return callback(err);
 
