@@ -8,7 +8,7 @@
             editorsPicks: '#editorsPicks'
         },
 
-        onRender: function () {            
+        onRender: function () {
             if (!this.options.isBrowseAll) {
                 this.$el.find('.resultsTitle, #editorsPicks').remove();
             } else {

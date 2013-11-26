@@ -29,7 +29,8 @@ function ($, _, Backbone, app, Restaurant, TopBar, SearchBar, TopBarView, Restau
             RestaurantView: RestaurantView,
             RestaurantsView: RestaurantsView,
             SearchBarView: SearchBarView,
-            TopBarView: TopBarView
+            TopBarView: TopBarView,
+            Restaurants: Restaurants
         });
     });
 });

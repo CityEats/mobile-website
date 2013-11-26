@@ -465,10 +465,12 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             var getRestaurantsHandler = function (err, restaurants) {
                 if (err) return that.errorPartial();
 
+                var editorsPicks =new module.Restaurants(restaurants.where({ is_editors_picks: true }));
+
                 if (module.contentLayout == null) {
                     module.contentLayout = new module.ContentLayout({
                         isBrowseAll: true,
-                        //isEditorsPicks: true,
+                        isEditorsPicks: editorsPicks.length > 0,
                     });
 
                     app.content.show(module.contentLayout);
@@ -476,17 +478,18 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                 }
 
                 module.restaurantsView = new module.RestaurantsView({
-                    collection: restaurants,
+                    collection: new module.Restaurants(restaurants.where({ is_editors_picks: false })),
                     showSimple: true
                 });
 
-                //module.editorsPicksView = new module.RestaurantsView({
-                //    collection: restaurants,
-                //    showSimple: true
-                //});
+                module.editorsPicksView = new module.RestaurantsView({
+                    collection: editorsPicks,
+                    showSimple: true,
+                    isEditorsPicks: true
+                });                
 
                 module.contentLayout.resultsHolder.show(module.restaurantsView);
-                //module.contentLayout.editorsPicks.show(module.editorsPicksView);
+                module.contentLayout.editorsPicks.show(module.editorsPicksView);
                 app.topBar.show(module.topBarBlock);
             };
 
