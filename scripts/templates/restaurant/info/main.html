@@ -15,24 +15,27 @@
                     <% if (open_for && open_for.length > 0) { %>
                         <dt>Open For</dt>
                         <dd><%= open_for %></dd>
-                    <% } %>                    
-                    <% if (restaurant_hours.length > 0) { %>
-                        <dt>Open Hours</dt>
-                        <% for(var i = 0; i < restaurant_hours.length; i++) { %>
-                            <dd><%= restaurant_hours[i] %></dd>
-                    <% }} %>
+                    <% } %>
+
+                    <% if (restaurant_hours.length > 0) { 
+                        var openHours  = getOpenHours();
+                        for(var i = 0; i < openHours.length; i++) { %>
+                            <dt><%= openHours[i].days %></dt>
+                            <% for (var k = 0; k < openHours[i].hours.length; k++) { %>
+                            <dd><%= openHours[i].hours[k]%></dd>
+                    <% }}} %>
                 </dl>
             </div>
             <div class="column">
-                <dl class="restaurantInfoList">                    
+                <dl class="restaurantInfoList">
                     <% if (cuisine_types.length > 0) { %>
-                        <dt>Cuisine</dt>                    
+                        <dt>Cuisine</dt>
                         <dd><%= cuisinesText(', ')%></dd>
                     <% } %>
                     <% if (neighborhood != null) { %>
                         <dt>Neighborhood</dt>
                         <dd><%= neighborhood.name %></dd>
-                    <% } %>              
+                    <% } %>
                     <% if (payment_options.length > 0) { %>
                         <dt>Accepted Payment</dt>
                         <dd><%= paymentsText() %></dd>

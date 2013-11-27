@@ -58,16 +58,11 @@
 	                    }
 	                ];
 
-	                console.log('selectedHour & selectedMin ' + selectedHour + ' ' + selectedMin);
-
 	                var result = new Array(3);
 	                for (var i = 0; i < slots.length; i++) {
 	                    var time = Helper.newDate(slots[i], this.current_time_offset),
                             h = time.getHours(),
 	                        m = time.getMinutes();
-
-	                    console.log('slots[i] ' + slots[i]);
-	                    console.log('time ' + time);
 
 	                    var position = -1
 	                    if (h == selectedHour && m == selectedMin)

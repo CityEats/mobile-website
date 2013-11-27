@@ -31,7 +31,6 @@ function (_, app) {
                 if (offset) {
                     date.setHours(date.getHours() - offset);
                 }
-                console.log(date);
 
                 //return date.getUTCFullYear()
                 //    + '-' + pad(date.getUTCMonth() + 1)
@@ -139,6 +138,10 @@ function (_, app) {
                 }
 
                 return daysOfWeek[date.getDay()].substr(0, 3) + ' ' + monthNamesShort[date.getMonth()] + ', ' + getNumber(date.getDate());
+            },
+
+            getDayOfWeek: function (day, length) {
+                return daysOfWeek[day].substr(0, length);
             },
 
             formatDateRelative: function (date, simple) {
