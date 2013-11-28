@@ -30,13 +30,15 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 var that = this;
                 var restaurants = restaurantsByMetro[metroId];
                 if (typeof restaurants == 'undefined') {
-                    app.execute('API:GetRestaurantsByMetro', metroId, 1000, 1, function (err, data) {
+                    var location = app.request('GetLocation');
+                    app.execute('API:GetRestaurantsByMetro', metroId, 1000, 1, location ? location.lat : null, location ? location.lng : null, function (err, data) {
                         if (err == null) {
                             restaurantsByMetro[metroId] = restaurants = new Restaurants(data.restaurants);
                         }
 
                         return callback ? callback(err, that.filterRestaurants(restaurants, searchQuery, filter)) : null;
                     });
+
                 } else {
                     return callback ? callback(null, that.filterRestaurants(restaurants, searchQuery, filter)) : null;
                 }
@@ -79,17 +81,11 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 restaurants = new Restaurants(restaurants.filter(function (restaurant) {
                     var filteredByCuisine = filteredByNeighborhood = filteredByPrice = filteredByQuery = true;
 
-                    if (cuisineIds.length > 0) {
-                        filteredByCuisine = _.intersection(cuisineIds, restaurant.get('cuisine_type_ids')).length > 0;
-                    }
+                    if (cuisineIds.length > 0) filteredByCuisine = _.intersection(cuisineIds, restaurant.get('cuisine_type_ids')).length > 0;
 
-                    if (neighborhoodIds.length > 0) {
-                        filteredByNeighborhood = neighborhoodIds.indexOf(restaurant.get('neighborhood_id')) != -1;
-                    }
+                    if (neighborhoodIds.length > 0) filteredByNeighborhood = neighborhoodIds.indexOf(restaurant.get('neighborhood_id')) != -1;
 
-                    if (prices.length > 0) {
-                        filteredByPrice = prices.indexOf(restaurant.get('price_rating')) != -1;
-                    }
+                    if (prices.length > 0) filteredByPrice = prices.indexOf(restaurant.get('price_rating')) != -1;
 
                     if (searchQuery && searchQuery.length > 0) {
                         searchQuery = searchQuery.toLowerCase();
@@ -104,7 +100,6 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                     return filteredByCuisine && filteredByNeighborhood && filteredByPrice && filteredByQuery;
 
                 }));
-
                 return this.orderRestaurants(restaurants, sortBy);
             },
 
@@ -112,7 +107,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 switch (by) {
                     case 1: {
                         //Distance
-                        return new Restaurants(restaurants.sortBy('distance'));
+                        return new Restaurants(restaurants.sortBy('distance_to_restaurant'));
                     }
                     case 3: {
                         //A - Z
@@ -186,9 +181,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
 
             getFilter: function (metroId, callback) {
                 var filter = filters[metroId];
-                if (filter == null) {
-                    filter = new FilterItem;
-                }
+                if (filter == null) filter = new FilterItem;
 
                 var cuisineIds = filter.get('cuisineIds') || [],
                     neighborhoodIds = filter.get('neighborhoodIds') || [],
@@ -215,7 +208,10 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
             },
 
             getFilterSimple: function (metroId) {
-                return filters[metroId];
+                var filter = filters[metroId]
+                if (filter == null) filter = new FilterItem;
+
+                return filter;
             },
 
             resetFilter: function (metroId) {
@@ -224,9 +220,8 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
 
             setFilterCuisines: function (cityId, cuisines) {
                 var filter = filters[cityId];
-                if (filter == null) {
-                    filter = new FilterItem;
-                }
+                if (filter == null) filter = new FilterItem;
+
                 filter.set('cuisineIds', cuisines);
 
                 filters[cityId] = filter;
@@ -234,9 +229,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
 
             setFilterNeighborhoods: function (cityId, neighborhoods) {
                 var filter = filters[cityId];
-                if (filter == null) {
-                    filter = new FilterItem;
-                }
+                if (filter == null)filter = new FilterItem;
 
                 filter.set('neighborhoodIds', neighborhoods);
 

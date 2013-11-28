@@ -2,10 +2,8 @@
 	function (_, Backbone, Helper, Reviews, Menus, Dictionary) {
 	    var Restaurant = Backbone.Model.extend({
 	        defaults: {
-	            distance: 5,
-
 	            distanceText: function () {
-	                return this.distance.toFixed(2) + ' mi';
+	                return this.distance_to_restaurant ? this.distance_to_restaurant.toFixed(2) + ' mi' : null;	                
 	            },
 
 	            cuisine_types: [],

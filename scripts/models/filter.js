@@ -1,12 +1,9 @@
-﻿define(['backbone'],
-	function (Backbone) {
-	    var Filter = Backbone.Model.extend({
-	        defaults: {
-	            sortBy: 2,
-	            prices: [],
-	            cuisines: [],
-	            cuisineIds: [],
-	            neighborhoods: [],
+﻿define(['backbone', 'app'],
+	function (Backbone, app) {	    
+	    var Filter = Backbone.Model.extend({	        
+	        defaults: {	            
+	            prices: [],	            
+	            cuisineIds: [],	            
 	            neighborhoodIds: [],
 	            cuisinesText: function () {	                
 	                var items = this.cuisines.length > 0 ? this.cuisines.where({ 'checked': true }) : [];
@@ -19,17 +16,27 @@
 	            }
 	        },
 
-	        prepareData: function () {                
+	        initialize: function(){
+	            this.resetFilter();
+	        },
+
+	        prepareData: function () {
 	            var cuisineIds = this.get('cuisineIds'),
-	                neighborhoodIds = this.get('neighborhoodIds');
+	                neighborhoodIds = this.get('neighborhoodIds'),
+	                cuisines = this.get('cuisines'),
+                    neighborhoods = this.get('neighborhoods');
 
-	            this.get('cuisines').each(function (item) {
-	                item.set('checked', cuisineIds.indexOf(item.get('key')) != -1);
-	            });
+	            if (cuisines) {
+	                cuisines.each(function (item) {
+	                    item.set('checked', cuisineIds.indexOf(item.get('key')) != -1);
+	                });
+	            }
 
-	            this.get('neighborhoods').each(function (item) {
-	                item.set('checked', neighborhoodIds.indexOf(item.get('key')) != -1);
-	            });
+	            if (neighborhoods) {
+	                neighborhoods.each(function (item) {
+	                    item.set('checked', neighborhoodIds.indexOf(item.get('key')) != -1);
+	                });
+	            }
 	        },
 
 	        isDefault: function () {                
@@ -39,10 +46,12 @@
 	        },
 
 	        resetFilter: function () {
+	            var location = app.request('GetLocation');
+	            console.log(location);
 	            this.set('neighborhoodIds', []);
 	            this.set('cuisineIds', []);
 	            this.set('prices', []);
-	            this.set('sortBy', 2);
+	            this.set('sortBy', location ? 1 : 2);
 	            this.prepareData();
 	        }
 	    });

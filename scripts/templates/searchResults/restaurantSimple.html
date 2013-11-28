@@ -11,7 +11,9 @@
         <p class="resultsListType"><%= cuisinesText() %></p>
     </div>
     <div class="resultsListMeta">
-        <p><%= distanceText() %></p>
+        <% if(distance_to_restaurant) { %>
+            <p><%= distanceText() %></p>
+        <% } %>
         <p><%= priceSymbols() %></p>
         <div class="rateit rating small" data-rateit-value="<%= rating %>" data-rateit-ispreset="true" data-rateit-readonly="true" data-rateit-starwidth="10" data-rateit-starheight="10"></div>
     </div>

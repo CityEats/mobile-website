@@ -16,7 +16,7 @@
                 'search-results/party/' + this.options.searchSettings.party + '/date/' + this.options.searchSettings.date + '/time/' + this.options.searchSettings.time;
 
             this.cuisinesUrl = this.options.isRestaurants ?
-                'restaurant/filter/cuisines' :
+                'restaurants/filter/cuisines' :
                 'search-results/party/' + this.options.searchSettings.party + '/date/' + this.options.searchSettings.date + '/time/' + this.options.searchSettings.time + '/filter/cuisines';
 
             this.neighborhoodsUrl = this.options.isRestaurants ?

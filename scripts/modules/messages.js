@@ -14,7 +14,12 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
 
     var API_PATH = '/api/v2',
         API_PATH1 = '/api/v1',
-        API_KEY = 'k2Rw6FRzFcuS0suyVIRk96mOIyKEhtH89Fvqz377htFrymvd7IfIPonvzmt87v3';
+        API_KEY = 'k2Rw6FRzFcuS0suyVIRk96mOIyKEhtH89Fvqz377htFrymvd7IfIPonvzmt87v3',
+        geoOptions = {
+            enableHighAccuracy: true,
+            maximumAge: 30000,
+            timeout: 15000
+        };
 
     var getJSONStatic = function (url) {
         return function (callback) {
@@ -104,16 +109,22 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
 
     app.reqres.setHandler('GetCurrentCity', function () {
         var result = localStorage.getItem('CurrentCity');
-        if (result) {
-            return new City(JSON.parse(result));
-        }
-        else {
-            return null;
-        }
-    });
+        if (result) return new City(JSON.parse(result));
+        else return null;
+    });    
 
     app.commands.setHandler('SetCurrentCity', function (currentCity) {
         localStorage.setItem('CurrentCity', JSON.stringify(currentCity));
+    });
+
+    app.reqres.setHandler('GetLocation', function () {
+        var result = localStorage.getItem('Location');
+        if (result) return JSON.parse(result);
+        else return null;
+    });
+
+    app.commands.setHandler('SetLocation', function (location) {        
+        localStorage.setItem('Location', JSON.stringify(location));
     });
 
     //cuisines
@@ -266,8 +277,8 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         });
     });
 
-    app.commands.setHandler('API:GetRestaurantsByMetro', function (metroId, perPage, pageNumber, callback) {
-        var handler = getJSONStatic(API_PATH + '/metros/' + metroId + '/restaurants?per_page=' + perPage + '&page_number=' + pageNumber);
+    app.commands.setHandler('API:GetRestaurantsByMetro', function (metroId, perPage, pageNumber,  lat, lng, callback) {
+        var handler = getJSONStatic(API_PATH + '/metros/' + metroId + '/restaurants?per_page=' + perPage + '&page_number=' + pageNumber + (lat && lng ? '&lat=' + lat + '&lng=' + lng : ''));
         handler(callback);
     });
 
@@ -276,17 +287,13 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     });
 
     app.commands.setHandler('GetMetros', function (callback) {
-        var geoOptions = {
-            enableHighAccuracy: true,
-            maximumAge: 30000,
-            timeout: 15000
-        };
-
         navigator.geolocation.getCurrentPosition(
             function success(data) {
+                app.execute('SetLocation', { lat: data.coords.latitude, lng: data.coords.longitude });
                 Data.getMetros(callback, data.coords.latitude, data.coords.longitude);
             },
             function error(data) {
+                app.execute('SetLocation', null);
                 Data.getMetros(callback);
             },
             geoOptions
