@@ -14,7 +14,7 @@
     'views/searchResults/restaurant',
     'views/searchResults/restaurants',
     'views/searchResults/searchBar',
-    'views/searchResults/RestaurantsPages'
+    'views/searchResults/restaurantsPages'
 ],
 
 function ($, _, Backbone, app, Restaurant, TopBar, SearchBar, KeyValue, TopBarView, Restaurants, Dictionary, ContentLayout, RestaurantView, RestaurantsView, SearchBarView, RestaurantsPagesView) {
