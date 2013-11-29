@@ -5,15 +5,18 @@
 	'app',	
     'models/topBar',
     'models/searchBar',
+    'models/keyValue',
+    'collections/dictionary',
     'views/shared/topBar',
     'views/shared/calendar',
     'views/searchResults/searchResults',
     'views/searchResults/restaurant',
     'views/searchResults/restaurants',
-    'views/searchResults/searchBar'
+    'views/searchResults/searchBar',
+    'views/searchResults/RestaurantsPages'
 ],
 
-function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, CalendarView, ContentLayout, RestaurantView, RestaurantsView, SearchBarView) {
+function ($, _, Backbone, app, TopBar, SearchBar, KeyValue, Dictionary, TopBarView, CalendarView, ContentLayout, RestaurantView, RestaurantsView, SearchBarView, RestaurantsPagesView) {
     return app.module('SearchResults', function (SearchResults) {
         _.extend(SearchResults, {            
             topBar: new TopBar({
@@ -28,10 +31,12 @@ function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, CalendarView, Cont
                 leftUrl: '',
                 title: 'Date'
             }),
+
+            getRestaurantSet: function (restaurants) {
+                 return new Dictionary([{ key: null, value: restaurants }]);
+            },
             getSearchModel: function (party, date, time, query) {
-                if (typeof date == 'string') {
-                    date = new Date(date);
-                }
+                if (typeof date == 'string') date = new Date(date);
 
                 return new SearchBar({
                     showTimingBar: true,
@@ -48,7 +53,8 @@ function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, CalendarView, Cont
             RestaurantsView: RestaurantsView,
             SearchBarView: SearchBarView,
             TopBarView: TopBarView,
-            CalendarView: CalendarView
+            CalendarView: CalendarView,
+            RestaurantsPagesView: RestaurantsPagesView
         });
     });
 });

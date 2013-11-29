@@ -283,7 +283,11 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     });
 
     app.commands.setHandler('GetRestaurantsByMetro', function (metroId, filter, searchQuery, callback) {
-        Data.getRestaurantsByMetro(metroId, filter, searchQuery, callback);
+        Data.getRestaurantsByMetro(metroId, filter, false, searchQuery, callback);
+    });
+
+    app.commands.setHandler('GetEditorsPicksByMetro', function (metroId, callback) {
+        Data.getRestaurantsByMetro(metroId, null, true, null, callback);
     });
 
     app.commands.setHandler('GetMetros', function (callback) {

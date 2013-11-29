@@ -401,10 +401,10 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
 
             var getRestaurantsHandler = function (err, data) {
                 if (err) return that.errorPartial();
-                that.toggleLoading(false);
+                that.toggleLoading(false);                
 
-                module.restaurantsView = new module.RestaurantsView({
-                    collection: data,
+                module.restaurantsPagesView = new module.RestaurantsPagesView({
+                    collection: module.getRestaurantSet(data),
                     party: module.searchBar.model.get('party'),
                     date: newDate || date,
                     time: module.searchBar.model.get('time'),
@@ -418,7 +418,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                     rendered = true;
                 }
 
-                module.contentLayout.resultsHolder.show(module.restaurantsView);
+                module.contentLayout.resultsHolder.show(module.restaurantsPagesView); //for uniformity of another action (browse all)
             };
 
             module.searchBar.on('filterParametersChanged', function (data) {
@@ -462,42 +462,34 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                 showFindButton: true
             });
 
-            var getRestaurantsHandler = function (err, restaurants) {
+            app.execute('GetEditorsPicksByMetro', cityId, function (err, editorsPicks) {
                 if (err) return that.errorPartial();
 
-                var editorsPicks =new module.Restaurants(restaurants.where({ is_editors_picks: true }));
+                var getRestaurantsHandler = function (err, restaurants) {
+                    //if (err) return that.errorPartial();
 
-                if (module.contentLayout == null) {
-                    module.contentLayout = new module.ContentLayout({
+                    if (module.contentLayout == null) {
+                        module.contentLayout = new module.ContentLayout;
+
+                        app.content.show(module.contentLayout);
+                        module.contentLayout.searchBar.show(module.searchBarView);
+                    }
+                    
+                    module.restaurantsPagesView = new module.RestaurantsPagesView({
+                        collection: module.getRestaurantSet(editorsPicks, restaurants),
                         isBrowseAll: true,
-                        isEditorsPicks: editorsPicks.length > 0,
+                        showSimple: true
                     });
+                    module.contentLayout.resultsHolder.show(module.restaurantsPagesView);
+                    app.topBar.show(module.topBarBlock);
+                };
 
-                    app.content.show(module.contentLayout);
-                    module.contentLayout.searchBar.show(module.searchBarView);
-                }
-
-                module.restaurantsView = new module.RestaurantsView({
-                    collection: new module.Restaurants(restaurants.where({ is_editors_picks: false })),
-                    showSimple: true
+                module.searchBarView.on('searchParametersChanged', function (data) {
+                    app.execute('GetRestaurantsByMetro', cityId, filter, data.searchQuery, getRestaurantsHandler);
                 });
 
-                module.editorsPicksView = new module.RestaurantsView({
-                    collection: editorsPicks,
-                    showSimple: true,
-                    isEditorsPicks: true
-                });                
-
-                module.contentLayout.resultsHolder.show(module.restaurantsView);
-                module.contentLayout.editorsPicks.show(module.editorsPicksView);
-                app.topBar.show(module.topBarBlock);
-            };
-
-            module.searchBarView.on('searchParametersChanged', function (data) {
-                app.execute('GetRestaurantsByMetro', cityId, filter, data.searchQuery, getRestaurantsHandler);
+                app.execute('GetRestaurantsByMetro', cityId, filter, null, getRestaurantsHandler);
             });
-
-            app.execute('GetRestaurantsByMetro', cityId, filter, null, getRestaurantsHandler);
         },
 
         restaurantsFilter: function (cityId) {

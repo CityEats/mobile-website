@@ -26,7 +26,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
 
     return app.module('Data', function (Data) {
         _.extend(Data, {
-            getRestaurantsByMetro: function (metroId, filter, searchQuery, callback) {
+            getRestaurantsByMetro: function (metroId, filter, isEditorsPicks, searchQuery, callback) {
                 var that = this;
                 var restaurants = restaurantsByMetro[metroId];
                 if (typeof restaurants == 'undefined') {
@@ -36,11 +36,11 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                             restaurantsByMetro[metroId] = restaurants = new Restaurants(data.restaurants);
                         }
 
-                        return callback ? callback(err, that.filterRestaurants(restaurants, searchQuery, filter)) : null;
+                        return callback ? callback(err, that.filterRestaurants(restaurants, searchQuery, filter, isEditorsPicks)) : null;
                     });
 
                 } else {
-                    return callback ? callback(null, that.filterRestaurants(restaurants, searchQuery, filter)) : null;
+                    return callback ? callback(null, that.filterRestaurants(restaurants, searchQuery, filter, isEditorsPicks)) : null;
                 }
             },
 
@@ -66,7 +66,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 }
             },
 
-            filterRestaurants: function (restaurants, searchQuery, filter) {
+            filterRestaurants: function (restaurants, searchQuery, filter, isEditorsPicks) {
                 var cuisineIds = [], neighborhoodIds = [], prices = [], sortBy;
 
                 if (typeof restaurants == 'undefined' || restaurants == null) return null;
@@ -79,13 +79,15 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 }
 
                 restaurants = new Restaurants(restaurants.filter(function (restaurant) {
-                    var filteredByCuisine = filteredByNeighborhood = filteredByPrice = filteredByQuery = true;
+                    var filteredByCuisine = filteredByNeighborhood = filteredByPrice = filteredByQuery = filteredByEditorsPicks = true;
 
                     if (cuisineIds.length > 0) filteredByCuisine = _.intersection(cuisineIds, restaurant.get('cuisine_type_ids')).length > 0;
 
                     if (neighborhoodIds.length > 0) filteredByNeighborhood = neighborhoodIds.indexOf(restaurant.get('neighborhood_id')) != -1;
 
                     if (prices.length > 0) filteredByPrice = prices.indexOf(restaurant.get('price_rating')) != -1;
+
+                    if (isEditorsPicks) filteredByEditorsPicks = restaurant.get('is_editors_picks');
 
                     if (searchQuery && searchQuery.length > 0) {
                         searchQuery = searchQuery.toLowerCase();
@@ -97,7 +99,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                             restaurant.get('neighborhood').name.toLowerCase().indexOf(searchQuery) != -1;
                     }
 
-                    return filteredByCuisine && filteredByNeighborhood && filteredByPrice && filteredByQuery;
+                    return filteredByCuisine && filteredByNeighborhood && filteredByPrice && filteredByQuery && filteredByEditorsPicks;
 
                 }));
                 return this.orderRestaurants(restaurants, sortBy);
