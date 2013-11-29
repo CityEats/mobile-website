@@ -6,7 +6,12 @@
             'click .byCuisines': 'goToCuisines',
             'click .byNeighborhoods': 'goToNeighborhoods',
             'click #btnSubmit': 'applyFilter',
+            'click .btnDistance' : 'btnDistanceClick',
             'change .radiosLineInput[type="checkbox"]': 'pricesChanged'
+        },
+
+        ui:{
+            btnDistance: '.btnDistance'
         },
 
         initialize: function () {
@@ -24,8 +29,17 @@
                 'search-results/party/' + this.options.searchSettings.party + '/date/' + this.options.searchSettings.date + '/time/' + this.options.searchSettings.time + '/filter/neighborhoods';
         },
 
-        onRender: function () {
+        onRender: function () {            
             this.pricesChanged(this.model.isDefault());
+            if (this.options.isLocation) this.ui.btnDistance.removeClass('disabled');
+            else this.ui.btnDistance.addClass('disabled');
+            
+        },
+
+        btnDistanceClick: function(evt){
+            if (this.options.isLocation !== true){
+                evt.preventDefault();
+            }
         },
 
         goToCuisines: function (evt) {            

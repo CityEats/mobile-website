@@ -523,7 +523,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                 if (err) return that.errorPartial();
 
                 module.contentLayout = new module.ContentLayout({
-                    model: filter,                    
+                    model: filter,
+                    isLocation: app.request('GetLocation') != null,
                     isRestaurants: isRestaurants,
                     searchSettings: {
                         party: party,

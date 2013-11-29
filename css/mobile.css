@@ -374,6 +374,9 @@ p {
   color: #838483;
   font: 16px/42px ProximaBold, Arial, "Helvetica Neue", Helvetica, sans-serif;
   text-shadow: 0 1px 1px #fff; }
+    .radiosLineLabel.disabled {
+        color: #B1B3B1;
+    }
 
 .radiosLineInput {
   position: absolute;

@@ -47,7 +47,6 @@
 
 	        resetFilter: function () {
 	            var location = app.request('GetLocation');
-	            console.log(location);
 	            this.set('neighborhoodIds', []);
 	            this.set('cuisineIds', []);
 	            this.set('prices', []);
