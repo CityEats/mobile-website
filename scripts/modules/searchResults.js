@@ -21,7 +21,7 @@ function ($, _, Backbone, app, TopBar, SearchBar, KeyValue, Dictionary, TopBarVi
         _.extend(SearchResults, {            
             topBar: new TopBar({
                 leftText: 'Home',
-                leftUrl: '',
+                leftUrl: 'find-table',
                 rightText: 'Filter',
                 subTitle: 'Search for a restaurant in:',
                 title: ''
