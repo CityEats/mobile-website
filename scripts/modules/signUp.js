@@ -13,7 +13,7 @@ function ($, _, Backbone, app, TopBar, TopBarView, ContentLayout) {
         _.extend(SignUp, {
             topBar: new TopBar({
                 leftText: 'Home',
-                leftUrl: '', //TODO: "Choose City" or "Find a Table"
+                leftUrl: 'back',
                 rightText: 'Log In',
                 rightUrl: 'login',
                 title: 'Sign Up'
