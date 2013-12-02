@@ -360,7 +360,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             if (filter && !filter.isDefault()) module.topBar.set('rightCss', 'red');
             else module.topBar.set('rightCss', '');
 
-            module.contentLayout = null;            
+            module.contentLayout = null;
             var start = Helper.parseDate(date, time);
             var end = new Date(start);
 

@@ -31,9 +31,7 @@ function ($, _, Backbone, app, Helper, TopBar, SearchBar, Dictionary, TopBarView
             }),
 
             getSearchModel: function (party, date, time) {
-                if (typeof date == 'string') {
-                    date = new Date(date);
-                }
+                if (typeof date == 'string') date = Helper.parseDate(date, time);
 
                 return new SearchBar({
                     showTimingBar: true,

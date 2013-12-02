@@ -2,7 +2,8 @@
 	'jquery',
 	'underscore',
 	'backbone',
-	'app',	
+	'app',
+    'modules/helper',
     'models/topBar',
     'models/searchBar',
     'models/keyValue',
@@ -16,7 +17,7 @@
     'views/searchResults/restaurantsPages'
 ],
 
-function ($, _, Backbone, app, TopBar, SearchBar, KeyValue, Dictionary, TopBarView, CalendarView, ContentLayout, RestaurantView, RestaurantsView, SearchBarView, RestaurantsPagesView) {
+function ($, _, Backbone, app, Helper, TopBar, SearchBar, KeyValue, Dictionary, TopBarView, CalendarView, ContentLayout, RestaurantView, RestaurantsView, SearchBarView, RestaurantsPagesView) {
     return app.module('SearchResults', function (SearchResults) {
         _.extend(SearchResults, {            
             topBar: new TopBar({
@@ -36,7 +37,7 @@ function ($, _, Backbone, app, TopBar, SearchBar, KeyValue, Dictionary, TopBarVi
                  return new Dictionary([{ key: null, value: restaurants }]);
             },
             getSearchModel: function (party, date, time, query) {
-                if (typeof date == 'string') date = new Date(date);
+                if (typeof date == 'string') date = Helper.parseDate(date, time);
 
                 return new SearchBar({
                     showTimingBar: true,

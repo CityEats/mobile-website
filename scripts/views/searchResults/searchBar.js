@@ -20,7 +20,7 @@
             searchSubmit: '.searchResultsSubmit'
         },
 
-        onRender: function () {            
+        onRender: function () {
             var that = this;
             var showTimingBar = this.model.get('showTimingBar'),
                 showTimes = this.model.get('showTimes'),

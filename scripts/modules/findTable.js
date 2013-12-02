@@ -3,6 +3,7 @@
 	'underscore',
 	'backbone',
 	'app',
+    'modules/helper',
     'models/topBar',
     'models/searchBar',
     'views/shared/topBar',
@@ -11,7 +12,7 @@
     'views/searchResults/searchBar'
 ],
 
-function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, CalendarView, ContentLayout, SearchBarView) {
+function ($, _, Backbone, app, Helper, TopBar, SearchBar, TopBarView, CalendarView, ContentLayout, SearchBarView) {
     return app.module('FindTable', function (FindTable) {
         _.extend(FindTable, {
             topBar: new TopBar({ title: 'Find a Table' }),
@@ -21,9 +22,7 @@ function ($, _, Backbone, app, TopBar, SearchBar, TopBarView, CalendarView, Cont
                 title: 'Date'
             }),
             getSearchModel: function (party, date, time) {
-                if (typeof date == 'string') {
-                    date = new Date(date);
-                }
+                if (typeof date == 'string') date = Helper.parseDate(date, time);
 
                 return new SearchBar({
                     showTimingBar: true,
