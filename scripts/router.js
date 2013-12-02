@@ -845,7 +845,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
 
                 module.chooseTimeView.on('datePickerClicked', function () {
                     module.calendarTopBarView.on('btnLeftClick', function () {
-                        that.restauranBookIt(id, party, date, time, code, reservationId, fromRestaurants, module.chooseTimeView.model.get('party'), Helper.formatDate(newDate));
+                        that.restauranBookIt(id, party, date, time, code, reservationId, fromRestaurants, module.chooseTimeView.model.get('party'), newDate ? Helper.formatDate(newDate) : null);
                     });
 
                     app.topBar.show(module.calendarTopBarView);

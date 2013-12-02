@@ -93,16 +93,17 @@ function (_, app) {
                 if (typeof date == 'string') {
                     if (dateFormat.test(date)) {
                         var parsedDate = dateFormat.exec(date),
-                            parsedTime = time.split(':');
+                            parsedTime = time ? time.split(':') : null;
 
                         if (parsedDate.length == 4) {
-                            return new Date(parseInt(parsedDate[1], 10),
+                            return new
+                                Date(parseInt(parsedDate[1], 10),
                                 parseInt(parsedDate[2], 10) - 1,
                                 parseInt(parsedDate[3], 10),
-                                parseInt(parsedTime[0], 10),
-                                parseInt(parsedTime[1], 10));
+                                parsedTime ? parseInt(parsedTime[0], 10) : null,
+                                parsedTime ? parseInt(parsedTime[1], 10) : null);
                         } else {
-                            return new Date(date + ' ' + time);
+                            return new Date(date + time ? (' ' + time) : '');
                         }
                     }
                 } else {
