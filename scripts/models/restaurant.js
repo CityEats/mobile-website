@@ -159,7 +159,7 @@
 	                });
 
 	            return new Dictionary(_.map(times, function (item) {
-	                var time = new Date('2000-01-01 ' + item.value),
+	                var time = Helper.parseDate('2000-01-01', item.value),
 	                    formated = Helper.formatTime(time.getHours(), time.getMinutes());
 
 	                return {

@@ -40,10 +40,11 @@ function ($, _, Backbone, app, Helper, TopBar, SearchBar, Dictionary, TopBarView
                     date: date
                 });
             },
+
             getNextDays: function (date) {
-                var first = new Date(date),
-                    second = new Date(date),
-                    third = new Date(date);
+                var first = Helper.parseDate(date),
+                    second = new Date(first),
+                    third = new Date(first);
 
                 first.setDate(first.getDate() + 1);
                 second.setDate(second.getDate() + 2);
@@ -51,6 +52,7 @@ function ($, _, Backbone, app, Helper, TopBar, SearchBar, Dictionary, TopBarView
 
                 return new Dictionary(_.map([first, second, third], function (item) { return { key: item, value: Helper.formatDateShort(item) }; }));
             },
+
             ContentLayout: ContentLayout,
             ChooseTimeView: ChooseTimeView,
             NextDaysView: NextDaysView,

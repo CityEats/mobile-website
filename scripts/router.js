@@ -661,8 +661,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                 end.setMinutes(end.getMinutes() + 15);
             } else {
                 //if time is not specified - set start-end interval to all day
-                start = new Date(date);
-                end = new Date(date);
+                start = Helper.parseDate(date);
+                end = new Date(start);
                 end.setHours(23, 45);
             }
 
