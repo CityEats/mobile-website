@@ -1018,8 +1018,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                     app.content.show(module.contentLayout);
                     that.toggleLoading();
 
-                    module.contentLayout.on('btnCancelClicked', function () {
-                        app.execute('CancelReservation', id, function (err) {
+                    module.contentLayout.on('btnCancelClicked', function () {                        
+                        app.execute('CancelReservation', orderId, function (err) {
                             if (err) return that.errorPartial();
                             app.router.navigate('profile/reservations', { trigger: true });
                         });
@@ -1056,18 +1056,18 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                         app.execute('GetReservation', code, function (err, reservation) {
                             if (err) return that.errorPartial(null, err);
                             if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true });
-
+                            
                             module.contentLayout = new module.ContentLayout({ model: reservation, isConfirmedView: true, points: 200 })
-                            showViews();
+                            showViews(reservation.get('order_id'));
                         });
                     });
                 } else {
                     app.execute('GetReservation', code, function (err, reservation) {
                         if (err) return that.errorPartial(null, err);
                         if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true });
-
+                        
                         module.contentLayout = new module.ContentLayout({ model: reservation, user: currentUser, isConfirmedView: true, points: 200 })
-                        showViews();
+                        showViews(reservation.get('order_id'));
                     });
                 }
             });
