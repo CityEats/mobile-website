@@ -127,6 +127,16 @@
 	            else return [];
 	        },
 
+	        recommendedDishes: function () {
+	            var result = _.find(this.get('aside_lists'), function (item) { return item.classification.toLowerCase() === 'recommended-dishes' });
+	            return result ? result.description : [];
+	        },
+
+	        recommendedMargaritas: function () {
+	            var result = _.find(this.get('aside_lists'), function (item) { return item.classification.toLowerCase() === 'recommended-drinks' });
+	            return result ? result.description : [];
+	        },
+
 	        getReviewCollection: function () {
 	            this.reviewCollection || (this.reviewCollection = new Reviews);
 

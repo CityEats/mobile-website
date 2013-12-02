@@ -737,6 +737,14 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                 if (goodToKnow.length > 0) module.goodToKnow = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Good to Know', value: goodToKnow }) });
                 else module.goodToKnow = null;
 
+                var recommendedDishes = restaurant.recommendedDishes();
+                if (recommendedDishes.length > 0) module.recommendedDishes = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Recommended Dishes', value: recommendedDishes }) });
+                else module.recommendedDishes = null;
+
+                var recommendedMargaritas = restaurant.recommendedMargaritas();
+                if (recommendedMargaritas.length > 0) module.recommendedMargaritas = new module.info.TextBlockView({ model: new module.KeyValue({ key: 'Recommended Margaritas', value: recommendedMargaritas }) });
+                else module.recommendedMargaritas = null;
+
                 var reviews = restaurant.get('reviews');
                 if (reviews.length > 0) module.fullOverview = new module.info.FullOverviewView({ collection: restaurant.getReviewCollection() });
                 else module.fullOverview = null;
@@ -754,6 +762,12 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
 
                 if (module.goodToKnow != null) module.infoView.goodToKnowBox.show(module.goodToKnow);
                 else module.infoView.goodToKnowBox.close();
+
+                if (module.recommendedMargaritas != null) module.infoView.margaritasBox.show(module.recommendedMargaritas);
+                else module.infoView.margaritasBox.close();
+
+                if (module.recommendedDishes != null) module.infoView.dishesBox.show(module.recommendedDishes);
+                else module.infoView.dishesBox.close();
 
                 if (module.fullOverview != null) module.infoView.fullOverviewBox.show(module.fullOverview);
                 else module.infoView.fullOverviewBox.close();
