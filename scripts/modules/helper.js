@@ -66,6 +66,7 @@ function (_, app) {
                 var h = am ? hours : (hours - 12);
 
                 if (am && h == 0) h = 12;
+                if (!am && h == 0) h = 12;
 
                 var m = minutes < 10 ? '0' + minutes : minutes;
                 return {
@@ -220,9 +221,9 @@ function (_, app) {
                     }
 
                     h = am ? h : (h - 12);
-                    if (am && h == 0) {
-                        h = 12;
-                    }
+
+                    if (am && h == 0) h = 12;
+                    if (!am && h == 0) h = 12;
 
                     m = m < 10 ? '0' + m : m;
 

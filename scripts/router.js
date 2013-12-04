@@ -654,7 +654,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
 
             if (!(cityId = this.checkCurrentCity())) return true; //set cityId to current.id or redirect to home if no current city specified
             
-            start = Helper.parseDate(date);
+            start = Helper.parseDate(date, time);
 
             app.execute('GetRestaurant', id, start, party, time, function (err, restaurant) {
                 if (err) return that.errorPartial();
@@ -801,7 +801,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             var that = this,
                 module = require('modules/restaurant/bookIt');
 
-            this.buildRestaurantBaseInfo(id, newParty || party, newDate || date, null, fromRestaurants, module, 3, function (restaurant) {
+            this.buildRestaurantBaseInfo(id, newParty || party, newDate || date, time, fromRestaurants, module, 3, function (restaurant) {
                 module.topBar.set('leftUrl', fromRestaurants === true ?
                         ('restaurants/' + id + '/info') :
                         ('restaurants/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/info'));

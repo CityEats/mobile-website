@@ -26,7 +26,6 @@
 	            },
 
 	            slotsFormated: function() {
-
 	                var times = this.selectedTime.split(':'),
 	                    slots = this.slots;
 	                var selectedHour = parseInt(times[0], 10),
@@ -151,7 +150,7 @@
 	            return this.menusCollection;
 	        },
 
-	        getFullSlots: function () {	            
+	        getFullSlots: function () {
 	            var times = Helper.getTimes(),
                     that = this,
 	                slots = _.map(this.get('slots'), function (item) {

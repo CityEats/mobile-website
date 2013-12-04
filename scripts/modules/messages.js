@@ -240,21 +240,20 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     app.commands.setHandler('API:GetAvailableSlotsForRestaurant', function (id, date, party, timeOffset, callback) {
         var handler = getJSONStatic(API_PATH +
             '/restaurants/' + id +
-            '/available_slots_for_date?start_time=' + Helper.formatDateForApi(date) +
+            '/available_slots_for_date?date=' + Helper.formatDateForApi(date) +
             '&party_size=' + party);
         handler(callback);
     });
 
     app.commands.setHandler('GetRestaurant', function (id, date, party, time, callback) {
         if (typeof start == 'function') callback = start;
-
         Data.getRestaurantExtended(id, function (err, restaurant) {
             if (err) return callback(err);
             if (typeof party != 'undefined' && typeof time != 'undefined') {
                 app.execute('API:GetAvailableSlotsForRestaurant', id, date, party, restaurant.get('current_time_offset'), function (err, slots) {
                     if (err) return callback(err);
 
-                    if (slots.length > 0) restaurant.set('slots', slots[0].slots);
+                    if (slots.slots.length > 0) restaurant.set('slots', slots.slots);
                     else restaurant.set('slots', []);
 
                     if (time) restaurant.set('selectedTime', time);
