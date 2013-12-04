@@ -31,26 +31,21 @@ function (_, app) {
                 if (offset) {
                     date.setHours(date.getHours() - offset);
                 }
-
-                //return date.getUTCFullYear()
-                //    + '-' + pad(date.getUTCMonth() + 1)
-                //    + '-' + pad(date.getUTCDate())
-                //    + 'T' + pad(date.getUTCHours())
-                //    + ':' + pad(date.getUTCMinutes())
-                //    + ':' + pad(date.getUTCSeconds())
-                //    + 'Z';
-                return date.getFullYear()
-                    + '-' + pad(date.getMonth() + 1)
-                    + '-' + pad(date.getDate())
-                    + 'T' + pad(date.getHours())
-                    + ':' + pad(date.getMinutes())
-                    + ':' + pad(date.getSeconds())
-                    + 'Z';
+                
+                var dateString = date.getFullYear() +
+                    '-' + pad(date.getMonth() + 1) +
+                    '-' + pad(date.getDate());
+                return offset ?
+                    (dateString +
+                    'T' + pad(date.getHours()) +
+                    ':' + pad(date.getMinutes()) +
+                    ':' + pad(date.getSeconds()) +
+                    'Z')
+                    : dateString;
             },
 
             newDate: function (dateString, offset) {
-                var date = new Date(dateString);
-                //date.setHours(date.getHours() + offset - (date.getTimezoneOffset() / 60));
+                var date = new Date(dateString);                
                 date.setHours(date.getUTCHours() + offset);
                 return date;
             },

@@ -650,23 +650,13 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         buildRestaurantBaseInfo: function (id, party, date, time, fromRestaurants, module, menu, callback) {
             var that = this,
                 module = module || require('modules/restaurant/info'),
-                start, end, cityId;
+                start, cityId;
 
             if (!(cityId = this.checkCurrentCity())) return true; //set cityId to current.id or redirect to home if no current city specified
+            
+            start = Helper.parseDate(date);
 
-            if (time) {
-                start = Helper.parseDate(date, time);
-                end = Helper.parseDate(date, time);
-                start.setMinutes(start.getMinutes() - 15);
-                end.setMinutes(end.getMinutes() + 15);
-            } else {
-                //if time is not specified - set start-end interval to all day
-                start = Helper.parseDate(date);
-                end = new Date(start);
-                end.setHours(23, 45);
-            }
-
-            app.execute('GetRestaurant', id, start, end, party, time, function (err, restaurant) {
+            app.execute('GetRestaurant', id, start, party, time, function (err, restaurant) {
                 if (err) return that.errorPartial();
 
                 module.topBar.set('title', restaurant.get('name'));
@@ -925,7 +915,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             module.topBar.set('leftUrl', returnUrl);
             module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
-            app.execute('GetRestaurant', id, slotDate, slotDate, party, time, function (err, restaurant) {
+            app.execute('GetRestaurant', id, slotDate, party, time, function (err, restaurant) {
                 if (err) return that.errorPartial();
 
                 app.execute('GetCurrentUser', function (err, currentUser) {

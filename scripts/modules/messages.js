@@ -237,37 +237,29 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         handler(callback);
     });
 
-    app.commands.setHandler('API:GetAvailableSlotsForRestaurant', function (id, start, end, party, timeOffset, callback) {
+    app.commands.setHandler('API:GetAvailableSlotsForRestaurant', function (id, date, party, timeOffset, callback) {
         var handler = getJSONStatic(API_PATH +
             '/restaurants/' + id +
-            '/available_slots?start_time=' + Helper.formatDateForApi(start, timeOffset) +
-            '&end_time=' + Helper.formatDateForApi(end, timeOffset) +
+            '/available_slots_for_date?start_time=' + Helper.formatDateForApi(date) +
             '&party_size=' + party);
         handler(callback);
     });
 
-    app.commands.setHandler('GetRestaurant', function (id, start, end, party, time, callback) {
-        if (typeof start == 'function' && typeof end == 'undefined') callback = start;
+    app.commands.setHandler('GetRestaurant', function (id, date, party, time, callback) {
+        if (typeof start == 'function') callback = start;
 
         Data.getRestaurantExtended(id, function (err, restaurant) {
             if (err) return callback(err);
-            if (typeof end != 'undefined' && typeof party != 'undefined' && typeof time != 'undefined') {
-                app.execute('API:GetAvailableSlotsForRestaurant', id, start, end, party, restaurant.get('current_time_offset'), function (err, slots) {
+            if (typeof party != 'undefined' && typeof time != 'undefined') {
+                app.execute('API:GetAvailableSlotsForRestaurant', id, date, party, restaurant.get('current_time_offset'), function (err, slots) {
                     if (err) return callback(err);
 
-                    if (slots.length > 0) {
-                        restaurant.set('slots', slots[0].slots);
-                    } else {
-                        restaurant.set('slots', []);
-                    }
+                    if (slots.length > 0) restaurant.set('slots', slots[0].slots);
+                    else restaurant.set('slots', []);
 
-                    if (time) {
-                        restaurant.set('selectedTime', time);
-                    }
+                    if (time) restaurant.set('selectedTime', time);
 
-                    if (party) {
-                        restaurant.set('party', party);
-                    }
+                    if (party)restaurant.set('party', party);
 
                     callback(null, restaurant);
                 });
@@ -351,8 +343,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
                         email_reminder: order.email_reminder,
                         sms_reminder: order.sms_reminder,
                     };
-
-                    //Data.saveReservations([resertvationData]);
+                    
                     callback(err, new Reservation(resertvationData));
                 });
             });
