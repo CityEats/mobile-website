@@ -70,7 +70,7 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
             evt.preventDefault();
             var that = this,
                 confirmMessage = "Are you sure you want to cancel this CityEats reservation?",
-                sorryMessage = "We're sorry, but the restaurant does not allow online cancellations this close to the reservation time. Please call them at (XXX) XXX-XXXX. Thank you.";
+                sorryMessage = "We're sorry, but the restaurant does not allow online cancellations this close to the reservation time. Please call them at " + Helper.formatPhone(this.options.phoneNumber) + ". Thank you.";
 
             var processCancel = function () {
                 if (confirm(confirmMessage)) that.trigger('btnCancelClicked');

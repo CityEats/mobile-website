@@ -1176,7 +1176,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
                         else if (reservation.isCanceled()) title = 'Canceled Reservation';
 
                         module.detailsTopBar.set('title', title);
-                        module.details = new module.DetailsView({ model: reservation, user: currentUser, minTimeToCancel: restaurant.get('min_time_to_cancel_reservation') });
+                        module.details = new module.DetailsView({ model: reservation, user: currentUser, phoneNumber: restaurant.get('phone_number'), minTimeToCancel: restaurant.get('min_time_to_cancel_reservation') });
                         module.topBarBlock = new module.TopBarView({ model: module.detailsTopBar });
                         module.contentLayout = module.details;
 
