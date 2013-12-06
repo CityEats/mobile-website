@@ -29,6 +29,20 @@
         </div>
     <% } %>
 </div>
+
+<% if(typeof(special_meals) != "undefined" && special_meals && special_meals.length > 0) { %>
+    <div class="chooseMeals">
+        <label class="chooseMealsLabel">Meal:</label>
+        <div class="selectForm small">
+            <select class="select ddlSpecialMeals">
+                <option>---</option>
+                <% for (var i = 0; i < special_meals.length; i++) { %>
+                    <option value="<%= special_meals[i].special_meal_id %>"><%= special_meals[i].name %></option>
+                <% } %>
+            </select>
+        </div>
+    </div>
+<% } %>
 <div class="searchResultsSubmit hide">
     <input class="btn small btnFindTable" type="submit" value="Find a Table">
 </div>

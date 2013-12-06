@@ -9,12 +9,14 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
         tagName: 'article',
         className: 'resultsListItem',
         ui: {
-            rateit: '.rateit'
+            rateit: '.rateit',
+            ddlSpecialMeals : '.ddlSpecialMeals'
         },
         events: {
             'click' : 'rootClick',
             'click .resultsListTitle a': 'goToRestaurantInfo',
             'click .btnSlot': 'gotoReservation',
+            'change .ddlSpecialMeals': 'ddlSpecialMealsChange'
         },
 
         onRender: function () {
@@ -43,7 +45,14 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
                 time = this.options.time,
                 party = this.options.party;
 
-            app.router.navigate('restaurants/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/search/complete-reservation/' + selected, { trigger: true });
+            app.router.navigate(
+                ['restaurants/', id,
+                    '/party/', party,
+                    '/date/', date,
+                    '/time/', time,
+                    '/search/complete-reservation/', selected,
+                    (this.specialMealId != null ? ('/meal/' + this.specialMealId) : '')
+                ].join(''), { trigger: true });
         },
 
         rootClick: function (evt) {
@@ -51,6 +60,13 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
                 this.goToRestaurantInfo(evt);
             }
         },
+
+        ddlSpecialMealsChange: function () {
+            var specialMealId = parseInt(this.ui.ddlSpecialMeals.val(), 10);
+            this.specialMealId = !isNaN(specialMealId) ? specialMealId : null;
+            this.model.set('slots', []); //todo: get slots
+            this.render();
+        }
     });
 
     return ItemView;

@@ -68,8 +68,24 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
 
         btnCancelClick: function (evt) {
             evt.preventDefault();
-            if (confirm('Are you sure you want to cancel this CityEats reservation?')) {
-                this.trigger('btnCancelClicked');
+            var that = this,
+                confirmMessage = "Are you sure you want to cancel this CityEats reservation?",
+                sorryMessage = "We're sorry, but the restaurant does not allow online cancellations this close to the reservation time. Please call them at (XXX) XXX-XXXX. Thank you.";
+
+            var processCancel = function () {
+                if (confirm(confirmMessage)) that.trigger('btnCancelClicked');
+            };
+
+            if (this.options.minTimeToCancel) {
+                var reservedFor = new Date(this.model.get('reserved_for'));
+                reservedFor.setMinutes(reservedFor.getMinutes() - this.options.minTimeToCancel);
+                if (reservedFor < new Date) {
+                    alert(sorryMessage);
+                } else {
+                    processCancel();
+                }
+            } else {
+                processCancel();
             }
         },
 

@@ -1,4 +1,19 @@
-﻿<h3 class="bookBoxTitle">Book a Table Tonight for <%= party%> People at:</h3>
+﻿<div id="testTmpl">
+<% if(has_special_meals) { %>
+    <div class="chooseMeals">
+        <label class="chooseMealsLabel">Meal:</label>
+        <div class="selectForm small">
+            <select class="select ddlSpecialMeals">
+                <option>---</option>
+                <% for (var i = 0; i < special_meals.length; i++) { %>
+                    <option value="<%= special_meals[i].special_meal_id %>"><%= special_meals[i].name %></option>
+                <% } %>
+            </select>
+        </div>
+    </div>
+<% } %>
+
+<h3 class="bookBoxTitle">Book a Table Tonight for <%= party%> People at:</h3>
 <ul class="schedule restaurantInfoSchedule">    
     <% 
         var slotsF = slotsFormated();
@@ -20,3 +35,4 @@
         <a class="scheduleLink" href="#"><span class="scheduleMoreOptions">more<br>options</span></a>
     </li>
 </ul>
+</div>

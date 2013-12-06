@@ -4,21 +4,29 @@
         template: _.template(itemHtml),
 
         events: {
-            'click .scheduleLink': 'goToCompleteReservation'
+            'click .scheduleLink': 'goToCompleteReservation',
+            'change .ddlSpecialMeals': 'ddlSpecialMealsChange'
+        },
+        ui: {
+            ddlSpecialMeals: '.ddlSpecialMeals'
+        },
+
+        onRender: function () {
+            this.specialMealId = this.specialMealId || this.options.specialMealId;
+            if (this.specialMealId) this.ui.ddlSpecialMeals.val(this.specialMealId);
         },
 
         goToCompleteReservation: function (evt) {
             evt.preventDefault();
-            var url;
             var time = this.$(evt.target).data('time');
-            if (time && time.length > 0) {
-                var url = this.options.completeUrlTemplate.replace('##time##', time);
-            }
-            else {                
-                url = this.options.infoUrl;
-            }
-            
-            app.router.navigate(url, { trigger: true });
+            this.trigger('slotChosen', time, this.specialMealId);
+        },
+
+        ddlSpecialMealsChange: function () {
+            var specialMealId = parseInt(this.ui.ddlSpecialMeals.val(), 10);
+            this.specialMealId = !isNaN(specialMealId) ? specialMealId : null;
+            this.model.set('slots', []); //todo: get slots
+            this.render();
         }
     });
 

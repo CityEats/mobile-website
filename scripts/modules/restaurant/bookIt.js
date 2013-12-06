@@ -30,14 +30,15 @@ function ($, _, Backbone, app, Helper, TopBar, SearchBar, Dictionary, TopBarView
                 title: 'Date'
             }),
 
-            getSearchModel: function (party, date, time) {
-                if (typeof date == 'string') date = Helper.parseDate(date, time);
+            getSearchModel: function (party, date, special_meals) {
+                if (typeof date == 'string') date = Helper.parseDate(date);
 
                 return new SearchBar({
                     showTimingBar: true,
                     showTimes: false,
                     party: party,
-                    date: date
+                    date: date,
+                    special_meals: special_meals
                 });
             },
 

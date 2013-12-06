@@ -246,7 +246,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     });
 
     app.commands.setHandler('GetRestaurant', function (id, date, party, time, callback) {
-        if (typeof start == 'function') callback = start;
+        if (typeof date == 'function') callback = date;
         Data.getRestaurantExtended(id, function (err, restaurant) {
             if (err) return callback(err);
             if (typeof party != 'undefined' && typeof time != 'undefined') {
@@ -392,7 +392,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         handler(callback);
     });
 
-    app.commands.setHandler('GetReservation', function (code, callback) {        
+    app.commands.setHandler('GetReservation', function (code, callback) {
         Data.getReservation(code, callback);
     });
 
@@ -447,8 +447,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     });
 
     //utilities
-    var getReservationReguest = function (reservation) {
-        console.log(reservation.slotDate + ' ' + reservation.timeOffset);
+    var getReservationReguest = function (reservation) {        
         var request = {
             reservation: {
                 party_size: reservation.party,

@@ -17,7 +17,8 @@
             time: '.time',
             txtSearch: '.searchField',
             btnSearchClear: '.searchFormClear',
-            searchSubmit: '.searchResultsSubmit'
+            searchSubmit: '.searchResultsSubmit',
+            ddlSpecialMeals: '.ddlSpecialMeals'
         },
 
         onRender: function () {
@@ -27,7 +28,8 @@
                 party = this.model.get('party'),
                 date = this.model.get('date'),
                 time = this.model.get('time'),
-                query = this.model.get('query');
+                query = this.model.get('query'),
+                specialMeals = this.model.get('special_meals');
 
             if (showTimingBar === true) {
                 if (showTimes === true) this.rerenderTime(true);
@@ -55,6 +57,10 @@
 
                 that.setDateText(date, this.ui.dateLabel);
                 this.filterParametersChanged(true);
+            }
+
+            if (specialMeals && this.options.specialMealId) {
+                this.ui.ddlSpecialMeals.val(this.options.specialMealId);
             }
         },
 

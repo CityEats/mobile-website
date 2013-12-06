@@ -29,4 +29,17 @@
         <p><%= priceSymbols() %></p>
         <div class="rateit rating small" data-rateit-value="<%= rating %>" data-rateit-ispreset="true" data-rateit-readonly="true" data-rateit-starwidth="10" data-rateit-starheight="10"></div>
     </div>
+    <% if(has_special_meals) { %>
+        <div class="chooseMeals resultsListItemMeals">
+            <label class="chooseMealsLabel">Meal:</label>
+            <div class="selectForm small">
+                <select class="select ddlSpecialMeals">
+                    <option>---</option>
+                    <% for (var i = 0; i < special_meals.length; i++) { %>
+                        <option value="<%= special_meals[i].special_meal_id %>"><%= special_meals[i].name %></option>
+                    <% } %>
+                </select>
+            </div>
+        </div>
+    <% } %>
 </div>
