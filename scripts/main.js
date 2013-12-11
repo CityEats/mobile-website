@@ -10,6 +10,7 @@ require.config({
         text: 'vendors/require/text',
         urlArgs: "bust=" + (new Date()).getTime(),
         basicItemView: 'views/shared/basicItemView',
+        BaseController: 'controllers/shared/baseController',
         rateIt: 'vendors/plugins/rateit/jquery.rateit.min'
     },
     shim: {

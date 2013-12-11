@@ -31,3 +31,5 @@
     name: "main",
     out: "main-built.js"
 })
+
+//r.js -o build.js

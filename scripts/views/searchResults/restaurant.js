@@ -21,6 +21,7 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
 
         onRender: function () {
             this.ui.rateit.rateit();
+            if (this.specialMealId) this.ui.ddlSpecialMeals.val(this.specialMealId);
         },
 
         goToRestaurantInfo: function (evt) {
