@@ -43,8 +43,8 @@ function (_, app, Helper, BaseController, City, TopBar, Cities, ContentLayout, C
                         app.content.show(contentView);
                         contentView.currentCity.show(new CityView({ model: currentCity }));
                     } else {
-                        app.content.show(contentView);
                         contentView = new ContentLayout;
+                        app.content.show(contentView);
                     }                    
 
                     var citiesView = new CitiesView({ collection: cities });

@@ -42,9 +42,8 @@ function (_, app, Helper, BaseController, Restaurant, TopBar, SearchBar, TopBarV
 
                     if (contentView == null) {
                         contentView = new RestaurantsContentLayout;
-
                         that.contentLayout.show(contentView);
-                        contentView.searchBar.show(topBarView);
+                        contentView.searchBar.show(searchBarView);
                     }
 
                     var restaurantsPagesView = new RestaurantsPagesView({
