@@ -49,7 +49,7 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
         getLoginTopBarView: function () {
             var topBarModel = new TopBar({
                 leftText: 'Home',
-                leftUrl: '',
+                leftUrl: 'back',
                 rightText: 'Sing Up',
                 rightUrl: 'signup',
                 title: 'Log In'
