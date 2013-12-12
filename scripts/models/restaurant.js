@@ -1,5 +1,5 @@
-﻿define(['underscore', 'backbone', 'modules/helper', 'collections/reviews', 'collections/menus', 'collections/dictionary'],
-	function (_, Backbone, Helper, Reviews, Menus, Dictionary) {
+﻿define(['underscore', 'backbone', 'modules/helper', 'collections/reviews', 'collections/dictionary'],
+	function (_, Backbone, Helper, Reviews, Dictionary) {
 	    var Restaurant = Backbone.Model.extend({
 	        defaults: {
 	            distanceText: function () {
@@ -141,13 +141,6 @@
 
 	            this.reviewCollection.reset(_.map(this.get('reviews'), function (item) { return item.review; }));
 	            return this.reviewCollection;
-	        },
-
-	        getMenuCollection: function () {
-	            this.menusCollection || (this.menusCollection = new Menus);
-
-	            this.menusCollection.reset(_.map(this.get('menus'), function (item) { return item.menu; }));
-	            return this.menusCollection;
 	        },
 
 	        getFullSlots: function () {

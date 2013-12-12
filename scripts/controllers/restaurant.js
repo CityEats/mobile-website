@@ -58,9 +58,11 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
         },
 
         menus: function (id, party, date, time, fromRestaurants) {
+            var url = 'https://widget.locu.com/menuwidget/locu.widget.developer.v2.0.js?venue-id=88175e3392c24e2a36f7&amp;widget-key=81ed5917272ae50a8eabb9bb3ec411c61e8f7512&amp;medium=mobile';
+            
             var that = this;
             this.buildRestaurantBaseInfo(id, party, date, time, fromRestaurants, 2, function (restaurant) {
-                var menusView = new MenusView({ collection: restaurant.getMenuCollection() });
+                var menusView = new MenusView({ model: new KeyValue({ value : url}) });
                 that.contentLayout.currentView.restaurantContent.show(menusView);
             });
         },
