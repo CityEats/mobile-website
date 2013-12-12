@@ -289,7 +289,7 @@ p {
   border: 0;
   background: none;
   -webkit-appearance: none;
-  padding: 0 30px;
+  padding: 0 40px;
   margin: 0;
   width: 100%;
   font: 12px/30px Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif;
@@ -324,7 +324,7 @@ p {
   left: 8px;
   text-indent: -9999px;
   overflow: hidden;
-  padding-right:22px;}
+  padding-right:32px;}
 
 .checkboxesListItem {
   border-top: 1px solid rgba(255, 255, 255, 0.4);
