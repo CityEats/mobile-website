@@ -15,8 +15,8 @@
             dateLabel: '.datePicker',
             date: '.date',
             time: '.time',
-            txtSearch: '.searchField',
-            btnSearchClear: '.searchFormClear',
+            txtSearch: '.searchField',            
+            searchForm: '.searchForm',
             searchSubmit: '.searchResultsSubmit',
             ddlSpecialMeals: '.ddlSpecialMeals'
         },
@@ -31,6 +31,8 @@
                 query = this.model.get('query'),
                 specialMeals = this.model.get('special_meals');
 
+            this.ui.searchForm.addClass('empty');
+
             if (showTimingBar === true) {
                 if (showTimes === true) this.rerenderTime(true);
 
@@ -44,11 +46,11 @@
                 if (typeof time != 'undefined') this.ui.time.val(time);
 
                 if (typeof query != 'undefined') {
-                    this.ui.txtSearch.val(query)
+                    this.ui.txtSearch.val(query)                    
                     if (query.length > 0) {
-                        this.ui.btnSearchClear.show();
+                        this.ui.searchForm.removeClass('empty');
                     } else {
-                        this.ui.btnSearchClear.hide();
+                        this.ui.searchForm.addClass('empty');
                     }
                 }
 
@@ -76,7 +78,7 @@
         btnClearClick: function (evt) {            
             evt.preventDefault();
             this.ui.txtSearch.val('');
-            this.ui.btnSearchClear.hide();
+            this.ui.searchForm.addClass('empty');
 
             this.searchChanged();
         },
@@ -85,9 +87,9 @@
             evt.preventDefault();
             
             if (this.ui.txtSearch.val().length > 0) {
-                this.ui.btnSearchClear.show();
+                this.ui.searchForm.removeClass('empty');
             } else {
-                this.ui.btnSearchClear.hide();
+                this.ui.searchForm.addClass('empty');
             }
 
             this.searchChanged();

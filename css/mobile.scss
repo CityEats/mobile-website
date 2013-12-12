@@ -360,10 +360,13 @@ p {
         top: 50%;
         left: 8px;
         margin: -7px 0 0;
-        width: 15px;
-        height: 16px;
-        background: url(../img/sprite.png) -325px -5px no-repeat;
+        width: 18px;
+        height: 18px;
+        background: url(../img/sprite.png) -344px -5px no-repeat;
     }
+	&.empty:before {
+		 background: none;
+	}
 }
 .searchField {
     border: 0;
@@ -375,19 +378,29 @@ p {
     font: 12px/30px $Proxima;
     color: #111010;
 }
-.searchFormClear {
+.searchFormButton {
     position: absolute;
     top: 50%;
-    width: 18px;
+    width: 40px;
     height: 18px;
     margin: -9px 0 0;
     right: 8px;
     text-indent: -9999px;
     overflow: hidden;
-    background: url(../img/sprite.png) -344px -5px no-repeat;
+	& span {
+		position: absolute;
+		top: 50%;
+		width: 18px;
+		height: 18px;
+		margin: -9px 0 0;
+		right: 8px;
+		text-indent: -9999px;
+		overflow: hidden;
+		background: url(../img/sprite.png) -325px -5px no-repeat;
+	}
 }
 
-.searchFormButton {
+.searchFormClear {
   position: absolute;
   top: 50%;
   width: 18px;
@@ -396,6 +409,7 @@ p {
   left: 8px;
   text-indent: -9999px;
   overflow: hidden; 
+  padding-right:22px;
 }
 
 .checkboxesListItem {
@@ -2067,7 +2081,7 @@ only screen and (min-resolution: 192dpi) {
     .filterByItems.byNeighborhoods:before,
     .resultsTitle.pick:before,
     .searchForm:before,
-    .searchFormClear {
+    .searchFormButton span {
         background-image: url(../img/sprite@2.png);
         background-size: 368px 55px;
     }

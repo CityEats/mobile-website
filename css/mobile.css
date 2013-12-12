@@ -278,9 +278,12 @@ p {
     top: 50%;
     left: 8px;
     margin: -7px 0 0;
-    width: 15px;
-    height: 16px;
-    background: url(../img/sprite.png) -325px -5px no-repeat; }
+    width: 18px;
+    height: 18px;
+    background: url(../img/sprite.png) -344px -5px no-repeat; }
+
+.searchForm.empty:before {
+    background: none;}
 
 .searchField {
   border: 0;
@@ -292,18 +295,27 @@ p {
   font: 12px/30px Proxima, Arial, "Helvetica Neue", Helvetica, sans-serif;
   color: #111010; }
 
-.searchFormClear {
+.searchFormButton{
   position: absolute;
   top: 50%;
-  width: 18px;
+  width: 40px;
   height: 18px;
   margin: -9px 0 0;
   right: 8px;
   text-indent: -9999px;
-  overflow: hidden;
-  background: url(../img/sprite.png) -344px -5px no-repeat; }
+  overflow: hidden; }
+    .searchFormButton span {
+      position: absolute;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      margin: -9px 0 0;
+      right: 8px;
+      text-indent: -9999px;
+      overflow: hidden;
+      background: url(../img/sprite.png) -325px -5px no-repeat; }
 
-.searchFormButton {
+.searchFormClear {
   position: absolute;
   top: 50%;
   width: 18px;
@@ -311,7 +323,8 @@ p {
   margin: -9px 0 0;
   left: 8px;
   text-indent: -9999px;
-  overflow: hidden; }
+  overflow: hidden;
+  padding-right:22px;}
 
 .checkboxesListItem {
   border-top: 1px solid rgba(255, 255, 255, 0.4);
@@ -1828,7 +1841,7 @@ a.reservationData {
   .filterByItems.byNeighborhoods:before,
   .resultsTitle.pick:before,
   .searchForm:before,
-  .searchFormClear {
+  .searchFormButton span{
     background-image: url(../img/sprite@2.png);
     background-size: 368px 55px; }
 
