@@ -275,7 +275,7 @@ p {
   .searchForm:before {
     content: '';
     position: absolute;
-    top: 50%;
+    top: 43%;
     left: 8px;
     margin: -7px 0 0;
     width: 18px;
@@ -297,11 +297,10 @@ p {
 
 .searchFormButton{
   position: absolute;
-  top: 50%;
-  width: 40px;
-  height: 18px;
-  margin: -9px 0 0;
-  right: 8px;
+  top: 0px;
+  width: 50px;
+  height: 30px;  
+  right: 0px;
   text-indent: -9999px;
   overflow: hidden; }
     .searchFormButton span {
@@ -313,18 +312,18 @@ p {
       right: 8px;
       text-indent: -9999px;
       overflow: hidden;
-      background: url(../img/sprite.png) -325px -5px no-repeat; }
+      background: url(../img/sprite.png) -325px -5px no-repeat;
+      margin-right: 8px; }
 
 .searchFormClear {
   position: absolute;
-  top: 50%;
+  top: 0px;
   width: 18px;
-  height: 18px;
-  margin: -9px 0 0;
-  left: 8px;
+  height: 30px;
+  left: 0px;
   text-indent: -9999px;
   overflow: hidden;
-  padding-right:32px;}
+  padding-right:40px;}
 
 .checkboxesListItem {
   border-top: 1px solid rgba(255, 255, 255, 0.4);
