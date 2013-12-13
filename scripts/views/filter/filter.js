@@ -7,7 +7,8 @@
             'click .byNeighborhoods': 'goToNeighborhoods',
             'click #btnSubmit': 'applyFilter',
             'click .btnDistance' : 'btnDistanceClick',
-            'change .radiosLineInput[type="checkbox"]': 'pricesChanged'
+            'change .radiosLineInput[type="checkbox"]': 'pricesChanged',
+            'change .radiosLineInput[type="radio"]': 'sortByChanged'
         },
 
         ui:{
@@ -30,7 +31,7 @@
         },
 
         onRender: function () {            
-            this.pricesChanged(this.model.isDefault());
+            this.checkChanges();
             if (this.options.isLocation) this.ui.btnDistance.removeClass('disabled');
             else this.ui.btnDistance.addClass('disabled');
             
@@ -53,12 +54,13 @@
         },
 
         applyFilter: function (evt) {
+            evt.preventDefault();
             var that = this;
             
             var sortBy = parseInt(this.$('input[name="sort"]:checked').attr('itemId'), 10) || 0,
                 prices = [];
 
-            priceElemets = this.$('.prices input[type="checkbox"]:checked');
+            var priceElemets = this.$('.prices input[type="checkbox"]:checked');
             priceElemets.each(function (i, item) {
                 prices.push(parseInt(that.$(item).attr('itemId'), 10) || 0)
             });
@@ -68,13 +70,25 @@
             app.execute('SaveFilter', this.model);
             
             app.router.navigate(this.backUrl, { trigger: true });
-
-            evt.preventDefault();
         },
 
         pricesChanged: function () {
-            priceElemets = this.$('.prices input[type="checkbox"]:checked');
-            var isDefault = this.model.isDefault() && priceElemets.length == 0;
+            this.checkChanges();
+        },
+
+        sortByChanged: function(){
+            this.checkChanges();
+        },
+
+        checkChanges: function () {
+            var priceElemets = this.$('.prices input[type="checkbox"]:checked');
+            var sortBy = parseInt(this.$('input[name="sort"]:checked').attr('itemId'), 10) || 0;
+
+            var isDefault = priceElemets.length == 0 &&
+                (this.options.isLocation && sortBy == 1 || !this.options.isLocation && sortBy == 2) &&
+                this.model.get('cuisineIds').length == 0 &&
+                this.model.get('neighborhoodIds').length == 0;
+
             this.trigger('filterChanged', isDefault);
         },
 

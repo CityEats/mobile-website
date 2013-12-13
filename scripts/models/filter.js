@@ -39,10 +39,14 @@
 	            }
 	        },
 
-	        isDefault: function () {                
+	        isDefault: function () {
+	            var sortBy = this.get('sortBy');
+	            var location = app.request('GetLocation');
+                
 	            return this.get('prices').length == 0 &&
                     this.get('cuisineIds').length == 0 &&
-                    this.get('neighborhoodIds').length == 0;
+                    this.get('neighborhoodIds').length == 0 &&
+                    (location && sortBy == 1 || !location && sortBy == 2);
 	        },
 
 	        resetFilter: function () {
