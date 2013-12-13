@@ -127,12 +127,21 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
 
             app.execute('GetRestaurant', id, start, party, time, function (err, restaurant) {
                 if (err) return that.errorPartial();
-
+                
+                var leftMenuUrl;
+                if (menu == 3) {
+                    leftMenuUrl = fromRestaurants === true ?
+                        ('restaurants/' + id + '/info') :
+                        ('restaurants/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/info');
+                } else {
+                    leftMenuUrl = fromRestaurants === true ?
+                       ('restaurants') :
+                       ('search-results/party/' + party + '/date/' + date + '/time/' + time)
+                }
                 var topBarView = that.getTopBarView({
+                    leftText : menu == 3 ? 'Cancel' : 'Back',
                     title: restaurant.get('name'),
-                    leftUrl: fromRestaurants === true ?
-                        ('restaurants') :
-                        ('search-results/party/' + party + '/date/' + date + '/time/' + time)
+                    leftUrl:leftMenuUrl
                 });
 
                 if (menu != 3) {
@@ -186,7 +195,7 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
             }, options));
 
             return new TopBarView({ model: topBar });
-        },
+        },        
 
         getCalendarTopBarView: function () {
             var topBar = new TopBar({
