@@ -52,12 +52,11 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             'restaurants/:num/party/:num/date/:num/time/:num/menus': 'restauranMenus',
             'restaurants/:num/book-it(/meal/:meal)': 'restauranBookItShort',
             'restaurants/:num/party/:num/date/:num/time/:num/book-it(/meal/:meal)': 'restauranBookIt',
-            'restaurants/:num/party/:num/date/:num/time/:num/book-it/modify/:code/:reservationId': 'restauranBookItEdit',
+            'restaurants/:num/party/:num/date/:num/time/:num/book-it/modify/:code(/meal/:meal)': 'restauranBookItEdit',
             //'restaurants/:num/exclusive-eats': 'restaurantExclusiveEats',
             //'restaurants/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
-            'restaurants/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num': 'completeReservation',
-            'restaurants/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num/meal/:meal': 'completeReservation',
-            'restaurants/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num/modify/:code': 'completeReservationEdit',
+            'restaurants/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num(/meal/:meal)': 'completeReservation',            
+            'restaurants/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num/modify/:code(/meal/:meal)': 'completeReservationEdit',
             //'restaurants/:num/:num/party/:num/date/:num/time/:num/:from/confirmed-reservation/:num/:num': 'reservationConfirmed',
             'restaurants/:num/confirmed-reservation/:num': 'reservationConfirmed',
             //'restaurants/:num/:num/complete-reservation/:num': 'completeReservation',
@@ -223,15 +222,15 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         },
 
         restauranBookItShort: function (id, mealId) {
-            this.restauranBookIt(id, 2, Helper.formatDate(new Date), '19:00', mealId, null, null, true);
+            this.restauranBookIt(id, 2, Helper.formatDate(new Date), '19:00', mealId, null, true);
         },
 
-        restauranBookItEdit: function (id, party, date, time, code) {
-            this.restauranBookIt(id, 2, Helper.formatDate(new Date), '19:00', null, code, null, true);
+        restauranBookItEdit: function (id, party, date, time, code, mealId) {
+            this.restauranBookIt(id, 2, Helper.formatDate(new Date), '19:00', mealId, code, true);
         },
 
-        restauranBookIt: function (id, party, date, time, mealId, code, reservationId, fromRestaurants) {            
-            this.getController('controllers/restaurant').bookIt(id, party, date, time, mealId, code, reservationId, fromRestaurants);
+        restauranBookIt: function (id, party, date, time, mealId, code, fromRestaurants) {            
+            this.getController('controllers/restaurant').bookIt(id, party, date, time, mealId, code, fromRestaurants);
         },
 
         restaurantExclusiveEats: function (num) {
@@ -267,8 +266,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             app.content.show(module.contentLayout);
         },
 
-        completeReservationEdit: function (id, party, date, filterTime, from, time, code) {
-            this.completeReservation(id, party, date, filterTime, from, time, null, code);
+        completeReservationEdit: function (id, party, date, filterTime, from, time, code, mealId) {
+            this.completeReservation(id, party, date, filterTime, from, time, mealId, code);
         },
 
         completeReservation: function (id, party, date, filterTime, from, time, mealId, code) {            

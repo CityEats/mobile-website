@@ -65,14 +65,16 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
             });
         },
 
-        bookIt: function (id, party, date, time, mealId, code, reservationId, fromRestaurants, newParty, newDate) {
+        bookIt: function (id, party, date, time, mealId, code, fromRestaurants, newParty, newDate) {
             var that = this;
-            this.buildRestaurantBaseInfo(id, newParty || party, newDate || date, time, fromRestaurants, 3, function (restaurant) {                
-
+            this.buildRestaurantBaseInfo(id, newParty || party, newDate || date, time, fromRestaurants, 3, function (restaurant) {
+                if (mealId == null && restaurant.get('has_special_meals')) {
+                    mealId = restaurant.get('special_meals_slots')[0].id;
+                }
                 var chooseTimeView = new ChooseTimeView({ model: that.getSearchModel(newParty || party, newDate || date, restaurant.get('special_meals')), specialMealId: mealId });
                 var nextDaysView = new NextDaysView({ collection: that.getNextDays(newDate || date) });
                 var scheduleItemsView = new ScheduleItemsView({
-                    collection: restaurant.getFullSlots(),
+                    collection: restaurant.getFullSlots(mealId),
                     completeUrlTemplate: [
                         'restaurants/',
                         id,
@@ -81,7 +83,8 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
                         '/time/', time,
                         '/', (fromRestaurants ? 'book-it' : 'book-it-ext'),
                         '/complete-reservation/##time##',
-                        (code ? ('/modify/' + code) : '')
+                        (code ? ('/modify/' + code) : ''),
+                        (mealId ? ('/meal/' + mealId) : '')
                     ].join('')
                 });
 
@@ -95,25 +98,25 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
 
                 chooseTimeView.on('datePickerClicked', function () {
                     calendarTopBarView.on('btnLeftClick', function () {
-                        that.bookIt(id, party, date, time, mealId, code, reservationId, fromRestaurants, chooseTimeView.model.get('party'), newDate ? Helper.formatDate(newDate) : null);
+                        that.bookIt(id, party, date, time, mealId, code, fromRestaurants, chooseTimeView.model.get('party'), newDate ? Helper.formatDate(newDate) : null);
                     });
 
                     that.topBarLayout.show(calendarTopBarView);
                     that.contentLayout.show(calendarView);
 
                     calendarView.on('dateSelected', function (selectedDate) {
-                        chooseTimeView.model.set('date', selectedDate);
-                        that.bookIt(id, party, date, time, mealId, code, reservationId, fromRestaurants, chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
+                        //chooseTimeView.model.set('date', selectedDate);
+                        that.bookIt(id, party, date, time, mealId, code, fromRestaurants, chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
                     });
+                }).on('partySizeChanged', function (partySize) {
+                    that.bookIt(id, party, date, time, mealId, code, fromRestaurants, partySize, newDate);
+                }).on('specialMealsChanged', function (specialMealId) {
+                    that.bookIt(id, party, date, time, specialMealId, code, fromRestaurants, newParty, newDate);
                 });
 
                 nextDaysView.on('newDayView:dateSelected', function (sender, selectedDate) {
-                    chooseTimeView.model.set('date', selectedDate);
-                    that.bookIt(id, party, date, time, mealId, code, reservationId, fromRestaurants, chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
-                });
-
-                chooseTimeView.on('partySizeChanged', function (partySize) {
-                    that.bookIt(id, party, date, time, mealId, code, reservationId, fromRestaurants, partySize, newDate);
+                    //chooseTimeView.model.set('date', selectedDate);
+                    that.bookIt(id, party, date, time, mealId, code, fromRestaurants, chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
                 });
             });
         },

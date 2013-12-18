@@ -3,8 +3,7 @@
     <div class="chooseMeals">
         <label class="chooseMealsLabel">Meal:</label>
         <div class="selectForm small">
-            <select class="select ddlSpecialMeals">
-                <option>---</option>
+            <select class="select ddlSpecialMeals">                
                 <% for (var i = 0; i < special_meals.length; i++) { %>
                     <option value="<%= special_meals[i].special_meal_id %>"><%= special_meals[i].name %></option>
                 <% } %>
@@ -13,10 +12,10 @@
     </div>
 <% } %>
 
-<h3 class="bookBoxTitle">Book a Table Tonight for <%= party%> People at:</h3>
+<h3 class="bookBoxTitle">Book a Table <%= formatDateRelative() %> for <%= party%> People at:</h3>
 <ul class="schedule restaurantInfoSchedule">    
-    <% 
-        var slotsF = slotsFormated();
+    <%
+        var slotsF = slotsFormated(specialMealId);
         for (var i = 0; i < slotsF.length; i++) { %>            
 
         <%if(!slotsF[i].isEmpty) { %>            

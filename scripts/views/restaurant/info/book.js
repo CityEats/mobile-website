@@ -1,14 +1,31 @@
-﻿define(['marionette', 'underscore', 'text!templates/restaurant/info/book.html'], function (Marionette, _, itemHtml) {
+﻿define(['marionette', 'underscore', 'modules/Helper', 'text!templates/restaurant/info/book.html'], function (Marionette, _, Helper, itemHtml) {
 
     var ItemView = Marionette.ItemView.extend({
         template: _.template(itemHtml),
 
         events: {
             'click .scheduleLink': 'goToCompleteReservation',
-            'change .ddlSpecialMeals': 'ddlSpecialMealsChange'
+            'change .ddlSpecialMeals': 'ddlSpecialMealsChanged'
         },
         ui: {
             ddlSpecialMeals: '.ddlSpecialMeals'
+        },
+
+        serializeData: function () {
+            var result = this.model.toJSON();
+            return _.extend(result, { specialMealId: this.specialMealId });
+        },
+
+        templateHelpers: {
+            formatDateRelative: function () {
+                return Helper.formatDateRelative(this.selectedDate);
+            }
+        },
+
+        initialize: function () {
+            if (this.model.get('has_special_meals')) {
+                this.specialMealId = this.model.get('special_meals_slots')[0].id;
+            }
         },
 
         onRender: function () {
@@ -22,10 +39,9 @@
             this.trigger('slotChosen', time, this.specialMealId);
         },
 
-        ddlSpecialMealsChange: function () {
+        ddlSpecialMealsChanged: function () {
             var specialMealId = parseInt(this.ui.ddlSpecialMeals.val(), 10);
             this.specialMealId = !isNaN(specialMealId) ? specialMealId : null;
-            this.model.set('slots', []); //todo: get slots
             this.render();
         }
     });

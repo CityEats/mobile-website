@@ -9,6 +9,7 @@
             'click .datePicker': 'datePickerClick',
             'change .partySize, .time': 'filterParametersChanged',
             'change .partySize': 'partySizeChanged',
+            'change .ddlSpecialMeals': 'ddlSpecialMealsChanged'
         },
         ui: {
             party: '.partySize',
@@ -19,6 +20,18 @@
             searchForm: '.searchForm',
             searchSubmit: '.searchResultsSubmit',
             ddlSpecialMeals: '.ddlSpecialMeals'
+        },
+
+        serializeData: function () {
+            var result = this.model.toJSON();
+
+            return _.extend(result, { specialMealId: this.specialMealId });
+        },
+
+        initialize: function () {
+            if (this.model.get('special_meals')) {
+                this.specialMealId = this.options.specialMealId
+            }
         },
 
         onRender: function () {
@@ -61,9 +74,7 @@
                 this.filterParametersChanged(true);
             }
 
-            if (specialMeals && this.options.specialMealId) {
-                this.ui.ddlSpecialMeals.val(this.options.specialMealId);
-            }
+            if (this.specialMealId) this.ui.ddlSpecialMeals.val(this.specialMealId);
         },
 
         setDateText: function (date, label) {
@@ -174,6 +185,12 @@
             var select = _(times).map(function (item) { return '<option value="' + item.value + '" ' + (item.selected ? 'selected' : '') + '>' + item.text + '</option>' });
 
             this.ui.time.empty().append(select);
+        },
+
+        ddlSpecialMealsChanged: function () {
+            var specialMealId = parseInt(this.ui.ddlSpecialMeals.val(), 10);
+            this.specialMealId = !isNaN(specialMealId) ? specialMealId : null;
+            this.trigger('specialMealsChanged', this.specialMealId);
         }
     });
 

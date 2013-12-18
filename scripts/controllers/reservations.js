@@ -43,14 +43,16 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
 
                 app.execute('GetCurrentUser', function (err, currentUser) {
                     if (err) return that.errorPartial();
-
-                    if (restaurant.get('slots').length == 0) return app.router.navigate(returnUrl, { trigger: true });
+                    
+                    if ((mealId && restaurant.get('special_meals_slots').length == 0) || (mealId == null && restaurant.get('slots').length == 0))
+                        return app.router.navigate(returnUrl, { trigger: true });
 
                     var contentView = new CompleteReservationContentLayout;
 
                     var restaurantInfoView = new RestaurantInfoView({
                         model: restaurant,
-                        bookItUrl: bookItUrl
+                        bookItUrl: bookItUrl,
+                        specialMealId: mealId
                     });
 
                     var showViews = function () {
@@ -70,7 +72,8 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                                     party: party,
                                     slotDate: slotDate,
                                     timeOffset: restaurant.get('current_time_offset'),
-                                    restaurantId: id
+                                    restaurantId: id,
+                                    specialMealId: mealId ? parseInt(mealId, 10) : null,
                                 };
 
                                 //create or update reservation
@@ -129,7 +132,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                     });
 
                     contentView.on('btnModifyClicked', function (code, reservationId, party, date, time) {
-                        app.router.navigate('restaurants/' + restaurantId + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code + '/' + reservationId, { trigger: true });
+                        app.router.navigate('restaurants/' + restaurantId + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code, { trigger: true });
                     });
 
                     contentView.on('reminderChanged', function (smsReminder, emailReminder) {
@@ -220,7 +223,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                         });
 
                         contentView.on('btnModifyClicked', function (code, reservationId, party, date, time) {
-                            app.router.navigate('restaurants/' + restaurant.get('id') + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code + '/' + reservationId, { trigger: true });
+                            app.router.navigate('restaurants/' + restaurant.get('id') + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code, { trigger: true });
                         });
 
                         contentView.on('reminderChanged', function (smsReminder, emailReminder) {

@@ -3,7 +3,7 @@
 	    var Restaurant = Backbone.Model.extend({
 	        defaults: {
 	            distanceText: function () {
-	                return this.distance_to_restaurant ? this.distance_to_restaurant.toFixed(2) + ' mi' : null;	                
+	                return this.distance_to_restaurant ? this.distance_to_restaurant.toFixed(2) + ' mi' : null;
 	            },
 
 	            cuisine_types: [],
@@ -25,18 +25,25 @@
 	                return Helper.formatPhone(this.phone_number);
 	            },
 
-	            slotsFormated: function() {
+	            slotsFormated: function (specialMealId) {
 	                var times = this.selectedTime.split(':'),
-	                    slots = this.slots;
-	                var selectedHour = parseInt(times[0], 10),
+	                    slots,
+	                    selectedHour = parseInt(times[0], 10),
                         selectedMin = parseInt(times[1], 10);
+
+	                if (specialMealId) {
+	                    var meals = _.findWhere(this.special_meals_slots, { id: specialMealId });
+	                    slots = meals ? meals.slots : [];
+	                } else {
+	                    slots = this.slots;
+	                }
 
 	                var date = new Date(2000, 1, 1, selectedHour, selectedMin);
 
 	                var minus15 = new Date(date),
                         plus15 = new Date(date);
 	                minus15.setMinutes(minus15.getMinutes() - 15);
-	                plus15.setMinutes(plus15.getMinutes() + 15);	                
+	                plus15.setMinutes(plus15.getMinutes() + 15);
 
 	                //unfortunately api returns all slots, but we need only 3 of them.	                
 
@@ -91,8 +98,16 @@
 	                return result;
 	            },
 
-	            slotFormated: function (index) {
-	                return Helper.formatDateShort2(this.slots[index]);
+	            slotFormated: function (index, specialMealId) {                    
+	                var slots;
+	                if (specialMealId) {
+	                    var meals = _.findWhere(this.special_meals_slots, { id: specialMealId });
+	                    slots = meals ? meals.slots : [];
+	                } else {
+	                    slots = this.slots;
+	                }
+
+	                return Helper.formatDateShort2(slots[index]);
 	            },
 
 	            thumbImage: function () {
@@ -143,12 +158,22 @@
 	            return this.reviewCollection;
 	        },
 
-	        getFullSlots: function () {
+	        getFullSlots: function (specialMealId) {
 	            var times = Helper.getTimes(),
                     that = this,
-	                slots = _.map(this.get('slots'), function (item) {
-	                    return Helper.formatTime(Helper.newDate(item, that.get('current_time_offset')))
-	                });
+                    items,
+	                slots;
+
+	            if (specialMealId) {
+	                var meals = _.findWhere(this.get('special_meals_slots'), { id: specialMealId });
+	                items = meals ? meals.slots : [];
+	            } else {
+	                items = this.get('slots');
+	            }
+
+	            slots = _.map(items, function (item) {
+	                return Helper.formatTime(Helper.newDate(item, that.get('current_time_offset')))
+	            });
 
 	            return new Dictionary(_.map(times, function (item) {
 	                var time = Helper.parseDate('2000-01-01', item.value),

@@ -16,7 +16,18 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
             'click' : 'rootClick',
             'click .resultsListTitle a': 'goToRestaurantInfo',
             'click .btnSlot': 'gotoReservation',
-            'change .ddlSpecialMeals': 'ddlSpecialMealsChange'
+            'change .ddlSpecialMeals': 'ddlSpecialMealsChanged'
+        },
+
+        serializeData: function () {
+            var result = this.model.toJSON();
+            return _.extend(result, { specialMealId: this.specialMealId });
+        },
+
+        initialize: function () {
+            if (this.model.get('has_special_meals')) {
+                this.specialMealId = this.model.get('special_meals_slots')[0].id;
+            }
         },
 
         onRender: function () {
@@ -26,14 +37,11 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
 
         goToRestaurantInfo: function (evt) {
             evt.preventDefault();
-
             var id = this.model.get('id'), url;
 
-            if (this.options.showSimple === true) {
-                url = 'restaurants/' + id + '/info';
-            } else {
-                url = 'restaurants/' + id + '/party/' + this.options.party + '/date/' + this.options.date + '/time/' + this.options.time + '/info';
-            }
+            url = this.options.showSimple === true ?
+                ('restaurants/' + id + '/info') :
+                ('restaurants/' + id + '/party/' + this.options.party + '/date/' + this.options.date + '/time/' + this.options.time + '/info');
 
             app.router.navigate(url, { trigger: true });
         },
@@ -62,10 +70,9 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
             }
         },
 
-        ddlSpecialMealsChange: function () {
+        ddlSpecialMealsChanged: function () {
             var specialMealId = parseInt(this.ui.ddlSpecialMeals.val(), 10);
             this.specialMealId = !isNaN(specialMealId) ? specialMealId : null;
-            this.model.set('slots', []); //todo: get slots
             this.render();
         }
     });

@@ -209,7 +209,9 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
                             var slot = _(slots).findWhere({ id: restaurant.get('id') });
                             if (slot) {
                                 restaurant.set('slots', slot.slots);
+                                restaurant.set('special_meals_slots', slot.special_meals);
                                 restaurant.set('selectedTime', time);
+                                restaurant.set('selectedDate', start);
                                 return true;
                             }
                             else {
@@ -253,10 +255,15 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
                 app.execute('API:GetAvailableSlotsForRestaurant', id, date, party, restaurant.get('current_time_offset'), function (err, slots) {
                     if (err) return callback(err);
 
-                    if (slots.slots.length > 0) restaurant.set('slots', slots.slots);
+                    if (slots.slots && slots.slots.length > 0) restaurant.set('slots', slots.slots);
                     else restaurant.set('slots', []);
 
+                    if (slots.special_meals && slots.special_meals.length > 0) restaurant.set('special_meals_slots', slots.special_meals);
+                    else restaurant.set('special_meals_slots', []);
+
                     if (time) restaurant.set('selectedTime', time);
+
+                    if (date) restaurant.set('selectedDate', date);
 
                     if (party)restaurant.set('party', party);
 
@@ -320,32 +327,34 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     app.commands.setHandler('ConfirmReservation', function (restaurantId, reservation, callback) {
         app.execute('GetRestaurant', restaurantId, function (err, restaurant) {
             if (err) return callback(err);
-            app.execute('API:LockReservation', restaurantId, { party_size: reservation.party, time: Helper.formatDateForApi(reservation.slotDate, restaurant.get('current_time_offset')) }, function (err, lockResponse) {
-                if (err) return callback(err);
-
-                app.execute('API:ConfirmReservation', restaurantId, lockResponse.lock_id, reservation, function (err, responseReservation) {
+            app.execute('API:LockReservation', restaurantId,
+                { party_size: reservation.party, time: Helper.formatDateForApi(reservation.slotDate, restaurant.get('current_time_offset')), special_meal_id: reservation.specialMealId },
+                function (err, lockResponse) {
                     if (err) return callback(err);
 
-                    var order = responseReservation.order;
-                    var resertvationData = {
-                        order_id: order.id,
-                        confirmation_code: order.confirmation_code,
-                        party_size: reservation.party,
-                        reserved_for: Helper.formatDateForApi(reservation.slotDate, restaurant.get('current_time_offset')),
-                        restaurant_name: restaurant.get('name'),
-                        special_request: reservation.additionalInfo.specialRequests,
-                        promo_code: reservation.additionalInfo.promoCode,
-                        email: reservation.user.email,
-                        first_name: reservation.user.firstName,
-                        last_name: reservation.user.lastName,
-                        phone_number: reservation.user.phone,
-                        email_reminder: order.email_reminder,
-                        sms_reminder: order.sms_reminder,
-                    };
-                    
-                    callback(err, new Reservation(resertvationData));
+                    app.execute('API:ConfirmReservation', restaurantId, lockResponse.lock_id, reservation, function (err, responseReservation) {
+                        if (err) return callback(err);
+
+                        var order = responseReservation.order;
+                        var resertvationData = {
+                            order_id: order.id,
+                            confirmation_code: order.confirmation_code,
+                            party_size: reservation.party,
+                            reserved_for: Helper.formatDateForApi(reservation.slotDate, restaurant.get('current_time_offset')),
+                            restaurant_name: restaurant.get('name'),
+                            special_request: reservation.additionalInfo.specialRequests,
+                            promo_code: reservation.additionalInfo.promoCode,
+                            email: reservation.user.email,
+                            first_name: reservation.user.firstName,
+                            last_name: reservation.user.lastName,
+                            phone_number: reservation.user.phone,
+                            email_reminder: order.email_reminder,
+                            sms_reminder: order.sms_reminder,
+                        };
+
+                        callback(err, new Reservation(resertvationData));
+                    });
                 });
-            });
         });
     });
 
@@ -459,7 +468,8 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
                 email: reservation.user.email,
                 first_name: reservation.user.firstName,
                 last_name: reservation.user.lastName,
-                phone_number: reservation.user.phone
+                phone_number: reservation.user.phone,
+                special_meal_id: reservation.specialMealId
             }
         };
 
