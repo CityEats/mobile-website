@@ -36,14 +36,14 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                 case 'book-it': returnUrl = 'restaurants/' + id + '/book-it';
             }
 
-            var topBarView = that.getCompleteReservationTopBarView({leftUrl : returnUrl});
+            var topBarView = that.getCompleteReservationTopBarView({ leftUrl: returnUrl });
 
             app.execute('GetRestaurant', id, slotDate, party, time, function (err, restaurant) {
                 if (err) return that.errorPartial();
 
                 app.execute('GetCurrentUser', function (err, currentUser) {
                     if (err) return that.errorPartial();
-                    
+
                     if ((mealId && restaurant.get('special_meals_slots').length == 0) || (mealId == null && restaurant.get('slots').length == 0))
                         return app.router.navigate(returnUrl, { trigger: true });
 
@@ -171,7 +171,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
             });
         },
 
-        reservations: function(){
+        reservations: function () {
             var that = this;
             app.execute('GetReservations', function (err, reservations) {
                 if (err) return that.errorPartial(err);
@@ -208,7 +208,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                         if (reservation.isUpcoming()) title = 'Upcoming Reservation';
                         else if (reservation.isPast()) title = 'Past Reservation';
                         else if (reservation.isCanceled()) title = 'Canceled Reservation';
-                        
+
                         var contentView = new ReservationContentLayout({ model: reservation, user: currentUser, phoneNumber: restaurant.get('phone_number'), minTimeToCancel: restaurant.get('min_time_to_cancel_reservation') });
                         var topBarView = that.getReservationTopBarView({ title: title });
 
@@ -283,7 +283,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
             });
 
             return new TopBarView({ model: topBar });
-        },        
+        },
     });
 
     return Controller;

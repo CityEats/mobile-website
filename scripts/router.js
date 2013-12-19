@@ -182,7 +182,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         },
 
         filterCuisines: function (isRestaurants, party, date, time) {            
-            controllerthis.getController('controllers/filter').cuisines(isRestaurants, party, date, time);
+            this.getController('controllers/filter').cuisines(isRestaurants, party, date, time);
         },
 
         restaurantsFilterNeighborhoods: function () {
