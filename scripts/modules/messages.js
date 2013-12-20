@@ -168,6 +168,11 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         handler(callback);
     });
 
+    app.commands.setHandler('API:UpdateUser', function (id, user, callback) {
+        var handler = putJSONStatic(API_PATH + '/user/' + id, { user: user });
+        handler(callback);
+    });
+
     app.commands.setHandler('SignUp', function (user, callback) {
         Data.signUp(user, callback);
     });
@@ -178,6 +183,10 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
 
     app.commands.setHandler('SignOut', function (callback) {
         Data.signOut(callback);
+    });
+
+    app.commands.setHandler('UpdateCurrentUser', function (user, callback) {
+        Data.updateCurrentUser(user, callback);
     });
 
     app.commands.setHandler('GetCurrentUser', function (callback) {

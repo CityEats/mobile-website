@@ -7,10 +7,12 @@
     'views/shared/topBar',
     'views/login/login',
     'views/signUp/signUp',
-    'views/account/profile/about'
+    'views/account/profile/about',
+    'views/account/profile/edit',
+    'views/filter/favoriteItems'
 ],
 
-function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout, SignUpContentLayout, ProfileContentLayout) {
+function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout, SignUpContentLayout, ProfileContentLayout, ProfileEditContentLayout, FavoriteItemsContentLayout) {
     var Controller = BaseController.extend({
 
         //login
@@ -115,6 +117,82 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
             });
         },
 
+        profileEdit: function(){
+            var that = this;
+
+            app.execute('GetCurrentUser', function (err, currentUser) {
+                if (err) return that.errorPartial();
+                if (currentUser == null) return app.router.navigate('login', { trigger: true });
+
+                var topBarView = that.getEditProfileTopBarView();
+                contentView = new ProfileEditContentLayout({ model: currentUser });
+
+                contentView.on('userSaved', function () {
+                    app.execute('UpdateCurrentUser', contentView.model, function (err, data) {
+                        if (err) return that.errorPartial(err);
+
+                        app.router.navigate('profile', { trigger: true });
+                    });
+                });
+
+                app.topBar.show(topBarView);
+                app.content.show(contentView);
+            });
+        },
+
+        cuisines: function () {
+            var that = this, cityId;
+
+            app.execute('GetCurrentUser', function (err, currentUser) {
+                if (err) return that.errorPartial();
+                if (currentUser == null) return app.router.navigate('login', { trigger: true });
+
+                var currentCity = app.request('GetCurrentCity');
+                if (!(cityId = that.checkCurrentCity())) return true; //set cityId to current.id or redirect to home if no current city specified
+
+                app.execute('GetCuisines', cityId, function (err, cuisines) {
+                    if (err) return that.errorPartial();
+
+                    var topBarView = that.getCuisinesTopBarView();
+                    contentView = new FavoriteItemsContentLayout({
+                        collection: cuisines,
+                        model: currentUser,
+                        isCuisines: true,
+                        isFavorite: true
+                    });
+
+                    app.topBar.show(topBarView);
+                    app.content.show(contentView);
+                });
+            });
+        },
+
+        neighborhoods: function () {
+            var that = this;
+
+            app.execute('GetCurrentUser', function (err, currentUser) {
+                if (err) return that.errorPartial();
+                if (currentUser == null) return app.router.navigate('login', { trigger: true });
+
+                var currentCity = app.request('GetCurrentCity');
+                if (!(cityId = that.checkCurrentCity())) return true; //set cityId to current.id or redirect to home if no current city specified
+                
+                app.execute('GetNeighborhoods', cityId, function (err, neighborhoods) {
+                    if (err) return that.errorPartial();
+
+                    var topBarView = that.getNeighborhoodsTopBarView();
+                    contentView = new FavoriteItemsContentLayout({
+                        collection: neighborhoods,
+                        model: currentUser,
+                        isFavorite: true
+                    });
+
+                    app.topBar.show(topBarView);
+                    app.content.show(contentView);
+                });
+            });
+        },
+
         getProfileTopBarView: function () {
             var topBar = new TopBar({
                 leftText: 'Home',
@@ -123,7 +201,37 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
             });
 
             return new TopBarView({ model: topBar });
-        }
+        },
+
+        getEditProfileTopBarView: function () {
+            var topBar = new TopBar({
+                leftText: 'Cancel',
+                leftUrl: 'profile',
+                title: 'Account'
+            });
+
+            return new TopBarView({ model: topBar });
+        },
+
+        getCuisinesTopBarView: function () {
+            var topBar = new TopBar({
+                leftText: 'Cancel',
+                leftUrl: 'profile/edit',
+                title: 'test'
+            });
+
+            return new TopBarView({ model: topBar });
+        },
+
+        getNeighborhoodsTopBarView: function () {
+            var topBar = new TopBar({
+                leftText: 'Cancel',
+                leftUrl: 'profile/edit',
+                title: 'test'
+            });
+
+            return new TopBarView({ model: topBar });
+        },
     });
 
     return Controller;

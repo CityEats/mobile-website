@@ -291,6 +291,16 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 }
             },
 
+            updateCurrentUser: function (user, callback) {
+                app.execute('API:UpdateUser', user.get('id'), user, function (err, data) {
+                    if (err == null && typeof data.error == 'undefined') {
+                        currentUser = user;
+                    }
+
+                    return callback ? callback(err, currentUser) : null;
+                });
+            },
+
             saveLock: function (lockId, lock) {                
                 locks[lockId] = lock;
             },

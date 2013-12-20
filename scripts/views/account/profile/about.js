@@ -9,6 +9,16 @@
             'click .btnReservations': 'btnReservationsClick',
         },
 
+        templateHelpers: {
+            neighborhoods: function () {
+                return (this.favorite_neighborhoods || '').split(',');
+            },
+
+            cuisines: function () {
+                return (this.favorite_cuisine_types || '').split(',');
+            }
+        },
+
         goToEdit: function (evt) {
             evt.preventDefault();
             var url = 'profile/edit';

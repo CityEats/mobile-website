@@ -64,7 +64,9 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             //'restaurants/:num/reservation-confirmed': 'reservationConfirmed',
             //'restaurants/:num/reservation-canceled': 'reservationCanceled',
             'profile': 'profile',
-            //'profile/edit': 'profileEdit',
+            'profile/edit': 'profileEdit',
+            'profile/cuisines': 'profileCuisines',
+            'profile/neighborhoods': 'profileNeighborhoods',
             'profile/reservations': 'profileReservations',
             'profile/reservations/:num': 'profileReservation',
             '*path': '404'
@@ -274,7 +276,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.getController('controllers/reservations').completeReservation(id, party, date, filterTime, from, time, mealId, code);
         },
 
-        reservationConfirmed: function (restaurantId, code) {            
+        reservationConfirmed: function (restaurantId, code) {
             this.getController('controllers/reservations').reservationConfirmed(restaurantId, code);
         },
 
@@ -309,15 +311,15 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         },
 
         profileEdit: function () {
-            this.setup();
-            var module = require('modules/profile');
+            this.getController('controllers/account').profileEdit();
+        },
 
-            module.topBarBlock = new module.TopBarView({ model: module.topBarEdit });
+        profileCuisines: function(){
+            this.getController('controllers/account').cuisines();
+        },
 
-            module.contentLayout = new module.EditView;
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
+        profileNeighborhoods: function () {
+            this.getController('controllers/account').neighborhoods();
         },
 
         profileReservations: function () {

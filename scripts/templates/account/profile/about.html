@@ -15,18 +15,25 @@
                         <p><%= formatPhone() %></p>
                     </div>
                 </div>
-                <!--<div class="accountAboutBox">
-                    <h2 class="accountAboutTitle">Favorite Neighborhoods</h2>
-                    <p>The Pearl</p>
-                    <p>Hawthorne</p>
-                    <p>NW 23rd</p>
-                </div>
-                <div class="accountAboutBox">
-                    <h2 class="accountAboutTitle">Favorite Cuisines</h2>
-                    <p>Thai</p>
-                    <p>Vegan</p>
-                    <p>Hot Pot</p>
-                </div>-->
+                <% 
+                    var cuisinesItems =  cuisines(),
+                    neighborhoodsItems =  neighborhoods(); 
+                %>
+                <% if (neighborhoodsItems.length > 0) { %>
+                    <div class="accountAboutBox">
+                        <h2 class="accountAboutTitle">Favorite Neighborhoods</h2>
+                        <% for(var i = 0; i < neighborhoodsItems.length; i++) { %>
+                            <p><%= neighborhoodsItems[i] %></p>
+                        <% } %>
+                    </div>
+                <% } if (cuisinesItems.length > 0) { %>
+                    <div class="accountAboutBox">
+                        <h2 class="accountAboutTitle">Favorite Cuisines</h2>
+                        <% for(var i = 0; i < cuisinesItems.length; i++) { %>
+                            <p><%= cuisinesItems[i] %></p>
+                        <% } %>
+                    </div>
+                <% }%>
             </div>
         </div>
     </div>

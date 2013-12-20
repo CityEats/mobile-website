@@ -2,33 +2,32 @@
 <section class="form editProfile">
     <div class="row">
         <label class="labelForm">First Name</label>
-        <input class="textField" type="text" value="Damian" />
+        <input class="textField txtFirstName" type="text" value="<%= first_name %>" />
     </div>
     <div class="row">
         <label class="labelForm">Last Name</label>
-        <input class="textField" type="text" value="Rebman" />
+        <input class="textField txtLastName" type="text" value="<%= last_name %>" />
     </div>
     <div class="row">
         <label class="labelForm">Email</label>
-        <input class="textField hasError" type="email" value="Drebman@burnsidedigital.com" />
-        <p class="textError">Error text</p>
+        <input class="textField txtEmail" type="email" value="<%= email %>" />        
     </div>
     <div class="row">
         <label class="labelForm">Phone</label>
-        <input class="textField" type="tel" value="503-799-3877" />
+        <input class="textField txtPhone" type="tel" value="<%= phone_number %>" />
     </div>
 </section>
 <div class="row">
     <label class="labelForm">Favorites <span class="labelFormOptional">(Choose up to 3 each)</span></label>
     <div class="roundedBox">
         <div class="roundedBoxRow">
-            <div class="filterByItems byNeighborhoods">Favorite Neighborhoods</div>
+            <div class="filterByItems byNeighborhoods <%= neighborhoodsClass() %>"><%= neighborhoods() %></div>
         </div>
         <div class="roundedBoxRow">
-            <div class="filterByItems byCuisines updated">American (New), Argentine, Afgan</div>
+            <div class="filterByItems byCuisines <%= cuisinesClass() %>"><%= cuisines() %></div>
         </div>
     </div>
 </div>
 <div class="row">
-    <input class="btn" type="submit" value="Save" />
+    <input class="btn btnSubmit" type="submit" value="Save" />
 </div>

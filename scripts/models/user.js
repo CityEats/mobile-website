@@ -2,9 +2,7 @@
 	function (Backbone, Helper) {
 	    var User = Backbone.Model.extend({
 	        defaults: {
-	            name: '',
 	            id: 0,
-
 	            getFullName: function () {
 	                return this.first_name + ' ' + this.last_name;
 	            },
