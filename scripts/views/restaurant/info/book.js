@@ -23,7 +23,7 @@
         },
 
         initialize: function () {
-            if (this.model.get('has_special_meals')) {
+            if (this.model.get('has_special_meals') && this.model.get('special_meals_slots')) {
                 this.specialMealId = this.model.get('special_meals_slots')[0].id;
             }
         },

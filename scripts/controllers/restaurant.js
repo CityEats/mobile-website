@@ -68,7 +68,7 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
         bookIt: function (id, party, date, time, mealId, code, fromRestaurants, newParty, newDate) {
             var that = this;
             this.buildRestaurantBaseInfo(id, newParty || party, newDate || date, time, fromRestaurants, 3, function (restaurant) {
-                if (mealId == null && restaurant.get('has_special_meals')) {
+                if (mealId == null && restaurant.get('has_special_meals') && restaurant.get('special_meals_slots')) {
                     mealId = restaurant.get('special_meals_slots')[0].id;
                 }
                 var chooseTimeView = new ChooseTimeView({ model: that.getSearchModel(newParty || party, newDate || date, restaurant.get('special_meals')), specialMealId: mealId });
