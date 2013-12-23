@@ -117,11 +117,10 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
             });
         },
 
-        profileEdit: function(){
+        profileEdit: function () {
             var that = this;
 
             app.execute('GetCurrentUser', function (err, currentUser) {
-                if (err) return that.errorPartial();
                 if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
                 var topBarView = that.getEditProfileTopBarView();
@@ -137,6 +136,13 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
 
                 app.topBar.show(topBarView);
                 app.content.show(contentView);
+
+                //contentView.on('ByNeighborhoodsClicked', function () {
+                //    that.neighborhoods();
+                //})
+                //.on('ByCuisinesClicked', function () {
+                //    that.cuisines();
+                //});
             });
         },
 
@@ -144,7 +150,6 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
             var that = this, cityId;
 
             app.execute('GetCurrentUser', function (err, currentUser) {
-                if (err) return that.errorPartial();
                 if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
                 var currentCity = app.request('GetCurrentCity');
@@ -171,12 +176,11 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
             var that = this;
 
             app.execute('GetCurrentUser', function (err, currentUser) {
-                if (err) return that.errorPartial();
                 if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
                 var currentCity = app.request('GetCurrentCity');
                 if (!(cityId = that.checkCurrentCity())) return true; //set cityId to current.id or redirect to home if no current city specified
-                
+
                 app.execute('GetNeighborhoods', cityId, function (err, neighborhoods) {
                     if (err) return that.errorPartial();
 

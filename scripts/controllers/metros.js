@@ -19,8 +19,6 @@ function (_, app, Helper, BaseController, City, TopBar, Cities, ContentLayout, C
             var that = this, contentView;
 
             app.execute('GetCurrentUser', function (err, currentUser) {
-                if (err) return that.errorPartial();
-
                 app.execute('GetMetros', function (err, cities, isNearestCity) {
                     if (err) return that.errorPartial();
 

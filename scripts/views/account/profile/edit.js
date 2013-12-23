@@ -4,8 +4,8 @@
         template: _.template(itemHtml),
 
         events: {
-            'click .byNeighborhoods': 'byNeighborhoodsClicked',
-            'click .byCuisines': 'byCuisinesClicked',
+            'click .byNeighborhoods': 'btnByNeighborhoodsClicked',
+            'click .byCuisines': 'btnByCuisinesClicked',
             'click .btnSubmit': 'btnSubmitClicked',
         },
 
@@ -39,16 +39,18 @@
             this.trigger('userSaved');
         },
 
-        byNeighborhoodsClicked: function (evt) {
+        btnByNeighborhoodsClicked: function (evt) {
             evt.preventDefault();
-            var url = 'profile/neighborhoods';
-            app.router.navigate(url, { trigger: true });
+            //var url = 'profile/neighborhoods';
+            //app.router.navigate(url, { trigger: true });
+            this.trigger('ByNeighborhoodsClicked');
         },
 
-        byCuisinesClicked: function (evt) {
+        btnByCuisinesClicked: function (evt) {
             evt.preventDefault();
-            var url = 'profile/cuisines';
-            app.router.navigate(url, { trigger: true });
+            //var url = 'profile/cuisines';
+            //app.router.navigate(url, { trigger: true });
+            this.trigger('ByCuisinesClicked');
         }
     });
 

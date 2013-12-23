@@ -42,8 +42,6 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                 if (err) return that.errorPartial();
 
                 app.execute('GetCurrentUser', function (err, currentUser) {
-                    if (err) return that.errorPartial();
-
                     if ((mealId && restaurant.get('special_meals_slots').length == 0) || (mealId == null && restaurant.get('slots').length == 0))
                         return app.router.navigate(returnUrl, { trigger: true });
 
@@ -115,8 +113,6 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                 contentView;
 
             app.execute('GetCurrentUser', function (err, currentUser) {
-                if (err) return that.errorPartial();
-
                 topBarView = that.getReservationConfirmedTopBarView();
 
                 var showViews = function (orderId) {
@@ -194,7 +190,6 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                 changing = 0;
 
             app.execute('GetCurrentUser', function (err, currentUser) {
-                if (err) return that.errorPartial();
                 if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
                 app.execute('GetReservation', code, function (err, reservation) {

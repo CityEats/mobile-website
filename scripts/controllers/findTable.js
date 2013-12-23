@@ -29,8 +29,6 @@ function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, Calenda
             if (currentCity == null) return app.router.navigate('', { trigger: true });
 
             app.execute('GetCurrentUser', function (err, currentUser) {
-                if (err) return that.errorPartial();
-
                 var name;
                 if (currentUser) name = currentUser.get('first_name') + ' ' + currentUser.get('last_name');
 

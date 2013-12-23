@@ -64,9 +64,9 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             //'restaurants/:num/reservation-confirmed': 'reservationConfirmed',
             //'restaurants/:num/reservation-canceled': 'reservationCanceled',
             'profile': 'profile',
-            'profile/edit': 'profileEdit',
-            'profile/cuisines': 'profileCuisines',
-            'profile/neighborhoods': 'profileNeighborhoods',
+            //'profile/edit': 'profileEdit',
+            //'profile/cuisines': 'profileCuisines',
+            //'profile/neighborhoods': 'profileNeighborhoods',
             'profile/reservations': 'profileReservations',
             'profile/reservations/:num': 'profileReservation',
             '*path': '404'
