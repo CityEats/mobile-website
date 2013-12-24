@@ -86,6 +86,7 @@ function (_, app, Helper, BaseController, TopBar, FilterItem, KeyValue, Dictiona
                 var contentView = new FavoriteItemsView({
                     collection: filter.get(isCuisines ? 'cuisines' : 'neighborhoods'),
                     cityId: cityId,
+                    isCuisines: isCuisines,
                     isRestaurants: isRestaurants
                 });
 

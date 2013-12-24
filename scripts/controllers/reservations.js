@@ -152,7 +152,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                         if (err) return that.errorPartial(err);
                         if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true });
 
-                        contentView = DetailsContentLayout({ model: reservation, isConfirmedView: true, points: 200 })
+                        contentView = new DetailsContentLayout({ model: reservation, isConfirmedView: true, points: 200 })
                         showViews(reservation.get('order_id'));
                     });
                 } else {

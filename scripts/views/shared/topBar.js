@@ -7,7 +7,9 @@
             'click .linkRight': 'btnRightClick',            
         },
         ui: {
-            linkRight: '.linkRight'
+            linkRight: '.linkRight',
+            topBarTitleText: '.topBarTitleText'
+
         },
 
         btnLeftClick: function (evt) {
@@ -45,6 +47,10 @@
         showRightButton: function () {
             this.ui.linkRight.show();
         },
+
+        changeTopBarTitleText: function (text) {
+            this.ui.topBarTitleText.text(text);
+        }
     });
     
     return ItemView;

@@ -3,18 +3,22 @@
     <div class="row">
         <label class="labelForm">First Name</label>
         <input class="textField txtFirstName" type="text" value="<%= first_name %>" />
+        <p class="textError txtFirstNameError hide">Error</p>
     </div>
     <div class="row">
         <label class="labelForm">Last Name</label>
         <input class="textField txtLastName" type="text" value="<%= last_name %>" />
+        <p class="textError txtLastNameError hide">Error</p>
     </div>
     <div class="row">
         <label class="labelForm">Email</label>
-        <input class="textField txtEmail" type="email" value="<%= email %>" />        
+        <input class="textField txtEmail" type="email" value="<%= email %>" />
+        <p class="textError txtEmailError hide">Error</p>
     </div>
     <div class="row">
         <label class="labelForm">Phone</label>
         <input class="textField txtPhone" type="tel" value="<%= phone_number %>" />
+        <p class="textError txtPhoneError hide">Error</p>
     </div>
 </section>
 <div class="row">

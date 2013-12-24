@@ -291,10 +291,10 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 }
             },
 
-            updateCurrentUser: function (user, callback) {
-                app.execute('API:UpdateUser', user.get('id'), user, function (err, data) {
+            updateCurrentUser: function (id, user, cuisineItems, neighborhoodItems, callback) {
+                app.execute('API:UpdateUser', id, user, cuisineItems, neighborhoodItems, function (err, data) {
                     if (err == null && typeof data.error == 'undefined') {
-                        currentUser = user;
+                        currentUser = new User(data.user);
                     }
 
                     return callback ? callback(err, currentUser) : null;

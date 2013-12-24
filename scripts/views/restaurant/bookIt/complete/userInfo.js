@@ -26,6 +26,7 @@ function (app, Marionette, Backbone, _, BasicItemView, itemHtml) {
             'click .btnLogIn': 'btnLogInClick',
             'click .btnSomeoneElse': 'btnSomeoneElseClick',
             'click .btnForMyself': 'btnForMyselfClick',
+            'click .btnEditProfile': 'btnEditProfileClick'
         },
 
         onRender: function () {
@@ -84,6 +85,11 @@ function (app, Marionette, Backbone, _, BasicItemView, itemHtml) {
             this.ui.pnlAccountInfo.show();
             this.ui.pnlReservationInfo.hide();
             this.isSomeoneElse = false;
+        },
+
+        btnEditProfileClick: function (evt) {
+            evt.preventDefault();
+            app.router.navigate('profile/edit', { trigger: true });
         },
 
         validate: function () {

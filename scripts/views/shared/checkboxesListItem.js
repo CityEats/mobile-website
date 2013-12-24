@@ -11,6 +11,7 @@
         change: function (evt) {
             var checked = this.$(evt.target).is(':checked');
             this.model.set('checked', checked);
+            this.trigger('checkboxChanged');
         }
     });
 

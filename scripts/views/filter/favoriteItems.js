@@ -6,13 +6,10 @@
         itemView: CheckboxesListItemView,
 
         initialize: function () {
-            var collection = this.options.isCuisines ? this.model.get('favorite_cuisine_types') : this.model.get('favorite_neighborhoods');
-            var items = _(_.map(collection.split(','),
-                function (item) { return item.toLowerCase().trim() }));
-
+            var that = this;
             if (this.options.isFavorite) {
                 this.collection.each(function (item) {
-                    if (items.some(function (i) { return i == item.get('value').toLowerCase(); })) {
+                    if (that.options.items.some(function (i) { return i.get('value').toLowerCase() === item.get('value').toLowerCase() || i.get('key') === item.get('key') })) {
                         item.set('checked', true);
                     } else {
                         item.set('checked', false);

@@ -4,6 +4,8 @@
     'BaseController',
     'modules/helper',
     'models/topBar',
+    'models/keyValue',
+    'collections/dictionary',
     'views/shared/topBar',
     'views/login/login',
     'views/signUp/signUp',
@@ -12,7 +14,7 @@
     'views/filter/favoriteItems'
 ],
 
-function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout, SignUpContentLayout, ProfileContentLayout, ProfileEditContentLayout, FavoriteItemsContentLayout) {
+function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarView, LoginContentLayout, SignUpContentLayout, ProfileContentLayout, ProfileEditContentLayout, FavoriteItemsContentLayout) {
     var Controller = BaseController.extend({
 
         //login
@@ -46,7 +48,7 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
 
             this.topBarLayout.show(topBarView);
             this.contentLayout.show(contentView);
-        },        
+        },
 
         //signUp
         signUp: function (fbRedirectUri) {
@@ -74,7 +76,7 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
 
             this.topBarLayout.show(topBarView);
             this.contentLayout.show(contentView);
-        },        
+        },
 
         //profile
         profile: function () {
@@ -93,7 +95,7 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
             });
         },
 
-        profileEdit: function () {
+        profileEdit: function (cuisineItems, neighborhoodItems) {
             var that = this;
 
             var currentCity = app.request('GetCurrentCity');
@@ -102,14 +104,32 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
             app.execute('GetCurrentUser', function (err, currentUser) {
                 if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
+                if (cuisineItems == null) {
+                    cuisineItems = new Dictionary(
+                        _.map(currentUser.get('favorite_cuisine_types').split(','),
+                            function (item) { return { value: item.trim() } }));
+                }
+
+                if (neighborhoodItems == null) {
+                    neighborhoodItems = new Dictionary(
+                        _.map(currentUser.get('favorite_neighborhoods').split(','),
+                            function (item) { return { value: item.trim() } }));
+                }
+
                 var topBarView = getEditProfileTopBarView();
-                contentView = new ProfileEditContentLayout({ model: currentUser });
+                contentView = new ProfileEditContentLayout({
+                    model: currentUser,
+                    cuisineItems: cuisineItems,
+                    neighborhoodItems: neighborhoodItems
+                });
 
-                contentView.on('userSaved', function () {
-                    app.execute('UpdateCurrentUser', contentView.model, function (err, data) {
-                        if (err) return that.errorPartial(err);
-
-                        app.router.navigate('profile', { trigger: true });
+                contentView.on('userSaved', function (userData) {                    
+                    app.execute('UpdateCurrentUser', currentUser.get('id'), userData, cuisineItems, neighborhoodItems, function (err, data) {
+                        if (err == null) {
+                            app.router.navigate('profile', { trigger: true });
+                        } else {
+                            contentView.showErrors(err);
+                        }
                     });
                 });
 
@@ -117,16 +137,20 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
                 app.content.show(contentView);
 
                 contentView.on('ByNeighborhoodsClicked', function () {
-                    neighborhoods(cityId, currentUser);
+                    showNeighborhoodsOrCuisines(false, cityId, neighborhoodItems, function (items) {
+                        that.profileEdit(cuisineItems, items);
+                    });
                 })
                 .on('ByCuisinesClicked', function () {
-                    cuisines(cityId, currentUser);
+                    showNeighborhoodsOrCuisines(true, cityId, cuisineItems, function (items) {
+                        that.profileEdit(items, neighborhoodItems);
+                    });
                 });
             });
         }
     });
 
-    var getLoginTopBarView =  function () {
+    var getLoginTopBarView = function () {
         var topBarModel = new TopBar({
             leftText: 'Home',
             leftUrl: 'back',
@@ -150,38 +174,37 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
         return new TopBarView({ model: topBarModel });
     };
 
-    var cuisines = function (cityId, currentUser) {
+    var showNeighborhoodsOrCuisines = function (isCuisines, cityId, items, callback) {
         var that = this;
-        app.execute('GetCuisines', cityId, function (err, cuisines) {
+        app.execute(isCuisines ? 'GetCuisines' : 'GetNeighborhoods', cityId, function (err, allItems) {
             if (err) return that.errorPartial();
 
-            var topBarView = getCuisinesTopBarView();
-            contentView = new FavoriteItemsContentLayout({
-                collection: cuisines,
-                model: currentUser,
-                isCuisines: true,
+            var topBarView = isCuisines ? getNeighborhoodsTopBarView(items.length) : getCuisinesTopBarView(items.length);
+            var contentView = new FavoriteItemsContentLayout({
+                collection: allItems,
+                items: items,
                 isFavorite: true
             });
 
             app.topBar.show(topBarView);
             app.content.show(contentView);
-        });
-    };
 
-    var neighborhoods = function (cityId, currentUser) {
-        var that = this;
-        app.execute('GetNeighborhoods', cityId, function (err, neighborhoods) {
-            if (err) return that.errorPartial();
-
-            var topBarView = getNeighborhoodsTopBarView();
-            contentView = new FavoriteItemsContentLayout({
-                collection: neighborhoods,
-                model: currentUser,
-                isFavorite: true
+            contentView.on('itemview:checkboxChanged', function (childView) {
+                if (contentView.collection.where({ 'checked': true }).length > 3) {
+                    childView.model.set('checked', false);
+                    childView.render();
+                }
+                else {
+                    topBarView.changeTopBarTitleText('(' + contentView.collection.where({ 'checked': true }).length + ')');
+                }
             });
 
-            app.topBar.show(topBarView);
-            app.content.show(contentView);
+            topBarView.on('btnLeftClick', function () {
+                callback(null);
+            })
+            .on('btnRightClick', function () {
+                callback(new Dictionary(contentView.collection.where({ 'checked': true })));
+            });
         });
     };
 
@@ -205,24 +228,40 @@ function (_, app, BaseController, Helper, TopBar, TopBarView, LoginContentLayout
         return new TopBarView({ model: topBar });
     };
 
-    var getCuisinesTopBarView = function () {
+    var getCuisinesTopBarView = function (count) {
         var topBar = new TopBar({
             leftText: 'Cancel',
-            leftUrl: 'profile/edit',
-            title: 'test'
+            leftUrl: '',
+            rightText: 'Done',
+            rightUrl: '',
+            rightCss: 'blue',
+            title: 'Favourite Cuisines',
+            topBarTitleText: '(' + count + ')'
         });
 
-        return new TopBarView({ model: topBar });
+        return new TopBarView({
+            model: topBar,
+            leftClickEvent: 'btnLeftClick',
+            rightClickEvent: 'btnRightClick'
+        });
     };
 
-    var getNeighborhoodsTopBarView = function () {
+    var getNeighborhoodsTopBarView = function (count) {
         var topBar = new TopBar({
             leftText: 'Cancel',
-            leftUrl: 'profile/edit',
-            title: 'test'
+            leftUrl: '',
+            rightText: 'Done',
+            rightUrl: '',
+            rightCss: 'blue',
+            title: 'Favourite Neighborhoods',
+            topBarTitleText: '(' + count + ')'
         });
 
-        return new TopBarView({ model: topBar });
+        return new TopBarView({
+            model: topBar,
+            leftClickEvent: 'btnLeftClick',
+            rightClickEvent: 'btnRightClick'
+        });
     };
 
     return Controller;

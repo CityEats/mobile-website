@@ -168,7 +168,14 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         handler(callback);
     });
 
-    app.commands.setHandler('API:UpdateUser', function (id, user, callback) {
+    app.commands.setHandler('API:UpdateUser', function (id, user, cuisineItems, neighborhoodItems, callback) {
+        user.first_favorite_food = cuisineItems.at(0) ? cuisineItems.at(0).get('value') : null;
+        user.second_favorite_food = cuisineItems.at(1) ? cuisineItems.at(1).get('value') : null;
+        user.third_favorite_food = cuisineItems.at(2) ? cuisineItems.at(2).get('value') : null;
+        user.first_favorite_neighborhood = neighborhoodItems.at(0) ? neighborhoodItems.at(0).get('value') : null;
+        user.second_favorite_neighborhood = neighborhoodItems.at(1) ? neighborhoodItems.at(1).get('value') : null;
+        user.third_favorite_neighborhood = neighborhoodItems.at(2) ? neighborhoodItems.at(2).get('value') : null;
+
         var handler = putJSONStatic(API_PATH + '/user/' + id, { user: user });
         handler(callback);
     });
@@ -185,8 +192,8 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         Data.signOut(callback);
     });
 
-    app.commands.setHandler('UpdateCurrentUser', function (user, callback) {
-        Data.updateCurrentUser(user, callback);
+    app.commands.setHandler('UpdateCurrentUser', function (id, user, cuisineItems, neighborhoodItems, callback) {
+        Data.updateCurrentUser(id, user, cuisineItems, neighborhoodItems, callback);
     });
 
     app.commands.setHandler('GetCurrentUser', function (callback) {
@@ -248,7 +255,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         handler(callback);
     });
 
-    app.commands.setHandler('API:GetAvailableSlotsForRestaurant', function (id, date, party, timeOffset, callback) {
+    app.commands.setHandler('API:GetAvailableSlotsForRestaurant', function (id, date, party, callback) {
         var handler = getJSONStatic(API_PATH +
             '/restaurants/' + id +
             '/available_slots_for_date?date=' + Helper.formatDateForApi(date) +
@@ -261,7 +268,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         Data.getRestaurantExtended(id, function (err, restaurant) {
             if (err) return callback(err);
             if (typeof party != 'undefined' && typeof time != 'undefined') {
-                app.execute('API:GetAvailableSlotsForRestaurant', id, date, party, restaurant.get('current_time_offset'), function (err, slots) {
+                app.execute('API:GetAvailableSlotsForRestaurant', id, date, party, function (err, slots) {
                     if (err) return callback(err);
 
                     if (slots.slots && slots.slots.length > 0) restaurant.set('slots', slots.slots);
@@ -274,7 +281,9 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
 
                     if (date) restaurant.set('selectedDate', date);
 
-                    if (party)restaurant.set('party', party);
+                    if (party) restaurant.set('party', party);
+
+                    restaurant.set('current_time_offset', slots.current_time_offset);
 
                     callback(null, restaurant);
                 });
