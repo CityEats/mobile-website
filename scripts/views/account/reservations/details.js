@@ -41,28 +41,25 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
             },
 
             getFullName: function () {
-                if (this.user && this.user.getFullName) return this.user.getFullName();
-                else return this.first_name + ' ' + this.last_name;
+                return this.first_name + ' ' + this.last_name;
             },
 
             formatPhone: function () {
-                return Helper.formatPhone(this.user && this.user.phone_number ? this.user.phone_number : this.phone_number);
+                return Helper.formatPhone(this.phone_number);
             },
 
             formatEmail: function () {                
-                return this.user && this.user.email ? this.user.email : this.email;
+                return this.email;
             }
         },
 
         serializeData: function () {
             var result = this.model.toJSON();
             var extra = {
-                isConfirmedView: this.options.isConfirmedView
+                isConfirmedView: this.options.isConfirmedView,
+                points: this.options.points
             };
-            
-            if (this.options.user) extra['user'] = this.options.user.toJSON();
-            
-            extra.points = this.options.points;
+
             return _.extend(result, extra);
         },
 
