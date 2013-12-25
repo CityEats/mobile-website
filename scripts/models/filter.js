@@ -1,22 +1,22 @@
 ﻿define(['backbone', 'app'],
-	function (Backbone, app) {	    
-	    var Filter = Backbone.Model.extend({	        
-	        defaults: {	            
-	            prices: [],	            
-	            cuisineIds: [],	            
+	function (Backbone, app) {
+	    var Filter = Backbone.Model.extend({
+	        defaults: {
+	            prices: [],
+	            cuisineIds: [],
 	            neighborhoodIds: [],
-	            cuisinesText: function () {	                
-	                var items = this.cuisines.length > 0 ? this.cuisines.where({ 'checked': true }) : [];
+	            cuisinesText: function () {
+	                var items = this.cuisines.length > 0 ? _(this.cuisines.where({ 'checked': true })).sortBy(function (item) { return item.get('value') }) : [];
 	                return items.length > 0 ? items.map(function (item) { return item.get('value') }).join(',') : 'By Cuisine';
 	            },
 
 	            neighborhoodsText: function () {
-	                var items = this.neighborhoods.length > 0 ? this.neighborhoods.where({ 'checked': true }) : [];
+	                var items = this.neighborhoods.length > 0 ? _(this.neighborhoods.where({ 'checked': true })).sortBy(function (item) { return item.get('value') }) : [];
 	                return items.length > 0 ? items.map(function (item) { return item.get('value') }).join(',') : 'By Neighborhood';
 	            }
 	        },
 
-	        initialize: function(){
+	        initialize: function () {
 	            this.resetFilter();
 	        },
 
@@ -42,7 +42,7 @@
 	        isDefault: function () {
 	            var sortBy = this.get('sortBy');
 	            var location = app.request('GetLocation');
-                
+
 	            return this.get('prices').length == 0 &&
                     this.get('cuisineIds').length == 0 &&
                     this.get('neighborhoodIds').length == 0 &&
