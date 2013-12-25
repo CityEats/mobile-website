@@ -154,7 +154,7 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
         var topBarModel = new TopBar({
             leftText: 'Home',
             leftUrl: 'back',
-            rightText: 'Sing Up',
+            rightText: 'Sign Up',
             rightUrl: 'signup',
             title: 'Log In'
         });
