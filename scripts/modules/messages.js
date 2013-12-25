@@ -399,10 +399,9 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
                     callback(response.error);
                 }
                 else if (response.reservations) {
-                    var reservations = response.reservations,
-                        now = new Date;
+                    var reservations = response.reservations
 
-                    reservations = _.filter(reservations, function (item) { return item.state != 'pending' || new Date(item.reserved_for) > now });
+                    reservations = _.filter(reservations, function (item) { return item.state != 'pending' || Helper.newDate(item.reserved_for, item.current_time_offset) > Helper.newDate(new Date, item.current_time_offset) });
                     Data.saveReservations(reservations);
                     callback(null, new Reservations(reservations));
                 } else {
