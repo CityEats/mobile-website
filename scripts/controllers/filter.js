@@ -48,7 +48,6 @@ function (_, app, Helper, BaseController, TopBar, FilterItem, KeyValue, Dictiona
                 }, topBarView);
 
                 topBarView.on('btnRightClick', function () {
-                    app.execute('ResetFilter', cityId);
                     this.resetFilter();
                 }, contentView);
 

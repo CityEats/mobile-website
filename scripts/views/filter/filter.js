@@ -6,19 +6,19 @@
             'click .byCuisines': 'goToCuisines',
             'click .byNeighborhoods': 'goToNeighborhoods',
             'click #btnSubmit': 'applyFilter',
-            'click .btnDistance' : 'btnDistanceClick',
+            'click .btnDistance': 'btnDistanceClick',
             'change .radiosLineInput[type="checkbox"]': 'pricesChanged',
             'change .radiosLineInput[type="radio"]': 'sortByChanged'
         },
 
-        ui:{
+        ui: {
             btnDistance: '.btnDistance'
         },
 
         initialize: function () {
             this.model.prepareData();
             this.backUrl = this.options.isRestaurants ?
-                'restaurants':
+                'restaurants' :
                 'search-results/party/' + this.options.searchSettings.party + '/date/' + this.options.searchSettings.date + '/time/' + this.options.searchSettings.time;
 
             this.cuisinesUrl = this.options.isRestaurants ?
@@ -30,20 +30,20 @@
                 'search-results/party/' + this.options.searchSettings.party + '/date/' + this.options.searchSettings.date + '/time/' + this.options.searchSettings.time + '/filter/neighborhoods';
         },
 
-        onRender: function () {            
+        onRender: function () {
             this.checkChanges();
             if (this.options.isLocation) this.ui.btnDistance.removeClass('disabled');
             else this.ui.btnDistance.addClass('disabled');
-            
+
         },
 
-        btnDistanceClick: function(evt){
-            if (this.options.isLocation !== true){
+        btnDistanceClick: function (evt) {
+            if (this.options.isLocation !== true) {
                 evt.preventDefault();
             }
         },
 
-        goToCuisines: function (evt) {            
+        goToCuisines: function (evt) {
             app.router.navigate(this.cuisinesUrl, { trigger: true });
             evt.preventDefault();
         },
@@ -56,7 +56,7 @@
         applyFilter: function (evt) {
             evt.preventDefault();
             var that = this;
-            
+
             var sortBy = parseInt(this.$('input[name="sort"]:checked').attr('itemId'), 10) || 0,
                 prices = [];
 
@@ -67,8 +67,7 @@
 
             this.model.set('sortBy', sortBy);
             this.model.set('prices', prices);
-            app.execute('SaveFilter', this.model);
-            
+
             app.router.navigate(this.backUrl, { trigger: true });
         },
 
@@ -76,7 +75,7 @@
             this.checkChanges();
         },
 
-        sortByChanged: function(){
+        sortByChanged: function () {
             this.checkChanges();
         },
 
@@ -99,4 +98,4 @@
     });
 
     return ItemView;
-}); 
+});

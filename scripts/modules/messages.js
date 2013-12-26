@@ -84,10 +84,6 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         return Data.getFilterSimple(cityid);
     });
 
-    app.commands.setHandler('ResetFilter', function (cityid) {
-        Data.resetFilter(cityid);
-    });
-
     //cities
     app.commands.setHandler('API:GetMetros', function (lat, lng, callback) {
         var handler = (lat && lng) ?
