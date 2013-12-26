@@ -198,7 +198,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         },        
 
         restauranInfoShort: function (id) {
-            this.restauranInfo(id, 2, Helper.formatDate(new Date()), '19:00', true);
+            this.restauranInfo(id, 2, Helper.formatDate(new Date()), '18:45', true);
         },
 
         restauranInfo: function (id, party, date, time, fromRestaurants) {
