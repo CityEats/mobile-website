@@ -25,7 +25,7 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
         },
 
         initialize: function () {
-            if (this.model.get('has_special_meals') && this.model.get('special_meals_slots')) {
+            if (this.model.get('has_special_meals') && this.model.get('special_meals_slots') && this.model.get('special_meals_slots').length > 0) {
                 this.specialMealId = this.model.get('special_meals_slots')[0].id;
             }
         },
