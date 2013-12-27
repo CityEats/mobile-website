@@ -1,12 +1,12 @@
-﻿define([	
+﻿define([
 	'underscore',
-	'app'	
+	'app'
 ],
 
 function (_, app) {
     var monthNamesShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     var daysOfWeek = ['Sunday', 'Monday', 'Tuesday ', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-     
+
     function getNumber(num) {
         switch (num) {
             case 1: return '1st';
@@ -31,7 +31,7 @@ function (_, app) {
                 if (offset) {
                     date.setHours(date.getHours() - offset);
                 }
-                
+
                 var dateString = date.getFullYear() +
                     '-' + pad(date.getMonth() + 1) +
                     '-' + pad(date.getDate());
@@ -45,7 +45,7 @@ function (_, app) {
             },
 
             newDate: function (dateString, offset) {
-                var date = new Date(dateString);                
+                var date = new Date(dateString);
                 date.setHours(date.getUTCHours() + offset);
                 return date;
             },
@@ -187,11 +187,17 @@ function (_, app) {
                 return null;
             },
 
-            getTimes: function (isToday) {
-                var times = [];
+            getTimes: function (selectedDate, startTime, endTime) {
+                var times = [],
+                    isToday,
+                    now = new Date,
+                        startTime = startTime || new Date(2000, 1, 1, 0, 0), //12:00am;
+                        endTime = endTime || new Date(2000, 1, 1, 23, 45);
 
-                var start = new Date(2000, 1, 1, 0, 0); //12:00am
-                var end = new Date(2000, 1, 1, 23, 45); //11:45pm
+                isToday = selectedDate.getDate() == now.getDate() &&
+                    selectedDate.getMonth() == now.getMonth() &&
+                    selectedDate.getFullYear() == now.getFullYear();
+                
                 var selected = new Date(2000, 1, 1, 19, 00); //7:00pm
                 if (isToday) {
                     selected = new Date();
@@ -210,10 +216,10 @@ function (_, app) {
                     }
                 }
 
-                while (start <= end) {
+                while (startTime <= endTime) {
                     var time = {},
-                        h = start.getHours(),
-                        m = start.getMinutes(),
+                        h = startTime.getHours(),
+                        m = startTime.getMinutes(),
                         am = h < 12;
 
                     if (h == selected.getHours() && m == selected.getMinutes()) {
@@ -228,10 +234,10 @@ function (_, app) {
                     m = m < 10 ? '0' + m : m;
 
                     time.text = h + ':' + m + (am ? 'a' : 'p');
-                    time.value = start.getHours() + ':' + m;
+                    time.value = startTime.getHours() + ':' + m;
 
                     times.push(time);
-                    start.setMinutes(start.getMinutes() + 15);
+                    startTime.setMinutes(startTime.getMinutes() + 15);
                 }
 
                 return times;

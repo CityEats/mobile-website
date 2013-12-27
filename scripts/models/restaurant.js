@@ -158,11 +158,49 @@
 	            return this.reviewCollection;
 	        },
 
-	        getFullSlots: function (specialMealId) {
-	            var times = Helper.getTimes(),
-                    that = this,
+	        getFullSlots: function (specialMealId, selectedDate) {
+	            var selectedDate = new Date(selectedDate),
+                    startDate,
+                    endDate,
+	                that = this,
                     items,
 	                slots;
+
+	            var openDay = _.chain(this.get('restaurant_open_hours'))
+                    .where({ day_of_week: (selectedDate.getDay() - 1) })
+                    .map(function (item) {
+                        var start = item.start_time.split(':');
+                        var end = item.end_time.split(':');
+                        return {
+                            start_time: item.start_time,
+                            start_time_h: parseInt(start[0], 10),
+                            start_time_m: parseInt(start[1], 10),
+                            end_time: item.end_time,
+                            end_time_h: parseInt(end[0], 10),
+                            end_time_m: parseInt(end[1], 10),
+                            start_time_tmp: parseFloat(start[0] + '.' + start[1]),
+                            end_time_tmp: parseFloat(end[0] + '.' + end[1]),
+                        };
+                    })
+                    .value();
+
+	            if (openDay.length > 0) {
+	                var start_time = _.min(openDay, function (item) { return item.start_time_tmp; }),
+                        end_time = _.max(openDay, function (item) { return item.end_time_tmp; });
+                    
+	                startDate = new Date(selectedDate);
+	                startDate.setHours(start_time.start_time_h);
+	                startDate.setMinutes(start_time.start_time_m);
+
+	                endDate = new Date(selectedDate);
+	                endDate.setHours(end_time.end_time_h);
+	                endDate.setMinutes(end_time.end_time_m);
+
+	                if (startDate > endDate) endDate.setDate(endDate.getDate() + 1);
+	            }
+
+                //get start time and end time
+	            var times = Helper.getTimes(selectedDate, startDate, endDate);
 
 	            if (specialMealId) {
 	                var meals = _.findWhere(this.get('special_meals_slots'), { id: specialMealId });

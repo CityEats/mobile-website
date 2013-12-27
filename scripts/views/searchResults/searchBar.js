@@ -47,7 +47,7 @@
             this.ui.searchForm.addClass('empty');
 
             if (showTimingBar === true) {
-                if (showTimes === true) this.rerenderTime(true);
+                if (showTimes === true) this.rerenderTime(date);
 
                 if (typeof party != 'undefined') this.ui.party.val(party);
 
@@ -180,8 +180,8 @@
             });
         },
 
-        rerenderTime: function (isToday) {
-            var times = Helper.getTimes();
+        rerenderTime: function (selectedDate) {
+            var times = Helper.getTimes(selectedDate);
             var select = _(times).map(function (item) { return '<option value="' + item.value + '" ' + (item.selected ? 'selected' : '') + '>' + item.text + '</option>' });
 
             this.ui.time.empty().append(select);

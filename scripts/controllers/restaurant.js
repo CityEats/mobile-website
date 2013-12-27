@@ -74,7 +74,7 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
                 var chooseTimeView = new ChooseTimeView({ model: that.getSearchModel(newParty || party, newDate || date, restaurant.get('special_meals')), specialMealId: mealId });
                 var nextDaysView = new NextDaysView({ collection: that.getNextDays(newDate || date) });
                 var scheduleItemsView = new ScheduleItemsView({
-                    collection: restaurant.getFullSlots(mealId),
+                    collection: restaurant.getFullSlots(mealId, newDate || date),
                     completeUrlTemplate: [
                         'restaurants/',
                         id,
@@ -105,7 +105,6 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
                     that.contentLayout.show(calendarView);
 
                     calendarView.on('dateSelected', function (selectedDate) {
-                        //chooseTimeView.model.set('date', selectedDate);
                         that.bookIt(id, party, date, time, mealId, code, fromRestaurants, chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
                     });
                 }).on('partySizeChanged', function (partySize) {
@@ -115,7 +114,6 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
                 });
 
                 nextDaysView.on('newDayView:dateSelected', function (sender, selectedDate) {
-                    //chooseTimeView.model.set('date', selectedDate);
                     that.bookIt(id, party, date, time, mealId, code, fromRestaurants, chooseTimeView.model.get('party'), Helper.formatDate(selectedDate));
                 });
             });
