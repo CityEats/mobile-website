@@ -196,6 +196,8 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
                 if (contentView.collection.where({ 'checked': true }).length > 3) {
                     childView.model.set('checked', false);
                     childView.render();
+                    alert('Please choose up to 3 ' + (isCuisines ? 'cuisines' : 'neighborhoods'));
+
                 }
                 else {
                     topBarView.changeTopBarTitleText('(' + contentView.collection.where({ 'checked': true }).length + ')');
