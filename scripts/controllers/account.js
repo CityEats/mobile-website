@@ -179,7 +179,7 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
         app.execute(isCuisines ? 'GetCuisines' : 'GetNeighborhoods', cityId, function (err, allItems) {
             if (err) return that.errorPartial();
 
-            var topBarView = isCuisines ? getNeighborhoodsTopBarView(items.length) : getCuisinesTopBarView(items.length);
+            var topBarView = isCuisines ? getCuisinesTopBarView(items.length) : getNeighborhoodsTopBarView(items.length);
             var contentView = new FavoriteItemsContentLayout({
                 collection: allItems,
                 items: items,
