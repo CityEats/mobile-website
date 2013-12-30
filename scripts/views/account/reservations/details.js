@@ -32,7 +32,7 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
 
         templateHelpers: {
             getDate: function () {
-                return Helper.formatDateShort2(this.reserved_for); 
+                return Helper.formatDateShort2(this.reserved_for, this.current_time_offset);
             },
 
             getTime: function () {

@@ -121,10 +121,10 @@ function (_, app) {
                 return daysOfWeek[date.getDay()] + ' ' + monthNamesShort[date.getMonth()] + ' ' + getNumber(date.getDate());
             },
 
-            formatDateShort2: function (date) {
-                if (typeof date == 'string') {
-                    date = new Date(date);
-                }
+            formatDateShort2: function (date, offset) {
+                if (typeof date == 'string') date = new Date(date);
+
+                if (offset) date.setHours(date.getUTCHours() + offset);
 
                 return daysOfWeek[date.getDay()].substr(0, 3) + ', ' + monthNamesShort[date.getMonth()] + ' ' + getNumber(date.getDate());
             },
