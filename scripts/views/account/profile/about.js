@@ -11,11 +11,11 @@
 
         templateHelpers: {
             neighborhoods: function () {
-                return (this.favorite_neighborhoods || '').split(',');
+                return this.favorite_neighborhoods.length > 0 ? this.favorite_neighborhoods.split(',') : '';
             },
 
             cuisines: function () {
-                return (this.favorite_cuisine_types || '').split(',');
+                return this.favorite_cuisine_types.length > 0 ? this.favorite_cuisine_types.split(',') : '';
             }
         },
 

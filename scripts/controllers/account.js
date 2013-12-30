@@ -104,15 +104,18 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
             app.execute('GetCurrentUser', function (err, currentUser) {
                 if (currentUser == null) return app.router.navigate('login', { trigger: true });
 
+                var favorite_cuisine_types = currentUser.get('favorite_cuisine_types'),
+                    favorite_neighborhoods = currentUser.get('favorite_neighborhoods');
+
                 if (cuisineItems == null) {
                     cuisineItems = new Dictionary(
-                        _.map(currentUser.get('favorite_cuisine_types').split(','),
+                        _.map(favorite_cuisine_types.length > 0 ? favorite_cuisine_types.split(',') : [],
                             function (item) { return { value: item.trim() } }));
                 }
 
                 if (neighborhoodItems == null) {
                     neighborhoodItems = new Dictionary(
-                        _.map(currentUser.get('favorite_neighborhoods').split(','),
+                        _.map(favorite_neighborhoods.length > 0 ? favorite_neighborhoods.split(',') : [],
                             function (item) { return { value: item.trim() } }));
                 }
 
@@ -123,7 +126,7 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
                     neighborhoodItems: neighborhoodItems
                 });
 
-                contentView.on('userSaved', function (userData) {                    
+                contentView.on('userSaved', function (userData) {
                     app.execute('UpdateCurrentUser', currentUser.get('id'), userData, cuisineItems, neighborhoodItems, function (err, data) {
                         if (err == null) {
                             app.router.navigate('profile', { trigger: true });
