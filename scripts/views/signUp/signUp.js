@@ -6,6 +6,8 @@
             'click .btnSubmit': 'btnSubmitClick',
             'click .cbAgree': 'cbAgreeClick',
             'click .btnTermsPrivacy': 'btnTermsPrivacyClick',
+            'change .ddlMonth': 'ddlMonthChange',
+            'change .ddlYear': 'ddlYearChange'
         },
         ui: {
             txtFirstName: '.txtFirstName',
@@ -43,28 +45,24 @@
             var howHeards = ['<option></option>'];
             var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             var howHeardNames = [{ 'Word of Mouth': 1 }, { 'Online ad': 2 }, { 'Radio': 3 }, { 'TV': 4 }, { 'Print': 5 }, { 'Outdoor ad': 6 }, { 'Other': 7 }];
-            var days = ['<option>Day</option>'];
+
             for (var i = 1900; i <= date.getFullYear() ; i++) {
-                years.push('<option value=" ' + i + ' "> ' + i + '</option>');
+                years.push('<option value="' + i + '"> ' + i + '</option>');
             }
 
             for (var i = 0; i < monthNames.length; i++) {
-                months.push('<option value=" ' + (i + 1) + ' "> ' + monthNames[i] + '</option>');
-            }
-
-            for (var i = 1; i <= 31 ; i++) {
-                days.push('<option value=" ' + i + ' "> ' + i + '</option>');
+                months.push('<option value="' + (i + 1) + '"> ' + monthNames[i] + '</option>');
             }
 
             for (var i = 0; i < howHeardNames.length; i++) {
                 var keys = Object.keys(howHeardNames[i]);
-                howHeards.push('<option value=" ' + howHeardNames[i][keys[0]] + ' "> ' + keys[0] + '</option>');
+                howHeards.push('<option value="' + howHeardNames[i][keys[0]] + '"> ' + keys[0] + '</option>');
             }
 
             this.ui.ddlYear.empty().append(years);
             this.ui.ddlMonth.empty().append(months);
-            this.ui.ddlDay.empty().append(days);
             this.ui.ddlHowHeard.empty().append(howHeards);
+            this.buildDays();
         },
 
         btnTermsPrivacyClick: function (evt) {
@@ -86,7 +84,7 @@
                     first_name: this.ui.txtFirstName.val(),
                     last_name: this.ui.txtLastName.val(),
                     postal_code: this.ui.txtZip.val(),
-                    phone_number: this.ui.txtPhone.val()                    
+                    phone_number: this.ui.txtPhone.val()
                 };
 
                 if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
@@ -107,19 +105,42 @@
             this.hideError(this.ui.cbAgree);
         },
 
+        ddlMonthChange: function () {
+            this.buildDays();
+        },
+
+        ddlYearChange: function () {
+            this.buildDays();
+        },
+
+        buildDays: function () {
+            var day = parseInt(this.ui.ddlDay.val(), 10),
+                year = parseInt(this.ui.ddlYear.val(), 10) || 2001,
+                month = parseInt(this.ui.ddlMonth.val(), 10) || 1,
+                days = ['<option>Day</option>'];
+
+            for (var i = 1; i <= new Date(year, month, 0).getDate() ; i++) {
+                days.push('<option value="' + i + '"> ' + i + '</option>');
+            }
+
+            this.ui.ddlDay.empty().append(days);
+
+            if (!isNaN(day)) this.ui.ddlDay.val(day);
+        },
+
         validate: function () {
-            var isValid = true;            
+            var isValid = true;
 
             if (!this.requireValidation('First Name is a required field', this.ui.txtFirstName, this.ui.txtFirstNameError)) {
-                isValid  = false;
+                isValid = false;
             }
 
-            if(!this.requireValidation('Last Name is a required field', this.ui.txtLastName, this.ui.txtLastNameError)) {
-                isValid  = false;
+            if (!this.requireValidation('Last Name is a required field', this.ui.txtLastName, this.ui.txtLastNameError)) {
+                isValid = false;
             }
 
-            if(!this.requireValidation('Email is a required field', this.ui.txtEmail, this.ui.txtEmailError)) {
-                isValid  = false;
+            if (!this.requireValidation('Email is a required field', this.ui.txtEmail, this.ui.txtEmailError)) {
+                isValid = false;
             }
 
             if (!this.requireValidation('Password is a required field', this.ui.txtPassword, this.ui.txtPasswordError)) {
@@ -144,12 +165,12 @@
                 }
             }
 
-            if(!this.requireValidation('Zip is a required field', this.ui.txtZip, this.ui.txtZipError)) {
-                isValid  = false;
+            if (!this.requireValidation('Zip is a required field', this.ui.txtZip, this.ui.txtZipError)) {
+                isValid = false;
             }
 
-            if(!this.requireValidation('Phone is a required field', this.ui.txtPhone, this.ui.txtPhoneError)) {
-                isValid  = false;
+            if (!this.requireValidation('Phone is a required field', this.ui.txtPhone, this.ui.txtPhoneError)) {
+                isValid = false;
             }
 
             if (this.ui.cbAgree.is(':checked')) {
