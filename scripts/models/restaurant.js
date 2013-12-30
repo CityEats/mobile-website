@@ -167,7 +167,7 @@
 	                slots;
 
 	            var openDay = _.chain(this.get('restaurant_open_hours'))
-                    .where({ day_of_week: (selectedDate.getDay() - 1) })
+                    .where({ day_of_week: (selectedDate.getDay()) })
                     .map(function (item) {
                         var start = item.start_time.split(':');
                         var end = item.end_time.split(':');
