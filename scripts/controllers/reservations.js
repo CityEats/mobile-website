@@ -36,7 +36,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                 case 'book-it': returnUrl = 'restaurants/' + id + '/book-it';
             }
 
-            var topBarView = that.getCompleteReservationTopBarView({ leftUrl: returnUrl });
+            var topBarView = getCompleteReservationTopBarView({ leftUrl: returnUrl });
 
             app.execute('GetRestaurant', id, slotDate, party, time, function (err, restaurant) {
                 if (err) return that.errorPartial();
@@ -113,7 +113,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                 contentView;
 
             app.execute('GetCurrentUser', function (err, currentUser) {
-                topBarView = that.getReservationConfirmedTopBarView();
+                topBarView = getReservationConfirmedTopBarView();
 
                 var showViews = function (orderId) {
                     app.topBar.show(topBarView);
@@ -176,7 +176,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                 if (reservations.error) {
                     that.errorPartial(reservations.error);
                 } else {
-                    topBarView = that.getReservationsTopBarView();
+                    topBarView = getReservationsTopBarView();
                     var contentView = new ReservationsContentLayout({ collection: reservations });
 
                     that.topBarLayout.show(topBarView);
@@ -205,7 +205,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                         else if (reservation.isCanceled()) title = 'Canceled Reservation';
 
                         var contentView = new ReservationContentLayout({ model: reservation, user: currentUser, phoneNumber: restaurant.get('phone_number'), minTimeToCancel: restaurant.get('min_time_to_cancel_reservation') });
-                        var topBarView = that.getReservationTopBarView({ title: title });
+                        var topBarView = getReservationTopBarView({ title: title });
 
                         that.topBarLayout.show(topBarView);
                         that.contentLayout.show(contentView);
@@ -238,48 +238,47 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                     });
                 });
             });
-        },
-
-        getCompleteReservationTopBarView: function (options) {
-            var topBar = new TopBar(_.extend({
-                leftText: 'Back',
-                title: 'Book It'
-            }, options));
-
-            return new TopBarView({ model: topBar });
-        },
-
-        getReservationConfirmedTopBarView: function (options) {
-            var topBar = new TopBar(_.extend({
-                rightText: 'Done',
-                rightUrl: 'back',
-                rightCss: 'blue',
-                title: 'Reservation Confirmed'
-            }, options));
-
-            return new TopBarView({ model: topBar });
-        },
-
-        getReservationsTopBarView: function () {
-            var topBar = new TopBar({
-                leftText: 'Home',
-                leftUrl: 'back',
-                title: 'Account'
-            });
-
-            return new TopBarView({ model: topBar });
-        },
-
-        getReservationTopBarView: function () {
-            var topBar = new TopBar({
-                leftText: 'Back',
-                leftUrl: 'profile/reservations',
-                title: ''
-            });
-
-            return new TopBarView({ model: topBar });
-        },
+        }
     });
+
+    var getCompleteReservationTopBarView = function (options) {
+        var topBar = new TopBar(_.extend({
+            leftText: 'Back',
+            title: 'Book It'
+        }, options));
+
+        return new TopBarView({ model: topBar });
+    };
+
+    var getReservationConfirmedTopBarView = function (options) {
+        var topBar = new TopBar(_.extend({
+            rightText: 'Done',
+            rightUrl: 'back',
+            rightCss: 'blue',
+            title: 'Reservation Confirmed'
+        }, options));
+
+        return new TopBarView({ model: topBar });
+    };
+
+    var getReservationsTopBarView = function () {
+        var topBar = new TopBar({
+            leftText: 'Home',
+            leftUrl: 'back',
+            title: 'Account'
+        });
+
+        return new TopBarView({ model: topBar });
+    };
+
+    var getReservationTopBarView = function (options) {
+        var topBar = new TopBar(_.extend({
+            leftText: 'Back',
+            leftUrl: 'profile/reservations'
+        }, options));
+
+        return new TopBarView({ model: topBar });
+    };
 
     return Controller;
 });
