@@ -11,6 +11,13 @@
             return _.extend(result, { specialMealId: this.specialMealId });
         },
 
+        templateHelpers: {
+            getMealText: function (specialMealId) {
+                var specialMeal = _.findWhere(this.special_meals, { special_meal_id: specialMealId });
+                return specialMeal ? specialMeal.name : null;
+            }
+        },
+
         initialize: function () {
             if (this.options.specialMealId) {
                 this.specialMealId = parseInt(this.options.specialMealId, 10);

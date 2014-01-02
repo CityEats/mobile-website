@@ -1,10 +1,13 @@
 ﻿<div class="roundedBox">
     <div class="roundedBoxRow">
         <div class="reservationData reservationDataEdit">
-            <h3 class="reservationDataTitle confirmed"><%= name %></h3>
-            <!--<p>Sun,Sept 16th</p>-->
+            <h3 class="reservationDataTitle confirmed"><%= name %></h3>            
             <p><%= slotFormated(0, specialMealId) %></p>
             <p><span class="reservationGreyText">for</span> <%= party %> people <span class="reservationGreyText">at</span> <%= selectedTimeFormated().valueSimpleAmTextFull %></p>
+            <% var mealText = getMealText(specialMealId); %>
+            <% if(mealText) { %>
+                <p><span class="reservationGreyText">for</span> <%= mealText %></p>
+            <% } %>
             <a href="#" class="btnSoft small btnEdit">Edit</a>
         </div>
     </div>

@@ -8,6 +8,9 @@
             <h3 class="reservationDataTitle confirmed"><%= restaurant_name %></h3>
             <p><%= getDate() %></p>
             <p><span class="reservationGreyText">for</span> <%= party_size %> people <span class="reservationGreyText">at</span> <%= getTime() %></p>
+            <% if (typeof special_meal_name != 'undefined') { %>
+            <p><span class="reservationGreyText">for</span> <%= special_meal_name %></p>
+            <% } %>
         </a>
     </div>
     <div class="roundedBoxRow">
