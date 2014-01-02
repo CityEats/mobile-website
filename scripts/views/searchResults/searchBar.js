@@ -59,7 +59,7 @@
                 if (typeof time != 'undefined') this.ui.time.val(time);
 
                 if (typeof query != 'undefined') {
-                    this.ui.txtSearch.val(query)                    
+                    this.ui.txtSearch.val(query)
                     if (query.length > 0) {
                         this.ui.searchForm.removeClass('empty');
                     } else {
@@ -68,7 +68,7 @@
                 }
 
                 var datepicker = this.ui.date,
-                    dateLabel = this.ui.dateLabel;                
+                    dateLabel = this.ui.dateLabel;
 
                 that.setDateText(date, this.ui.dateLabel);
                 this.filterParametersChanged(true);
@@ -117,9 +117,7 @@
             this.model.set('party', parseInt(this.ui.party.val(), 10));
             this.model.set('time', this.ui.time.val());
 
-            if (this.options.showFindButton !== true) {
-                return true;
-            }
+            if (this.options.showFindButton !== true) return true;
 
             party = this.options.defaults.party;
             date = this.options.defaults.date;

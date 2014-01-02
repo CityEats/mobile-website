@@ -142,9 +142,8 @@ function (_, app) {
             },
 
             formatDateRelative: function (date, simple) {
-                if (typeof date == 'string') {
-                    date = new Date(date);
-                }
+                if (typeof date == 'string') date = new Date(date);
+
                 var current = new Date;
 
                 if (current.getDate() == date.getDate() &&
@@ -190,30 +189,44 @@ function (_, app) {
             getTimes: function (selectedDate, startTime, endTime) {
                 var times = [],
                     isToday,
-                    now = new Date,
-                        startTime = startTime || new Date(2000, 1, 1, 0, 0), //12:00am;
-                        endTime = endTime || new Date(2000, 1, 1, 23, 45);
+                    now = new Date;
+
+                if (startTime == null) {
+                    startTime = new Date;
+                    startTime.setHours(0);
+                    startTime.setMinutes(0);
+                }
+
+                if (endTime == null) {
+                    //12:00am;
+                    endTime = new Date;
+                    endTime.setHours(23);
+                    endTime.setMinutes(45);
+                }
 
                 isToday = selectedDate.getDate() == now.getDate() &&
                     selectedDate.getMonth() == now.getMonth() &&
                     selectedDate.getFullYear() == now.getFullYear();
                 
-                var selected = new Date(2000, 1, 1, 19, 00); //7:00pm
+                //7:00pm
+                var selected = new Date; 
+                selected.setHours(19);
+                selected.setMinutes(0);
+
                 if (isToday) {
-                    selected = new Date();
+
+                    selected = this.newDate(new Date, -5);
                     var min = selected.getMinutes();
                     if (min != 0 && min != 15 && min != 30 && min != 45) {
-                        if (min > 0 && min < 15) {
-                            min = 15;
-                        } else if (min > 15 && min < 30) {
-                            min = 30;
-                        } else if (min > 30 && min < 45) {
-                            min = 45;
-                        } else {
-                            min = 60;
-                        }
+                        if (min > 0 && min < 15) min = 15;
+                        else if (min > 15 && min < 30) min = 30;
+                        else if (min > 30 && min < 45) min = 45;
+                        else min = 60;
+
                         selected.setMinutes(min);
                     }
+
+                    startTime = new Date(selected);
                 }
 
                 while (startTime <= endTime) {
@@ -222,9 +235,7 @@ function (_, app) {
                         m = startTime.getMinutes(),
                         am = h < 12;
 
-                    if (h == selected.getHours() && m == selected.getMinutes()) {
-                        time.selected = true;
-                    }
+                    if (h == selected.getHours() && m == selected.getMinutes()) time.selected = true;
 
                     h = am ? h : (h - 12);
 

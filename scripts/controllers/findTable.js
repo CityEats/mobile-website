@@ -13,12 +13,10 @@
 
 function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, CalendarView, ContentLayout, SearchBarView) {
     var Controller = BaseController.extend({
-        index: function (date, newParty, newDate, newTime) {
+        index: function (date, newParty, newTime) {
             var that = this, cityId;
-
-            date = date || new Date;
             party = 2;
-            time = '19:00';
+            if (date == null) date = new Date;
 
             if (!(cityId = this.checkCurrentCity())) return true; //set cityId to current.id or redirect to home if no current city specified
 
@@ -38,15 +36,15 @@ function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, Calenda
                 });
 
                 var searchBarView = new SearchBarView({
-                    model: that.getSearchModel(newParty || party, newDate || date, newTime || time),
+                    model: that.getSearchModel(newParty || party, date, newTime),
                     defaults: {
                         party: 2,
                         date: date,
-                        time: '19:00'
-                    },
+                        time: newTime
+                    }
                 });
 
-                var calendarView = new CalendarView({ date: newDate || date });
+                var calendarView = new CalendarView({ date: date });
                 var calendarTopBarView = that.getCalendarTopBarView();
 
                 that.contentLayout.show(contentView);
@@ -54,7 +52,7 @@ function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, Calenda
 
                 searchBarView.on('datePickerClicked', function () {
                     calendarTopBarView.on('btnLeftClick', function () {
-                        that.index(date, searchBarView.model.get('party'), newDate, searchBarView.model.get('time'));
+                        that.index(date, searchBarView.model.get('party'), searchBarView.model.get('time'));
                     });
 
                     that.topBarLayout.show(calendarTopBarView);
@@ -62,7 +60,7 @@ function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, Calenda
 
                     calendarView.on('dateSelected', function (selectedDate) {
                         searchBarView.model.set('date', selectedDate);
-                        that.index(date, searchBarView.model.get('party'), selectedDate, searchBarView.model.get('time'));
+                        that.index(selectedDate, searchBarView.model.get('party'), searchBarView.model.get('time'));
                     });
                 });
 
@@ -76,8 +74,7 @@ function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, Calenda
                 }).on('logOut', function () {
                     app.execute('SignOut', function (err) {
                         if (err) return that.errorPartial();
-
-                        that.index(date, newParty, newDate, newTime);
+                        that.index(date, newParty, newTime);
                     });
                 });
             });
@@ -86,12 +83,12 @@ function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, Calenda
             this.topBarLayout.show(topBarView);
         },
 
-        getTopBarView: function(){
+        getTopBarView: function () {
             var topBar = new TopBar({ title: 'Find a Table' });
             return new TopBarView({ model: topBar });
         },
 
-        getCalendarTopBarView: function(){
+        getCalendarTopBarView: function () {
             var topBar = new TopBar({
                 leftText: 'Cancel',
                 leftUrl: '',
