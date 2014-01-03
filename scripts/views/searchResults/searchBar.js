@@ -16,7 +16,7 @@
             dateLabel: '.datePicker',
             date: '.date',
             time: '.time',
-            txtSearch: '.searchField',            
+            txtSearch: '.searchField',
             searchForm: '.searchForm',
             searchSubmit: '.searchResultsSubmit',
             ddlSpecialMeals: '.ddlSpecialMeals'
@@ -86,7 +86,7 @@
             this.trigger('datePickerClicked', this.model.get('date'));
         },
 
-        btnClearClick: function (evt) {            
+        btnClearClick: function (evt) {
             evt.preventDefault();
             this.ui.txtSearch.val('');
             this.ui.searchForm.addClass('empty');
@@ -96,7 +96,7 @@
 
         btnSearchClick: function (evt) {
             evt.preventDefault();
-            
+
             if (this.ui.txtSearch.val().length > 0) {
                 this.ui.searchForm.removeClass('empty');
             } else {
@@ -112,8 +112,9 @@
         },
 
         filterParametersChanged: function (onRender) {
-            var party, date, time, isChanged = false;
+            if (this.ui.time.val() == null) return app.router.navigate('find-table', { trigger: true });
 
+            var party, date, time, isChanged = false;
             this.model.set('party', parseInt(this.ui.party.val(), 10));
             this.model.set('time', this.ui.time.val());
 
@@ -122,14 +123,14 @@
             party = this.options.defaults.party;
             date = this.options.defaults.date;
             time = this.options.defaults.time;
-            
+
             if (party.toString().toLowerCase() == this.model.get('party').toString().toLowerCase()) {
                 this.ui.party.removeClass('updated');
             } else {
                 this.ui.party.addClass('updated');
                 isChanged = true;
             }
-            
+
             if (Helper.formatDate(date) == Helper.formatDate(this.model.get('date'))) {
                 this.ui.dateLabel.removeClass('updated');
             } else {
@@ -180,8 +181,8 @@
 
         rerenderTime: function (selectedDate) {
             var times = Helper.getTimes(selectedDate);
-            var select = _(times).map(function (item) { return '<option value="' + item.value + '" ' + (item.selected ? 'selected' : '') + '>' + item.text + '</option>' });
 
+            var select = _(times).map(function (item) { return '<option value="' + item.value + '" ' + (item.selected ? 'selected' : '') + '>' + item.text + '</option>' });
             this.ui.time.empty().append(select);
         },
 
