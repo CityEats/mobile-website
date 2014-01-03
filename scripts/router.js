@@ -45,6 +45,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             'restaurants/filter/neighborhoods': 'restaurantsFilterNeighborhoods',
             'search-results/party/:num/date/:num/time/:num/filter/neighborhoods': 'searchResultsFilterNeighborhoods',
             'restaurants/:num/info': 'restauranInfoShort',
+            'restaurants/:num/info?:url': 'restauranInfoShort',
             'restaurants/:num/party/:num/date/:num/time/:num/info': 'restauranInfo',
             'restaurants/:num/reviews': 'restauranReviewsShort',
             'restaurants/:num/party/:num/date/:num/time/:num/reviews': 'restauranReviews',
@@ -197,12 +198,12 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.getController('controllers/filter').neighborhoods(isRestaurants, party, date, time);
         },        
 
-        restauranInfoShort: function (id) {
-            this.restauranInfo(id, 2, Helper.formatDate(new Date()), '18:45', true);
+        restauranInfoShort: function (id, url) {
+            this.restauranInfo(id, 2, Helper.formatDate(new Date()), '18:45', true, url);
         },
 
-        restauranInfo: function (id, party, date, time, fromRestaurants) {
-            this.getController('controllers/restaurant').info(id, party, date, time, fromRestaurants);
+        restauranInfo: function (id, party, date, time, fromRestaurants, url) {
+            this.getController('controllers/restaurant').info(id, party, date, time, fromRestaurants, url);
         },
 
         restauranReviewsShort: function (id) {

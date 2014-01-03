@@ -108,8 +108,8 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
 
         reservationDataClicked: function (evt) {
             evt.preventDefault();
-
-            this.model.get('restaurant_id');
+            var backUrl = Backbone.history.fragment; //curent url
+            app.router.navigate('restaurants/' + this.model.get('restaurant_id') + '/info?' + encodeURIComponent(backUrl), { trigger: true });
         }
     });
 
