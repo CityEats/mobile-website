@@ -50,19 +50,21 @@ function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, Calenda
                 that.contentLayout.show(contentView);
                 contentView.search.show(searchBarView);
 
-                searchBarView.on('datePickerClicked', function () {
-                    calendarTopBarView.on('btnLeftClick', function () {
-                        that.index(date, searchBarView.model.get('party'), searchBarView.model.get('time'));
-                    });
+                searchBarView
+                    .on('datePickerClicked', function () {
+                        calendarTopBarView.on('btnLeftClick', function () {
+                            that.index(date, searchBarView.model.get('party'), searchBarView.model.get('time'));
+                        });
 
-                    that.topBarLayout.show(calendarTopBarView);
-                    that.contentLayout.show(calendarView);
+                        that.topBarLayout.show(calendarTopBarView);
+                        that.contentLayout.show(calendarView);
 
-                    calendarView.on('dateSelected', function (selectedDate) {
-                        searchBarView.model.set('date', selectedDate);
-                        that.index(selectedDate, searchBarView.model.get('party'), searchBarView.model.get('time'));
-                    });
-                });
+                        calendarView.on('dateSelected', function (selectedDate) {
+                            searchBarView.model.set('date', selectedDate);
+                            that.index(selectedDate, searchBarView.model.get('party'), searchBarView.model.get('time'));
+                        });
+                    })
+                    .on('timeExpired', function () { return that.errorPartial(); });
 
                 contentView.on('findTableClicked', function () {
                     var date = searchBarView.model.get('date');

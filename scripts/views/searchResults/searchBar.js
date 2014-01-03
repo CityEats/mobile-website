@@ -112,7 +112,7 @@
         },
 
         filterParametersChanged: function (onRender) {
-            if (this.ui.time.val() == null) return app.router.navigate('find-table', { trigger: true });
+            if (this.ui.time.val() == null) return this.trigger('timeExpired');
 
             var party, date, time, isChanged = false;
             this.model.set('party', parseInt(this.ui.party.val(), 10));

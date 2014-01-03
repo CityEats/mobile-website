@@ -15,7 +15,8 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
             'click .btnModify': 'btnModifyClick',
             'click .btnShare': 'btnShareClick',
             'click .cbSmsReminder': 'reminderChanged',
-            'click .cbEmailReminder': 'reminderChanged'
+            'click .cbEmailReminder': 'reminderChanged',
+            'click a.reservationData': 'reservationDataClicked'
         },
 
         ui: {
@@ -103,6 +104,12 @@ function (Marionette, _, Helper, upcomingHtml, pastHtml, canceledHtml) {
 
         reminderChanged: function (evt) {
             this.trigger('reminderChanged', this.ui.cbSmsReminder.is(':checked'), this.ui.cbEmailReminder.is(':checked'));
+        },
+
+        reservationDataClicked: function (evt) {
+            evt.preventDefault();
+
+            this.model.get('restaurant_id');
         }
     });
 

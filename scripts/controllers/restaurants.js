@@ -126,18 +126,20 @@ function (_, app, Helper, BaseController, Restaurant, TopBar, SearchBar, TopBarV
             var calendarView = new CalendarView({ date: newDate || date });
             var calendarTopBarView = this.getCalendarTopBarView();
 
-            searchBar.on('datePickerClicked', function () {
-                that.topBarLayout.show(calendarTopBarView);
-                that.contentLayout.show(calendarView);
+            searchBar
+                .on('datePickerClicked', function () {
+                    that.topBarLayout.show(calendarTopBarView);
+                    that.contentLayout.show(calendarView);
 
-                calendarTopBarView.on('btnLeftClick', function () {
-                    that.search(party, date, time, searchBar.model.get('party'), newDate, searchBar.model.get('time'), searchBar.model.get('searchQuery'));
-                });
+                    calendarTopBarView.on('btnLeftClick', function () {
+                        that.search(party, date, time, searchBar.model.get('party'), newDate, searchBar.model.get('time'), searchBar.model.get('searchQuery'));
+                    });
 
-                calendarView.on('dateSelected', function (selectedDate) {
-                    that.search(party, date, time, searchBar.model.get('party'), Helper.formatDate(selectedDate), searchBar.model.get('time'), searchBar.model.get('searchQuery'));
-                });
-            });
+                    calendarView.on('dateSelected', function (selectedDate) {
+                        that.search(party, date, time, searchBar.model.get('party'), Helper.formatDate(selectedDate), searchBar.model.get('time'), searchBar.model.get('searchQuery'));
+                    });
+                })
+                .on('timeExpired', function () { return app.router.navigate('find-table', { trigger: true }); });
 
             var getRestaurantsHandler = function (err, data) {
                 if (err) return that.errorPartial();
@@ -158,7 +160,7 @@ function (_, app, Helper, BaseController, Restaurant, TopBar, SearchBar, TopBarV
                     rendered = true;
                 }
 
-                contentView.resultsHolder.show(restaurantsPagesView); //for uniformity of another action (browse all)
+                if (contentView.resultsHolder) contentView.resultsHolder.show(restaurantsPagesView); //for uniformity of another action (browse all)
             };
 
             searchBar.on('filterParametersChanged', function (data) {
