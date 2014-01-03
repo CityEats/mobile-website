@@ -1,5 +1,5 @@
-﻿define([	
-	'underscore',	
+﻿define([
+	'underscore',
 	'app',
     'modules/helper',
     'BaseController',
@@ -22,13 +22,13 @@ function (_, app, Helper, BaseController, City, TopBar, Cities, ContentLayout, C
                 app.execute('GetMetros', function (err, cities, isNearestCity) {
                     if (err) return that.errorPartial();
 
-                    topBarView = that.getTopBarView();
+                    topBarView = getTopBarView();
                     that.topBarLayout.show(topBarView);
 
                     if (currentUser) topBarView.hideRightButton();
 
                     var currentCity = app.request('GetCurrentCity');
-                    
+
                     if (currentCity) {
                         if (isNearestCity === true) return app.router.navigate('find-table', { trigger: true });
 
@@ -43,7 +43,7 @@ function (_, app, Helper, BaseController, City, TopBar, Cities, ContentLayout, C
                     } else {
                         contentView = new ContentLayout;
                         app.content.show(contentView);
-                    }                    
+                    }
 
                     var citiesView = new CitiesView({ collection: cities });
                     var dontSeeCityView = new DontSeeCityView;
@@ -66,28 +66,25 @@ function (_, app, Helper, BaseController, City, TopBar, Cities, ContentLayout, C
                             }
                         });
                     }, dontSeeCityView);
-        
+
                     contentView.findYourCity.show(dontSeeCityView);
                     contentView.locationsButtons.show(citiesView);
                 });
             });
-        },
-
-        getTopBarModel: function () {
-            return new TopBar({
-                leftText: 'Home',
-                leftUrl: '',
-                rightText: 'Log In',
-                rightUrl: 'login',
-                title: 'Choose Your City'
-            });
-        },
-
-        getTopBarView: function () {
-            var topBar = this.getTopBarModel();
-            return new TopBarView({ model: topBar });
         }
     });
+
+    var getTopBarView = function () {
+        var topBar = new TopBar({
+            leftText: 'Home',
+            leftUrl: 'back',
+            rightText: 'Log In',
+            rightUrl: 'login',
+            title: 'Choose Your City'
+        });
+
+        return new TopBarView({ model: topBar });
+    };
 
     return Controller;
 });
