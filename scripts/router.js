@@ -56,7 +56,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             'restaurants/:num/party/:num/date/:num/time/:num/book-it/modify/:code(/meal/:meal)': 'restauranBookItEdit',
             //'restaurants/:num/exclusive-eats': 'restaurantExclusiveEats',
             //'restaurants/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
-            'restaurants/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num(/meal/:meal)': 'completeReservation',            
+            'restaurants/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num(/meal/:meal)': 'completeReservation',
             'restaurants/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num/modify/:code(/meal/:meal)': 'completeReservationEdit',
             //'restaurants/:num/:num/party/:num/date/:num/time/:num/:from/confirmed-reservation/:num/:num': 'reservationConfirmed',
             'restaurants/:num/confirmed-reservation/:num': 'reservationConfirmed',
@@ -65,7 +65,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             //'restaurants/:num/reservation-confirmed': 'reservationConfirmed',
             //'restaurants/:num/reservation-canceled': 'reservationCanceled',
             'profile': 'profile',
-            'profile/edit': 'profileEdit',            
+            'profile/edit(?:url)': 'profileEdit',
             'profile/reservations': 'profileReservations',
             'profile/reservations/:num': 'profileReservation',
             '*path': '404'
@@ -118,7 +118,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.login(url)
         },
 
-        login: function (url) {            
+        login: function (url) {
             this.getController('controllers/account').login(fbRedirectUri, url);
         },
 
@@ -158,7 +158,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.getController('controllers/restaurants').search(party, date, time, newParty, newDate, newTime, searchQuery);
         },
 
-        restaurants: function () {            
+        restaurants: function () {
             this.getController('controllers/restaurants').index();
         },
 
@@ -182,7 +182,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.filterCuisines(false, party, date, time);
         },
 
-        filterCuisines: function (isRestaurants, party, date, time) {            
+        filterCuisines: function (isRestaurants, party, date, time) {
             this.getController('controllers/filter').cuisines(isRestaurants, party, date, time);
         },
 
@@ -194,9 +194,9 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.filterNeighborhoods(false, party, date, time);
         },
 
-        filterNeighborhoods: function (isRestaurants, party, date, time) {            
+        filterNeighborhoods: function (isRestaurants, party, date, time) {
             this.getController('controllers/filter').neighborhoods(isRestaurants, party, date, time);
-        },        
+        },
 
         restauranInfoShort: function (id, url) {
             this.restauranInfo(id, 2, Helper.formatDate(new Date()), '18:45', true, url);
@@ -210,7 +210,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.restauranReviews(id, 2, Helper.formatDate(new Date()), '19:00', true);
         },
 
-        restauranReviews: function (id, party, date, time, fromRestaurants) {            
+        restauranReviews: function (id, party, date, time, fromRestaurants) {
             this.getController('controllers/restaurant').reviews(id, party, date, time, fromRestaurants);
         },
 
@@ -218,7 +218,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.restauranMenus(id, 2, Helper.formatDate(new Date()), '19:00', true);
         },
 
-        restauranMenus: function (id, party, date, time, fromRestaurants) {            
+        restauranMenus: function (id, party, date, time, fromRestaurants) {
             this.getController('controllers/restaurant').menus(id, party, date, time, fromRestaurants);
         },
 
@@ -230,7 +230,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.restauranBookIt(id, 2, Helper.formatDate(new Date), '19:00', mealId, code, true);
         },
 
-        restauranBookIt: function (id, party, date, time, mealId, code, fromRestaurants) {            
+        restauranBookIt: function (id, party, date, time, mealId, code, fromRestaurants) {
             this.getController('controllers/restaurant').bookIt(id, party, date, time, mealId, code, fromRestaurants);
         },
 
@@ -271,7 +271,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.completeReservation(id, party, date, filterTime, from, time, mealId, code);
         },
 
-        completeReservation: function (id, party, date, filterTime, from, time, mealId, code) {            
+        completeReservation: function (id, party, date, filterTime, from, time, mealId, code) {
             this.getController('controllers/reservations').completeReservation(id, party, date, filterTime, from, time, mealId, code);
         },
 
@@ -309,15 +309,15 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.getController('controllers/account').profile();
         },
 
-        profileEdit: function () {
-            this.getController('controllers/account').profileEdit();
+        profileEdit: function (url) {
+            this.getController('controllers/account').profileEdit(url);
         },
-        
+
         profileReservations: function () {
             this.getController('controllers/reservations').reservations();
         },
 
-        profileReservation: function (code) {            
+        profileReservation: function (code) {
             this.getController('controllers/reservations').reservation(code);
         },
 

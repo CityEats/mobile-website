@@ -89,7 +89,8 @@ function (app, Marionette, Backbone, _, BasicItemView, itemHtml) {
 
         btnEditProfileClick: function (evt) {
             evt.preventDefault();
-            app.router.navigate('profile/edit', { trigger: true });
+            var backUrl = Backbone.history.fragment; //curent url
+            app.router.navigate('profile/edit?' + encodeURIComponent(backUrl), { trigger: true });
         },
 
         validate: function () {

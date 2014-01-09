@@ -95,7 +95,7 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
             });
         },
 
-        profileEdit: function (cuisineItems, neighborhoodItems) {
+        profileEdit: function (url, cuisineItems, neighborhoodItems) {
             var that = this;
 
             var currentCity = app.request('GetCurrentCity');
@@ -129,7 +129,7 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
                 contentView.on('userSaved', function (userData) {
                     app.execute('UpdateCurrentUser', currentUser.get('id'), userData, cuisineItems, neighborhoodItems, function (err, data) {
                         if (err == null) {
-                            app.router.navigate('profile', { trigger: true });
+                            app.router.navigate(url ? url : 'profile', { trigger: true });
                         } else {
                             contentView.showErrors(err);
                         }
@@ -141,12 +141,12 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
 
                 contentView.on('ByNeighborhoodsClicked', function () {
                     showNeighborhoodsOrCuisines(false, cityId, neighborhoodItems, function (items) {
-                        that.profileEdit(cuisineItems, items);
+                        that.profileEdit(url, cuisineItems, items);
                     });
                 })
                 .on('ByCuisinesClicked', function () {
                     showNeighborhoodsOrCuisines(true, cityId, cuisineItems, function (items) {
-                        that.profileEdit(items, neighborhoodItems);
+                        that.profileEdit(url, items, neighborhoodItems);
                     });
                 });
             });
