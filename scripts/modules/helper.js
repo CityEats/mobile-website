@@ -207,9 +207,9 @@ function (_, app) {
                 isToday = selectedDate.getDate() == now.getDate() &&
                     selectedDate.getMonth() == now.getMonth() &&
                     selectedDate.getFullYear() == now.getFullYear();
-                
+
                 //7:00pm
-                var selected = new Date; 
+                var selected = new Date;
                 selected.setHours(19);
                 selected.setMinutes(0);
 
@@ -268,6 +268,32 @@ function (_, app) {
                     return phone_number;
                 }
             },
+
+            stringSearch: function (search, data) {
+                var rExps = [
+                    { re: /[\xC0-\xC6]/g, ch: "A" },
+                    { re: /[\xE0-\xE6]/g, ch: "a" },
+                    { re: /[\xC8-\xCB]/g, ch: "E" },
+                    { re: /[\xE8-\xEB]/g, ch: "e" },
+                    { re: /[\xCC-\xCF]/g, ch: "I" },
+                    { re: /[\xEC-\xEF]/g, ch: "i" },
+                    { re: /[\xD2-\xD6]/g, ch: "O" },
+                    { re: /[\xF2-\xF6]/g, ch: "o" },
+                    { re: /[\xD9-\xDC]/g, ch: "U" },
+                    { re: /[\xF9-\xFC]/g, ch: "u" },
+                    { re: /[\xC7-\xE7]/g, ch: "c" },
+                    { re: /[\xD1]/g, ch: "N" },
+                    { re: /[\xF1]/g, ch: "n" }
+                ];
+
+                $.each(rExps, function () {
+                    data = data.replace(this.re, this.ch);
+                    search = search.replace(this.re, this.ch);
+                });
+
+                return data.toUpperCase()
+                    .indexOf(search.toUpperCase()) >= 0;
+            }
         });
     });
 });

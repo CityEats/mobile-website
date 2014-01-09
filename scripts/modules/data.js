@@ -2,7 +2,8 @@
 	'jquery',
 	'underscore',
 	'backbone',
-	'app',    
+	'app',
+    'modules/helper',
     'models/filter',
     'models/keyValue',
     'models/user',
@@ -13,7 +14,7 @@
     'collections/cities'
 ],
 
-function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservation, Dictionary, Restaurants, Cities) {
+function ($, _, Backbone, app, Helper, FilterItem, KeyValue, User, Restaurant, Reservation, Dictionary, Restaurants, Cities) {
     var restaurantsByMetro = {},
         restaurantExtended = {},
         cuisinesByMetro = {},
@@ -94,9 +95,9 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                         var name = restaurant.get('name').toLowerCase(),
                             cuisines = _(restaurant.get('cuisine_types')).map(function (item) { return item.name; }).join(' | ').toLowerCase();
 
-                        filteredByQuery = name.indexOf(searchQuery) != -1 ||
-                            cuisines.indexOf(searchQuery) != -1 ||
-                            restaurant.get('neighborhood').name.toLowerCase().indexOf(searchQuery) != -1;
+                        filteredByQuery = Helper.stringSearch(searchQuery, name) ||
+                            Helper.stringSearch(searchQuery, cuisines) ||
+                            Helper.stringSearch(searchQuery, restaurant.get('neighborhood').name);
                     }
 
                     return filteredByCuisine && filteredByNeighborhood && filteredByPrice && filteredByQuery && filteredByEditorsPicks;
@@ -275,7 +276,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
 
                     currentUser = null;
                     callback(null);
-                });                
+                });
             },
 
             getCurrentUser: function (callback) {
@@ -304,7 +305,7 @@ function ($, _, Backbone, app, FilterItem, KeyValue, User, Restaurant, Reservati
                 });
             },
 
-            saveLock: function (lockId, lock) {                
+            saveLock: function (lockId, lock) {
                 locks[lockId] = lock;
             },
 
