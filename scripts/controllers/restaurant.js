@@ -51,7 +51,7 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
 
         reviews: function (id, party, date, time, fromRestaurants) {
             var that = this;
-            this.buildRestaurantBaseInfo(id, party, date, time, fromRestaurants, 1, url, function (restaurant) {
+            this.buildRestaurantBaseInfo(id, party, date, time, fromRestaurants, 1, null, function (restaurant) {
                 var reviewsView = new ReviewsView({ collection: restaurant.getReviewCollection() });
                 that.contentLayout.currentView.restaurantContent.show(reviewsView);
             });
@@ -59,7 +59,7 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
 
         menus: function (id, party, date, time, fromRestaurants) {
             var that = this;
-            this.buildRestaurantBaseInfo(id, party, date, time, fromRestaurants, 2, url, function (restaurant) {
+            this.buildRestaurantBaseInfo(id, party, date, time, fromRestaurants, 2, null, function (restaurant) {
                 var menusView = new MenusView({ model: new KeyValue({ value: restaurant.get('locu_url') }) });
                 that.contentLayout.currentView.restaurantContent.show(menusView);
             });
@@ -67,7 +67,7 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
 
         bookIt: function (id, party, date, time, mealId, code, fromRestaurants, newParty, newDate) {
             var that = this;
-            this.buildRestaurantBaseInfo(id, newParty || party, newDate || date, time, fromRestaurants, 3, url, function (restaurant) {
+            this.buildRestaurantBaseInfo(id, newParty || party, newDate || date, time, fromRestaurants, 3, null, function (restaurant) {
                 if (mealId == null && restaurant.get('has_special_meals') && restaurant.get('special_meals_slots') && restaurant.get('special_meals_slots').length > 0) {
                     mealId = restaurant.get('special_meals_slots')[0].id;
                 }
