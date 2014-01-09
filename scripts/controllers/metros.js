@@ -15,22 +15,22 @@
 
 function (_, app, Helper, BaseController, City, TopBar, Cities, ContentLayout, CityView, CitiesView, DontSeeCityView, TopBarView) {
     var Controller = BaseController.extend({
-        index: function () {
+        index: function (isChangeCity) {
             var that = this, contentView;
-
+            
             app.execute('GetCurrentUser', function (err, currentUser) {
-                app.execute('GetMetros', function (err, cities, isNearestCity) {
+                app.execute('GetMetros', function (err, cities) {
                     if (err) return that.errorPartial();
-
+                    
                     topBarView = getTopBarView();
                     that.topBarLayout.show(topBarView);
 
                     if (currentUser) topBarView.hideRightButton();
-
+                    
                     var currentCity = app.request('GetCurrentCity');
 
                     if (currentCity) {
-                        if (isNearestCity === true) return app.router.navigate('find-table', { trigger: true });
+                        if (!isChangeCity) return app.router.navigate('find-table', { trigger: true });
 
                         currentCity.set('isCurrent', true);
 

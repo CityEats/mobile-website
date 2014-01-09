@@ -3,7 +3,7 @@
 	    var Restaurant = Backbone.Model.extend({
 	        defaults: {
 	            distanceText: function () {
-	                return this.distance_to_restaurant ? this.distance_to_restaurant.toFixed(2) + ' mi' : null;
+	                return this.distance_to_restaurant ? this.distance_to_restaurant.toFixed(2) * 1000 + ' mi' : null;
 	            },
 
 	            cuisine_types: [],

@@ -29,6 +29,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         routes: {
             '': 'index',
             'index.html': 'index',
+            'change-city': 'changeCity',
             'back': 'back',
             'login': 'login',
             'login?:url': 'loginReturnUrl',
@@ -103,8 +104,12 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.chooseCity();
         },
 
-        chooseCity: function () {
-            this.getController('controllers/metros').index();
+        changeCity: function () {
+            this.chooseCity(true);
+        },
+
+        chooseCity: function (isChangeCity) {
+            this.getController('controllers/metros').index(isChangeCity);
         },
 
         back: function () {
@@ -340,16 +345,6 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         toggleLoading: function (show) {
             if (show) app.loading.show(app.loadingView);
             else app.loading.close();
-        },
-
-        checkCurrentCity: function () {
-            var currentCity = app.request('GetCurrentCity');
-            if (currentCity == null) {
-                app.router.navigate('', { trigger: true });
-                return null;
-            } else {
-                return currentCity.get('id');
-            }
         }
     });
 

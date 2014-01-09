@@ -1,4 +1,4 @@
-﻿define(['marionette', 'underscore', 'text!templates/findTable/content.html'], function (Marionette, _, findTableHtml) {
+﻿define(['app', 'marionette', 'underscore', 'text!templates/findTable/content.html'], function (app, Marionette, _, findTableHtml) {
 
     var ItemView = Marionette.Layout.extend({
         template: _.template(findTableHtml),
@@ -44,7 +44,7 @@
         },
 
         goToChangeCity: function (evt) {
-            this.goTo(evt, '');
+            this.goTo(evt, 'change-city');
         },
 
         goToUser: function (evt) {

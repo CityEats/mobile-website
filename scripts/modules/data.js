@@ -127,12 +127,16 @@ function ($, _, Backbone, app, Helper, FilterItem, KeyValue, User, Restaurant, R
             getMetros: function (callback, lat, lng) {
                 if (metros == null) {
                     app.execute('API:GetMetros', lat, lng, function (err, data) {
-                        if (err == null) {
-                            metros = new Cities(_.where(data.metros, { active: true }));
-                        }
+                        if (err) return callback ? callback(err) : null;
+
+                        metros = new Cities(_.where(data.metros, { active: true }));
                         if (lat && lng && metros.length > 0 && app.request('GetCurrentCity') == null) {
-                            app.execute('SetCurrentCity', metros.at(0))
-                            return callback ? callback(err, metros, true) : null;;
+                            var firstMetro = metros.at(0);
+                            if (firstMetro.get('distance_to_metro') && (firstMetro.get('distance_to_metro') * 1000) <= 100) {
+                                app.execute('SetCurrentCity', firstMetro);
+                            }
+
+                            return callback ? callback(err, metros) : null;;
                         }
                         return callback ? callback(err, metros) : null;
                     });
