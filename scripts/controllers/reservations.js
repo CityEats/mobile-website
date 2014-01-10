@@ -213,7 +213,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                         contentView.on('btnCancelClicked', function () {
                             app.execute('CancelReservation', reservation.get('order_id'), function (err) {
                                 if (err) return that.errorPartial();
-                                app.router.navigate('profile/reservations', { trigger: true });
+                                that.reservation(code);
                             });
                         });
 
