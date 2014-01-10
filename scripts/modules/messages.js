@@ -15,11 +15,7 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     var API_PATH = '/api/v2',
         API_PATH1 = '/api/v1',
         API_KEY = 'k2Rw6FRzFcuS0suyVIRk96mOIyKEhtH89Fvqz377htFrymvd7IfIPonvzmt87v3',
-        geoOptions = {
-            enableHighAccuracy: true,
-            maximumAge: 30000,
-            timeout: 15000
-        };
+        geoOptions = { timeout: 15000 };
 
     var getJSONStatic = function (url) {
         return function (callback) {
