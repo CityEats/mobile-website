@@ -303,12 +303,10 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
     app.commands.setHandler('GetMetros', function (callback) {
         navigator.geolocation.getCurrentPosition(
             function success(data) {
-                alert('geolocation success');
                 app.execute('SetLocation', { lat: data.coords.latitude, lng: data.coords.longitude });
                 Data.getMetros(callback, data.coords.latitude, data.coords.longitude);
             },
             function error(data) {
-                alert('geolocation error');
                 app.execute('SetLocation', null);
                 Data.getMetros(callback);
             },
