@@ -68,6 +68,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             'profile/edit(?:url)': 'profileEdit',
             'profile/reservations': 'profileReservations',
             'profile/reservations/:num': 'profileReservation',
+            'profile/reservations/:num/canceled': 'profileReservationCanceled',
             '*path': '404'
         },
 
@@ -323,6 +324,10 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
 
         profileReservation: function (code) {
             this.getController('controllers/reservations').reservation(code);
+        },
+
+        profileReservationCanceled: function (code) {
+            this.getController('controllers/reservations').reservationCanceled(code);
         },
 
         '404': function () {

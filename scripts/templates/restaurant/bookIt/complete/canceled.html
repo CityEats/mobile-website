@@ -1,20 +1,25 @@
 ﻿<!-- Reservation -->
 <div class="reservationHeader">
     <h2 class="reservationTitle">Reservation Canceled</h2>
-    <p>Confirmation Number: cityeats-odr-66e0-54b9</p>
+    <p>Confirmation Number: <%= confirmation_code %></p>
 </div>
 <div class="roundedBox">
     <div class="roundedBoxRow">
         <div class="reservationData">
-            <h3 class="reservationDataTitle canceled">Joe’s Crab Shack</h3>
-            <p>Sat, Aug 25th</p>
-            <p><span class="reservationGreyText">for</span> 2 people <span class="reservationGreyText">at</span> 6:30pm</p>
+            <h3 class="reservationDataTitle canceled"><%= restaurant_name %></h3>
+            <p><%= getDate() %></p>
+            <p><span class="reservationGreyText">for</span> <%= party_size %> people <span class="reservationGreyText">at</span> <%= getTime() %></p>
+            <% if (typeof special_meal_name != 'undefined') { %>
+            <p><span class="reservationGreyText">for</span> <%= special_meal_name %></p>
+            <% } %>
         </div>
     </div>
 </div>
 <div class="btnHolder">
     <a href="#" class="btn btnFindTable">Find a Table</a>
 </div>
-<div class="btnHolder">
-    <a href="#" class="btn pale">Account: <span class="btnText">Damian R</span></a>
-</div>
+<% if(user) { %>
+    <div class="btnHolder">
+        <a href="#" class="btn pale btnAccount">Account: <span class="btnText"><%= getFullName() %></span></a>
+    </div>
+<% } %>

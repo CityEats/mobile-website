@@ -9,13 +9,13 @@
     'views/restaurant/bookIt/complete/restaurantInfo',
     'views/restaurant/bookIt/complete/userInfo',
     'views/restaurant/bookIt/complete/additionalInfo',
-    'views/account/reservations/details',
     'views/account/reservations/all',
-    'views/account/reservations/details'
+    'views/account/reservations/details',
+    'views/restaurant/bookIt/complete/canceled'
 ],
 
 function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservationContentLayout, RestaurantInfoView, UserInfoView,
-    AdditionalInfoView, DetailsContentLayout, ReservationsContentLayout, ReservationContentLayout) {
+    AdditionalInfoView, ReservationsContentLayout, ReservationContentLayout, CanceledReservationContentLayout) {
 
     var Controller = BaseController.extend({
         completeReservation: function (id, party, date, filterTime, from, time, mealId, code) {
@@ -113,57 +113,56 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                 contentView;
 
             app.execute('GetCurrentUser', function (err, currentUser) {
-                topBarView = getReservationConfirmedTopBarView();
+                app.execute('GetReservation', code, function (err, reservation) {
+                    if (err) return that.errorPartial(err);
+                    if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true });
 
-                var showViews = function (orderId) {
-                    app.topBar.show(topBarView);
-                    app.content.show(contentView);
-                    that.toggleLoading();
+                    app.execute('GetRestaurant', restaurantId, function (err, restaurant) {
+                        topBarView = getReservationConfirmedTopBarView();
 
-                    contentView.on('btnCancelClicked', function () {
-                        app.execute('CancelReservation', orderId, function (err) {
-                            if (err) return that.errorPartial();
-                            app.router.navigate('profile/reservations', { trigger: true });
-                        });
+                        var showViews = function (orderId) {
+                            app.topBar.show(topBarView);
+                            app.content.show(contentView);
+                            that.toggleLoading();
+
+                            contentView.on('btnCancelClicked', function () {
+                                app.execute('CancelReservation', orderId, function (err) {
+                                    if (err) return that.errorPartial();
+                                    app.router.navigate('profile/reservations/' + code + '/canceled', { trigger: true });
+                                });
+                            });
+
+                            contentView.on('btnModifyClicked', function (code, reservationId, party, date, time) {
+                                app.router.navigate('restaurants/' + restaurantId + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code, { trigger: true });
+                            });
+
+                            contentView.on('reminderChanged', function (smsReminder, emailReminder) {
+                                changing++;
+                                that.toggleLoading(true);
+                                app.execute('UpdateReservationReminders', code, smsReminder, emailReminder, function (err, reservation) {
+                                    if (err) {
+                                        changing = 0;
+                                        that.toggleLoading();
+                                        return that.errorPartial(err);
+                                    }
+                                    changing--;
+
+                                    if (changing <= 0) that.toggleLoading();
+                                });
+                            });
+                        };
+
+                        if (currentUser == null) {
+                            contentView = new ReservationContentLayout({ model: reservation, isConfirmedView: true, phoneNumber: restaurant.get('phone_number') });
+                            showViews(reservation.get('order_id'));
+
+                        } else {
+                            contentView = new ReservationContentLayout({ model: reservation, user: currentUser, isConfirmedView: true, phoneNumber: restaurant.get('phone_number'), points: 200 });
+                            showViews(reservation.get('order_id'));
+
+                        }
                     });
-
-                    contentView.on('btnModifyClicked', function (code, reservationId, party, date, time) {
-                        app.router.navigate('restaurants/' + restaurantId + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it/modify/' + code, { trigger: true });
-                    });
-
-                    contentView.on('reminderChanged', function (smsReminder, emailReminder) {
-                        changing++;
-                        that.toggleLoading(true);
-                        app.execute('UpdateReservationReminders', code, smsReminder, emailReminder, function (err, reservation) {
-                            if (err) {
-                                changing = 0;
-                                that.toggleLoading();
-                                return that.errorPartial(err);
-                            }
-                            changing--;
-
-                            if (changing <= 0) that.toggleLoading();
-                        });
-                    });
-                };
-
-                if (currentUser == null) {
-                    app.execute('GetReservation', code, function (err, reservation) {
-                        if (err) return that.errorPartial(err);
-                        if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true });
-
-                        contentView = new DetailsContentLayout({ model: reservation, isConfirmedView: true });
-                        showViews(reservation.get('order_id'));
-                    });
-                } else {
-                    app.execute('GetReservation', code, function (err, reservation) {
-                        if (err) return that.errorPartial(err);
-                        if (reservation == null) return app.router.navigate('profile/reservations', { trigger: true });
-
-                        contentView = new DetailsContentLayout({ model: reservation, user: currentUser, isConfirmedView: true, points: 200 });
-                        showViews(reservation.get('order_id'));
-                    });
-                }
+                });
             });
         },
 
@@ -213,7 +212,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                         contentView.on('btnCancelClicked', function () {
                             app.execute('CancelReservation', reservation.get('order_id'), function (err) {
                                 if (err) return that.errorPartial();
-                                that.reservation(code);
+                                app.router.navigate('profile/reservations/' + code + '/canceled', { trigger: true });
                             });
                         });
 
@@ -236,6 +235,24 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                             });
                         });
                     });
+                });
+            });
+        },
+
+        reservationCanceled: function (code) {
+            var that = this,
+                changing = 0;
+
+            app.execute('GetCurrentUser', function (err, currentUser) {
+                app.execute('GetReservation', code, function (err, reservation) {
+                    if (err) return that.errorPartial();
+                    if (reservation == null || !reservation.isCanceled()) return app.router.navigate('profile/reservations', { trigger: true });
+
+                    var contentView = new CanceledReservationContentLayout({ model: reservation, user: currentUser });
+                    var topBarView = getCanceledReservationTopBarView();
+
+                    that.topBarLayout.show(topBarView);
+                    that.contentLayout.show(contentView);
                 });
             });
         }
@@ -276,6 +293,12 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
             leftText: 'Back',
             leftUrl: 'profile/reservations'
         }, options));
+
+        return new TopBarView({ model: topBar });
+    };
+
+    var getCanceledReservationTopBarView = function () {
+        var topBar = new TopBar({ title: 'Reservation Canceled' });
 
         return new TopBarView({ model: topBar });
     };

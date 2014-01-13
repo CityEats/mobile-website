@@ -370,17 +370,6 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         });
     });
 
-    app.commands.setHandler('API:CancelReservation', function (orderId, callback) {
-        var handler = putJSONStatic(API_PATH + '/orders/' + id + '/cancel?key=' + API_KEY);
-        handler(callback);
-    });
-
-    app.commands.setHandler('CancelReservation', function (orderId, callback) {
-        app.execute('API:CancelReservation', orderId, function (err, response) {
-            callback(err, response);
-        });
-    });
-
     app.commands.setHandler('API:GetReservations', function (callback) {
         var handler = getJSONStatic(API_PATH + '/reservations');
         handler(callback);
