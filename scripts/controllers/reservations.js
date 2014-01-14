@@ -42,8 +42,20 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                 if (err) return that.errorPartial();
 
                 app.execute('GetCurrentUser', function (err, currentUser) {
-                    if ((mealId && restaurant.get('special_meals_slots').length == 0) || (mealId == null && restaurant.get('slots').length == 0))
-                        return app.router.navigate(returnUrl, { trigger: true });
+                    var allSlots = mealId ?
+                        (_.findWhere(restaurant.get('special_meals_slots'), { id: parseInt(mealId, 10) }) || { slots: []}).slots:
+                        restaurant.get('slots');
+
+                    var times = time.split(':'),
+                        hours = parseInt(times[0], 10),
+                        minutes = parseInt(times[1], 10),
+                        timeOffset = restaurant.get('current_time_offset');
+                    
+                    var slotExists = _.some(allSlots, function (item) {
+                        var date = Helper.newDate(item, timeOffset);
+                        return date.getHours() == hours && minutes == date.getMinutes();                        
+                    });
+                    if (!slotExists) return app.router.navigate(bookItUrl, { trigger: true });
 
                     var contentView = new CompleteReservationContentLayout;
 
