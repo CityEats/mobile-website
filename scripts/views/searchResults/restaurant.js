@@ -21,7 +21,10 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
 
         serializeData: function () {
             var result = this.model.toJSON();
-            return _.extend(result, { specialMealId: this.specialMealId });
+            return _.extend(result, {
+                specialMealId: this.specialMealId,
+                timeOffset: this.options.timeOffset
+            });
         },
 
         initialize: function () {

@@ -180,7 +180,7 @@
         },
 
         rerenderTime: function (selectedDate) {
-            var times = Helper.getTimes(selectedDate);
+            var times = Helper.getTimes(selectedDate, this.model.get('timeOffset'));
 
             var select = _(times).map(function (item) { return '<option value="' + item.value + '" ' + (item.selected ? 'selected' : '') + '>' + item.text + '</option>' });
             this.ui.time.empty().append(select);

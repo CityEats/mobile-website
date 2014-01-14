@@ -33,7 +33,8 @@
                 party: this.options.party,
                 date: this.options.date,
                 time: this.options.time,
-                cityId: this.options.cityId
+                cityId: this.options.cityId,
+                timeOffset:  this.options.timeOffset
             }));
 
             if (!this.options.isBrowseAll) this.ui.restaurantsLabel.hide();

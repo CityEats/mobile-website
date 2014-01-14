@@ -71,7 +71,7 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
                 if (mealId == null && restaurant.get('has_special_meals') && restaurant.get('special_meals_slots') && restaurant.get('special_meals_slots').length > 0) {
                     mealId = restaurant.get('special_meals_slots')[0].id;
                 }
-                var chooseTimeView = new ChooseTimeView({ model: that.getSearchModel(newParty || party, newDate || date, restaurant.get('special_meals')), specialMealId: mealId });
+                var chooseTimeView = new ChooseTimeView({ model: that.getSearchModel(newParty || party, newDate || date, restaurant.get('special_meals'), restaurant.get('current_time_offset')), specialMealId: mealId });
                 var nextDaysView = new NextDaysView({ collection: that.getNextDays(newDate || date) });
                 var scheduleItemsView = new ScheduleItemsView({
                     collection: restaurant.getFullSlots(mealId, newDate || date),
@@ -164,7 +164,7 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
             });
         },
 
-        getSearchModel: function (party, date, special_meals) {
+        getSearchModel: function (party, date, special_meals, timeOffset) {
             if (typeof date == 'string') date = Helper.parseDate(date);
 
             return new SearchBar({
@@ -172,7 +172,8 @@ function (_, app, Helper, BaseController, KeyValue, Restaurant, TopBar, SearchBa
                 showTimes: false,
                 party: party,
                 date: date,
-                special_meals: special_meals
+                special_meals: special_meals,
+                timeOffset: timeOffset
             });
         },
 

@@ -25,7 +25,7 @@
 	                return Helper.formatPhone(this.phone_number);
 	            },
 
-	            slotsFormated: function (specialMealId) {
+	            slotsFormated: function (specialMealId, timeOffset) {
 	                var times = this.selectedTime.split(':'),
 	                    slots,
 	                    selectedHour = parseInt(times[0], 10),
@@ -64,7 +64,7 @@
 
 	                var result = new Array(3);
 	                for (var i = 0; i < slots.length; i++) {
-	                    var time = Helper.newDate(slots[i], this.current_time_offset),
+	                    var time = Helper.newDate(slots[i], timeOffset || this.current_time_offset),
                             h = time.getHours(),
 	                        m = time.getMinutes();
 
@@ -200,7 +200,7 @@
 	            }
 
                 //get start time and end time
-	            var times = Helper.getTimes(selectedDate, startDate, endDate);
+	            var times = Helper.getTimes(selectedDate, this.get('current_time_offset'), startDate, endDate);
 
 	            if (specialMealId) {
 	                var meals = _.findWhere(this.get('special_meals_slots'), { id: specialMealId });

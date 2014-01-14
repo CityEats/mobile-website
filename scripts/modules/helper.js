@@ -186,7 +186,7 @@ function (_, app) {
                 return null;
             },
 
-            getTimes: function (selectedDate, startTime, endTime) {
+            getTimes: function (selectedDate, offset, startTime, endTime) {
                 var times = [],
                     isToday,
                     now = new Date;
@@ -215,7 +215,7 @@ function (_, app) {
 
                 if (isToday) {
 
-                    selected = this.newDate(new Date, -5);
+                    selected = this.newDate(new Date, offset);
                     var min = selected.getMinutes();
                     if (min != 0 && min != 15 && min != 30 && min != 45) {
                         if (min > 0 && min < 15) min = 15;

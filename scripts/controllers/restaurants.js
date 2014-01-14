@@ -113,7 +113,7 @@ function (_, app, Helper, BaseController, Restaurant, TopBar, SearchBar, TopBarV
             });
 
             searchBar = new SearchBarView({
-                model: that.getSearchModel(newParty || party, newDate || date, newTime || time, searchQuery),
+                model: that.getSearchModel(newParty || party, newDate || date, newTime || time, searchQuery, currentCity.get('current_time_offset')),
                 defaults: {
                     party: party,
                     date: date,
@@ -150,7 +150,8 @@ function (_, app, Helper, BaseController, Restaurant, TopBar, SearchBar, TopBarV
                     party: searchBar.model.get('party'),
                     date: newDate || date,
                     time: searchBar.model.get('time'),
-                    cityId: cityId
+                    cityId: cityId,
+                    timeOffset: currentCity.get('current_time_offset')
                 });
 
                 if (!rendered) {
@@ -197,7 +198,7 @@ function (_, app, Helper, BaseController, Restaurant, TopBar, SearchBar, TopBarV
             return new TopBarView({ model: topBar, leftClickEvent: 'btnLeftClick' });
         },
 
-        getSearchModel: function (party, date, time, query) {
+        getSearchModel: function (party, date, time, query, timeOffset) {
             if (typeof date == 'string') date = Helper.parseDate(date, time);
 
             return new SearchBar({
@@ -207,7 +208,8 @@ function (_, app, Helper, BaseController, Restaurant, TopBar, SearchBar, TopBarV
                 party: party,
                 date: date,
                 time: time,
-                query: query
+                query: query,
+                timeOffset: timeOffset
             });
         },
     });

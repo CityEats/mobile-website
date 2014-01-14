@@ -10,7 +10,7 @@
         <p class="resultsListType"><%= cuisinesText() %></p>
         <ul class="resultsListSchedule">
             <%
-                var slotsF = slotsFormated(specialMealId);
+                var slotsF = slotsFormated(specialMealId, timeOffset);
                 for (var i = 0; i < slotsF.length; i++) { %>            
 
                 <%if(!slotsF[i].isEmpty) { %>

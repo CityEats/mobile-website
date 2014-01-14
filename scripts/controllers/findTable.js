@@ -36,7 +36,7 @@ function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, Calenda
                 });
 
                 var searchBarView = new SearchBarView({
-                    model: that.getSearchModel(newParty || party, date, newTime),
+                    model: that.getSearchModel(newParty || party, date, newTime, currentCity.get('current_time_offset')),
                     defaults: {
                         party: 2,
                         date: date,
@@ -103,7 +103,7 @@ function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, Calenda
             });
         },
 
-        getSearchModel: function (party, date, time) {
+        getSearchModel: function (party, date, time, timeOffset) {
             if (typeof date == 'string') date = Helper.parseDate(date, time);
 
             return new SearchBar({
@@ -111,7 +111,8 @@ function (_, app, Helper, BaseController, TopBar, SearchBar, TopBarView, Calenda
                 showTimes: true,
                 party: party,
                 date: date,
-                time: time
+                time: time,
+                timeOffset: timeOffset
             });
         }
     });
