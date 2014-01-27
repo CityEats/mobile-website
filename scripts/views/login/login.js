@@ -19,6 +19,10 @@
         onRender: function () {            
             var fbLink = "/auth/facebook?callback_url=/auth/facebook/callback/back";
             this.ui.fbLoginBtn.attr('href', fbLink);
+
+            if (this.options.isEmailSent === true) {
+                alert('You will receive an email with instructions about how to reset your password in a few minutes.');
+            }
         },
 
         goToForgotPassword: function (evt) {

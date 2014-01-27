@@ -1,14 +1,25 @@
-﻿define(['marionette', 'underscore', 'text!templates/forgotPassword/content.html'], function (Marionette, _, forgotPasswordHtml) {
+﻿define(['marionette', 'underscore', 'basicItemView', 'text!templates/forgotPassword/content.html'], function (Marionette, _, BasicItemView, forgotPasswordHtml) {
 
-    var ItemView = Marionette.ItemView.extend({
+    var ItemView = BasicItemView.extend({
         template: _.template(forgotPasswordHtml),
         events: {
-            'click .btnSignUp': 'goToSignUp'
+            'click .btnSignUp': 'goToSignUp',
+            'click .btnSubmit': 'btnSubmitClick'
+        },
+
+        ui: {
+            txtEmail: '.txtEmail',
+            txtError: '.txtError'
         },
 
         goToSignUp: function (evt) {
-            app.router.navigate('signup', { trigger: true });
             evt.preventDefault();
+            app.router.navigate('signup', { trigger: true });            
+        },
+
+        btnSubmitClick: function (evt) {
+            evt.preventDefault();
+            this.trigger('btnSubmitClicked', this.ui.txtEmail.val());
         }
     });
 

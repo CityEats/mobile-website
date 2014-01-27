@@ -11,18 +11,20 @@
     'views/signUp/signUp',
     'views/account/profile/about',
     'views/account/profile/edit',
-    'views/filter/favoriteItems'
+    'views/filter/favoriteItems',
+    'views/forgotPassword/forgotPassword'
 ],
 
-function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarView, LoginContentLayout, SignUpContentLayout, ProfileContentLayout, ProfileEditContentLayout, FavoriteItemsContentLayout) {
+function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarView, LoginContentLayout, SignUpContentLayout, ProfileContentLayout, ProfileEditContentLayout, FavoriteItemsContentLayout, ForgotPasswordContentLayout) {
     var Controller = BaseController.extend({
 
         //login
-        login: function (fbRedirectUri, url) {
+        login: function (fbRedirectUri, url, isEmailSent) {
             var topBarView = getLoginTopBarView();
 
             var contentView = new LoginContentLayout({
-                redirectUri: fbRedirectUri
+                redirectUri: fbRedirectUri,
+                isEmailSent: isEmailSent
             });
 
             contentView.on('loginSubmited', function (user) {
@@ -64,6 +66,32 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
                     if (err == null) {
                         app.router.navigate('back', { trigger: true });
                     } else {
+                        var error = Helper.getErrorMessage(err);
+                        if (error) {
+                            view.showError(error, null, 'main');
+                        } else {
+                            that.errorPartial();
+                        }
+                    }
+                });
+            }, contentView);
+
+            this.topBarLayout.show(topBarView);
+            this.contentLayout.show(contentView);
+        },
+
+        //forgot password
+        forgotPassword: function () {
+            var topBarView = getForgotPasswordTopBarView();
+
+            var contentView = new ForgotPasswordContentLayout;
+
+            contentView.on('btnSubmitClicked', function (email) {
+                var view = this;
+                app.execute('ForgotPassword', email, function (err, data) {                    
+                    if (err == null) {
+                        app.router.navigate('login-email-sent', { trigger: true });
+                    } else {                        
                         var error = Helper.getErrorMessage(err);
                         if (error) {
                             view.showError(error, null, 'main');
@@ -266,6 +294,20 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
             model: topBar,
             leftClickEvent: 'btnLeftClick',
             rightClickEvent: 'btnRightClick'
+        });
+    };
+
+    var getForgotPasswordTopBarView = function () {
+        var topBar = new TopBar({
+            leftText: 'Home',
+            leftUrl: 'back',
+            rightText: 'Log In',
+            rightUrl: 'login',
+            title: 'Reset Password'
+        });
+
+        return new TopBarView({
+            model: topBar
         });
     };
 

@@ -6,7 +6,6 @@ define([
     'views/shared/404',
     'views/shared/loading',
     'modules/helper',
-    'modules/forgotPassword',
     'modules/contactUs',
     'modules/restaurant/exclusiveEats',
     'modules/restaurant/completeReservation',    
@@ -31,10 +30,11 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             'change-city': 'changeCity',
             'back': 'back',
             'login': 'login',
-            'login?:url': 'loginReturnUrl',
+            'login-email-sent': 'loginEmailSent',
+            'login?:url': 'loginReturnUrl',            
             'signup': 'signUp',
             //'contact-us': 'contactUs',
-            //'forgot-password': 'forgotPassword',
+            'forgot-password': 'forgotPassword',
             'find-table': 'findTable',
             'search-results/party/:num/date/:num/time/:num': 'searchResults',
             'restaurants': 'restaurants',
@@ -123,8 +123,12 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.login(url)
         },
 
-        login: function (url) {
-            this.getController('controllers/account').login(fbRedirectUri, url);
+        loginEmailSent: function () {
+            this.login(null, true);
+        },
+
+        login: function (url, isEmailSent) {
+            this.getController('controllers/account').login(fbRedirectUri, url, isEmailSent);
         },
 
         signUp: function () {
@@ -132,15 +136,7 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         },
 
         forgotPassword: function () {
-            this.setup();
-            var module = require('modules/forgotPassword');
-
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-            module.contentLayout = new module.ContentLayout;
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
+            this.getController('controllers/account').forgotPassword();
         },
 
         contactUs: function () {
