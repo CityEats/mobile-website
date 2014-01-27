@@ -1,11 +1,16 @@
-﻿define(['marionette', 'underscore', 'text!templates/restaurant/bookIt/complete/complete.html'], function (Marionette, _, contentHtml) {
+﻿define(['marionette', 'underscore', 'text!templates/restaurant/bookIt/complete/complete.html', 'text!templates/restaurant/bookIt/complete/completePurchase.html'], function (Marionette, _, completeHtml, completePurchaseHtml) {
 
     var ContentLayout = Backbone.Marionette.Layout.extend({
-        template: _.template(contentHtml),
+        getTemplate: function () {
+            return this.options.isPurchase ?
+                _.template(completePurchaseHtml) :
+                _.template(completeHtml);
+        },
         regions: {
             restaurantInfo: '#restaurantInfo',
             userInfo: '#userInfo',
-            additionalInfo: '#additionalInfo',
+            purchaseDetails: '#purchaseDetails',
+            additionalInfo: '#additionalInfo'
         },
 
         events: {

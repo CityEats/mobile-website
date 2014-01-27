@@ -1,0 +1,35 @@
+﻿<h4 class="reservationSubTitle purchaseSubTitle">Purchase Details</h4>
+<div class="roundedBox purchaseDetails">  
+    <div class="roundedBoxRow">
+        <div class="column2">
+            <div class="column">
+                <div class="reservationData">
+                    <p class="reservationGreyText">Price:</p>
+                    <p><%= format(price) %></p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="reservationData">
+                    <p class="reservationGreyText">Your account balance:</p>
+                    <p><%= format(accountBalance) %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="roundedBoxRow">
+        <div class="column2">
+            <div class="column">
+                <div class="reservationData">
+                    <p class="reservationGreyText">Chargeable Amount:</p>
+                    <p><%= format(chargeableAmount()) %></p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="reservationData">
+                    <p class="reservationGreyText">Remaining balance after purchase:</p>
+                    <p><%= format(remainingBalance()) %></p>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>

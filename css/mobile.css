@@ -1596,6 +1596,9 @@ p {
   color: #808080;
   text-align: center;
   margin: 15px 0 12px; }
+    .reservationHeader p{
+        color:#c33;
+    }
 
 .reservationTitle {
   font-size: 25px;
@@ -1778,6 +1781,35 @@ a.reservationData {
     background-position: -164px -5px; }
   .radioCard:checked {
     opacity: 1; }
+
+  .purchaseDetails .column2 .column:first-child {
+      border-right: 1px solid #b3b3b3;
+  }
+
+.creditCardRequiredText {
+    position: relative;
+    text-align: center;
+    color: #a5a5a5; }
+
+#purchaseDetails {
+    position: relative;
+    margin-top:15px;
+}
+
+.purchaseSubTitle {
+    padding-top:15px;
+}
+.purchaseSubTitle:before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    height: 2px;
+    border-top: 1px solid rgba(102, 102, 102, 0.2);
+    background: rgba(255, 255, 255, 0.4);
+}  
 
 /* Footer */
 .footer {

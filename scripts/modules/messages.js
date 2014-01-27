@@ -331,8 +331,9 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         };
 
         _.extend(request, getReservationReguest(reservation));
+        request.reservation.lock_id = lockId;
 
-        var handler = postJSONStatic(API_PATH1 + '/iorders', request);
+        var handler = postJSONStatic(API_PATH + '/iorders', request);
         handler(callback);
     });
 
@@ -346,6 +347,8 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
 
                     app.execute('API:ConfirmReservation', restaurantId, lockResponse.lock_id, reservation, function (err, responseReservation) {
                         if (err) return callback(err);
+
+                        if (responseReservation.payment_url) return callback(null, responseReservation);
 
                         var order = responseReservation.order;
                         var resertvationData = {
@@ -361,10 +364,10 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
                             last_name: reservation.user.lastName,
                             phone_number: reservation.user.phone,
                             email_reminder: order.email_reminder,
-                            sms_reminder: order.sms_reminder,
+                            sms_reminder: order.sms_reminder
                         };
 
-                        callback(err, new Reservation(resertvationData));
+                        callback(null, new Reservation(resertvationData));
                     });
                 });
         });

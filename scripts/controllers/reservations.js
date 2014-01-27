@@ -4,6 +4,8 @@
     'modules/helper',
     'BaseController',
 	'models/topBar',
+    'models/purchaseDetails',
+    'models/reservation',
     'views/shared/topBar',
     'views/restaurant/bookIt/complete/complete',
     'views/restaurant/bookIt/complete/restaurantInfo',
@@ -11,17 +13,23 @@
     'views/restaurant/bookIt/complete/additionalInfo',
     'views/account/reservations/all',
     'views/account/reservations/details',
-    'views/restaurant/bookIt/complete/canceled'
+    'views/restaurant/bookIt/complete/canceled',
+    'views/restaurant/bookIt/complete/purchaseDetails',
+    'views/restaurant/bookIt/complete/creditCard'
 ],
 
-function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservationContentLayout, RestaurantInfoView, UserInfoView,
-    AdditionalInfoView, ReservationsContentLayout, ReservationContentLayout, CanceledReservationContentLayout) {
+function (_, app, Helper, BaseController, TopBar, PurchaseDetails, Reservation, TopBarView, CompleteReservationContentLayout, RestaurantInfoView, UserInfoView,
+    AdditionalInfoView, ReservationsContentLayout, ReservationContentLayout, CanceledReservationContentLayout, PurchaseDetailsView, CreditCardView) {
 
     var Controller = BaseController.extend({
         completeReservation: function (id, party, date, filterTime, from, time, mealId, code) {
             var that = this,
                 slotDate = Helper.parseDate(date, time),
-                returnUrl, bookItUrl;
+                returnUrl, bookItUrl,
+                isPurchase = false,
+                specialMealId = mealId ? parseInt(mealId, 10) : null,
+                accountBalance = 0,
+                price = 0;
 
             bookItUrl = 'restaurants/' + id + '/party/' + party + '/date/' + date + '/time/' + time + '/book-it';
             switch (from) {
@@ -43,7 +51,7 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
 
                 app.execute('GetCurrentUser', function (err, currentUser) {
                     var allSlots = mealId ?
-                        (_.findWhere(restaurant.get('special_meals_slots'), { id: parseInt(mealId, 10) }) || { slots: []}).slots:
+                        (_.findWhere(restaurant.get('special_meals_slots'), { id: specialMealId }) || { slots: [] }).slots :
                         restaurant.get('slots');
 
                     var times = time.split(':'),
@@ -55,9 +63,17 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                         var date = Helper.newDate(item, timeOffset);
                         return date.getHours() == hours && minutes == date.getMinutes();                        
                     });
+
+                    var specialMeal = _.findWhere(restaurant.get('special_meals'), { special_meal_id: specialMealId });
+                    if (specialMeal.meal_price && parseFloat(specialMeal.meal_price) > 0) {
+                        price = parseFloat(specialMeal.meal_price);
+                    }
+
                     if (!slotExists) return app.router.navigate(bookItUrl, { trigger: true });
 
-                    var contentView = new CompleteReservationContentLayout;
+                    if (currentUser) accountBalance = parseFloat(currentUser.get('account_balance')) || 0;
+
+                    var contentView = new CompleteReservationContentLayout({ isPurchase: price > 0 });
 
                     var restaurantInfoView = new RestaurantInfoView({
                         model: restaurant,
@@ -73,31 +89,56 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                         contentView.userInfo.show(contentView.userInfoView);
                         contentView.additionalInfo.show(contentView.additionalInfoView);
 
-                        contentView.on('completeClicked', function () {
-                            if (contentView.userInfoView.validate()) {
-                                that.toggleLoading(true);
-                                var lock = {
-                                    user: contentView.userInfoView.getModel(),
-                                    additionalInfo: contentView.additionalInfoView.getModel(),
-                                    party: party,
-                                    slotDate: slotDate,
-                                    timeOffset: restaurant.get('current_time_offset'),
-                                    restaurantId: id,
-                                    specialMealId: mealId ? parseInt(mealId, 10) : null,
-                                };
+                        if (price > 0) {
+                            contentView.purchaseDetails.show(new PurchaseDetailsView({
+                                model: new PurchaseDetails({
+                                    price: price,
+                                    accountBalance: accountBalance
+                                })
+                            }));
+                        }
 
-                                //create or update reservation
-                                app.execute(code ? 'UpdateReservation' : 'ConfirmReservation', code ? code : id, lock, function (err, reservationResponse) {
-                                    if (err == null) {
+                        contentView.on('completeClicked', function () {
+                            if (!contentView.userInfoView.validate()) return false;
+
+                            var lock = {
+                                user: contentView.userInfoView.getModel(),
+                                additionalInfo: contentView.additionalInfoView.getModel(),
+                                party: party,
+                                slotDate: slotDate,
+                                timeOffset: restaurant.get('current_time_offset'),
+                                restaurantId: id,
+                                specialMealId: specialMealId,
+                            };
+
+                            that.toggleLoading(true);
+
+                            //create or update reservation
+                            app.execute(code ? 'UpdateReservation' : 'ConfirmReservation', code ? code : id, lock, function (err, reservationResponse) {
+                                if (err == null) {
+                                    if (reservationResponse instanceof Reservation) {
                                         app.router.navigate('restaurants/' + id + '/confirmed-reservation/' + reservationResponse.get('confirmation_code'), { trigger: true });
+                                    } else {
+                                        var creditCardView = new CreditCardView({ url: reservationResponse.payment_url.replace('.json', '') });
+                                        that.contentLayout.show(creditCardView);
+                                        that.toggleLoading(false);
+
+                                        creditCardView.on('responseError', function (err) {
+                                            if (err.error) that.errorPartial(err.error[0]);
+                                            else that.errorPartial();
+                                        }).on('responseSuccess', function (data) {
+                                            app.router.navigate('restaurants/' + id + '/confirmed-reservation/' + data.order.confirmation_code, { trigger: true });
+                                        }).on('responseUnknown', function () {
+                                            that.errorPartial();
+                                        });
                                     }
-                                    else {
-                                        var error = Helper.getErrorMessage(err);
-                                        if (error) that.errorPartial(error);
-                                        else that.errorPartial();
-                                    }
-                                });
-                            }
+                                }
+                                else {
+                                    var error = Helper.getErrorMessage(err);
+                                    if (error) that.errorPartial(error);
+                                    else that.errorPartial();
+                                }
+                            });
                         });
                     };
 
@@ -171,7 +212,6 @@ function (_, app, Helper, BaseController, TopBar, TopBarView, CompleteReservatio
                         } else {
                             contentView = new ReservationContentLayout({ model: reservation, user: currentUser, isConfirmedView: true, phoneNumber: restaurant.get('phone_number'), points: 200 });
                             showViews(reservation.get('order_id'));
-
                         }
                     });
                 });
