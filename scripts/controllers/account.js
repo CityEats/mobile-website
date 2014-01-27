@@ -12,10 +12,11 @@
     'views/account/profile/about',
     'views/account/profile/edit',
     'views/filter/favoriteItems',
-    'views/forgotPassword/forgotPassword'
+    'views/forgotPassword/forgotPassword',
+    'views/contactUs/contactUs'
 ],
 
-function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarView, LoginContentLayout, SignUpContentLayout, ProfileContentLayout, ProfileEditContentLayout, FavoriteItemsContentLayout, ForgotPasswordContentLayout) {
+function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarView, LoginContentLayout, SignUpContentLayout, ProfileContentLayout, ProfileEditContentLayout, FavoriteItemsContentLayout, ForgotPasswordContentLayout, ContactUsContentLayout) {
     var Controller = BaseController.extend({
 
         //login
@@ -92,6 +93,32 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
                     if (err == null) {
                         app.router.navigate('login-email-sent', { trigger: true });
                     } else {                        
+                        var error = Helper.getErrorMessage(err);
+                        if (error) {
+                            view.showError(error, null, 'main');
+                        } else {
+                            that.errorPartial();
+                        }
+                    }
+                });
+            }, contentView);
+
+            this.topBarLayout.show(topBarView);
+            this.contentLayout.show(contentView);
+        },
+
+        //contact us
+        contactUs: function (isDone) {
+            var topBarView = getContactTopBarView();
+
+            var contentView = new ContactUsContentLayout({ isDone: isDone });
+
+            contentView.on('btnSubmitClicked', function (contactInfo) {
+                var view = this;
+                app.execute('ContactUs', contactInfo, function (err, data) {
+                    if (err == null) {
+                        app.router.navigate('contact-us-done', { trigger: true });
+                    } else {
                         var error = Helper.getErrorMessage(err);
                         if (error) {
                             view.showError(error, null, 'main');
@@ -304,6 +331,20 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
             rightText: 'Log In',
             rightUrl: 'login',
             title: 'Reset Password'
+        });
+
+        return new TopBarView({
+            model: topBar
+        });
+    };
+
+    var getContactTopBarView = function () {
+        var topBar = new TopBar({
+            leftText: 'Home',
+            leftUrl: 'back',
+            rightText: 'Log In',
+            rightUrl: 'login',
+            title: 'Contact Us'
         });
 
         return new TopBarView({

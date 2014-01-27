@@ -6,7 +6,6 @@ define([
     'views/shared/404',
     'views/shared/loading',
     'modules/helper',
-    'modules/contactUs',
     'modules/restaurant/exclusiveEats',
     'modules/restaurant/completeReservation',    
     'modules/messages',
@@ -33,7 +32,8 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             'login-email-sent': 'loginEmailSent',
             'login?:url': 'loginReturnUrl',            
             'signup': 'signUp',
-            //'contact-us': 'contactUs',
+            'contact-us': 'contactUs',
+            'contact-us-done': 'contactUsDone',
             'forgot-password': 'forgotPassword',
             'find-table': 'findTable',
             'search-results/party/:num/date/:num/time/:num': 'searchResults',
@@ -140,15 +140,11 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
         },
 
         contactUs: function () {
-            this.setup();
-            var module = require('modules/contactUs');
+            this.getController('controllers/account').contactUs();
+        },
 
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-            module.contentLayout = new module.ContentLayout;
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
+        contactUsDone: function () {
+            this.getController('controllers/account').contactUs(true);
         },
 
         findTable: function () {

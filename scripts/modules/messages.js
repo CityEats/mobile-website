@@ -167,6 +167,11 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         handler(callback);
     });
 
+    app.commands.setHandler('API:ContactUs', function (contactInfo, callback) {
+        var handler = postJSONStatic(API_PATH + '/web_contact_messages', { web_contact_message: contactInfo });
+        handler(callback);
+    }); 
+
     app.commands.setHandler('API:UpdateUser', function (id, user, cuisineItems, neighborhoodItems, callback) {
         user.first_favorite_food = cuisineItems.at(0) ? cuisineItems.at(0).get('value') : null;
         user.second_favorite_food = cuisineItems.at(1) ? cuisineItems.at(1).get('value') : null;
@@ -195,6 +200,9 @@ function ($, _, app, Data, Helper, City, Restaurant, Reservation, Restaurants, R
         app.execute('API:ForgotPassword', email, callback);
     });
 
+    app.commands.setHandler('ContactUs', function (contactInfo, callback) {
+        app.execute('API:ContactUs', contactInfo, callback);
+    });
 
     app.commands.setHandler('UpdateCurrentUser', function (id, user, cuisineItems, neighborhoodItems, callback) {
         Data.updateCurrentUser(id, user, cuisineItems, neighborhoodItems, callback);
