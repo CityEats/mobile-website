@@ -109,15 +109,15 @@ function (_, app, BaseController, Helper, TopBar, KeyValue, Dictionary, TopBarVi
 
         //contact us
         contactUs: function (isDone) {
+            var that = this;
             var topBarView = getContactTopBarView();
-
             var contentView = new ContactUsContentLayout({ isDone: isDone });
 
             contentView.on('btnSubmitClicked', function (contactInfo) {
                 var view = this;
                 app.execute('ContactUs', contactInfo, function (err, data) {
                     if (err == null) {
-                        app.router.navigate('contact-us-done', { trigger: true });
+                        that.contactUs(true);
                     } else {
                         var error = Helper.getErrorMessage(err);
                         if (error) {
