@@ -25,7 +25,7 @@ run under web server where API located
 ```
 
 ##Structure
->	index.html – single page, start point.
+*	index.html – single page, start point.
 
 *	mockups/ - folder with mock-ups files.
 
