@@ -1,7 +1,6 @@
 mobile-website
 ==============
 
-Mobile Website
 ##Libs
 Backbone.js, Marionette.js, Require.js, Text.js (Require.js plugin for load html templates), JQuery.rateit (jquery plugin for render stars as some rating).
 
