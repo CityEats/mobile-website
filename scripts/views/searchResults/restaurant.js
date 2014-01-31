@@ -16,20 +16,28 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
             'click' : 'rootClick',
             'click .resultsListTitle a': 'goToRestaurantInfo',
             'click .btnSlot': 'gotoReservation',
-            'change .ddlSpecialMeals': 'ddlSpecialMealsChanged'
+            'change .ddlSpecialMeals': 'ddlSpecialMealsChanged',
+            'click .resultsListItemOfferBtn': 'btnResultsListItemOfferClick'
         },
 
         serializeData: function () {
             var result = this.model.toJSON();
             return _.extend(result, {
                 specialMealId: this.specialMealId,
-                timeOffset: this.options.timeOffset
+                timeOffset: this.options.timeOffset,
+                exclusiveEats: this.exclusiveEats
             });
         },
 
         initialize: function () {
             if (this.model.get('has_special_meals') && this.model.get('special_meals_slots') && this.model.get('special_meals_slots').length > 0) {
                 this.specialMealId = this.model.get('special_meals_slots')[0].id;
+            }
+
+            var offers = this.model.get('offers');
+            this.exclusiveEats = null;
+            if (offers && offers.length > 0) {
+                this.exclusiveEats = offers[0];
             }
         },
 
@@ -71,6 +79,12 @@ function (Marionette, _, restaurantHtml, restaurantSimpleHtml) {
             if (this.options.showSimple === true) {
                 this.goToRestaurantInfo(evt);
             }
+        },
+
+        btnResultsListItemOfferClick: function(evt){
+            evt.preventDefault();            
+            app.router.navigate('restaurants/' + this.model.get('id') + '/exclusive-eats/' + this.exclusiveEats.id, { trigger: true });
+            return false;
         },
 
         ddlSpecialMealsChanged: function () {

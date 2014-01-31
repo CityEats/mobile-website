@@ -41,3 +41,9 @@
         </div>
     <% } %>
 </div>
+<% if (offers.length > 0) { %>
+    <div class="resultsListItemOffer">
+        <div class="resultsListItemOfferText"><%= offers[0].short_description %></div>
+        <a class="btn small resultsListItemOfferBtn" href="#">Details</a>
+    </div>
+<% } %>

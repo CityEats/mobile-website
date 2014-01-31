@@ -65,7 +65,7 @@ function (_, app, Helper, BaseController, TopBar, PurchaseDetails, Reservation, 
                     });
 
                     var specialMeal = _.findWhere(restaurant.get('special_meals'), { special_meal_id: specialMealId });
-                    if (specialMeal.meal_price && parseFloat(specialMeal.meal_price) > 0) {
+                    if (specialMeal && specialMeal.meal_price && parseFloat(specialMeal.meal_price) > 0) {
                         price = parseFloat(specialMeal.meal_price);
                     }
 

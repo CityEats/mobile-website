@@ -3,7 +3,7 @@
     'text!templates/restaurant/info/info.html',
     'models/keyValue',
     'views/restaurant/info/book',
-    'views/restaurant/info/exclusiveEatsOffer',
+    'views/restaurant/exclusiveEats/shortItems',
     'views/restaurant/info/fullOverview',
     'views/restaurant/info/images',
     'views/restaurant/info/main',
@@ -32,11 +32,16 @@ function (Marionette, _, contentHtml, KeyValue, BookView, ExclusiveEatsOfferView
                 party = this.options.party,
                 date = this.options.date,
                 time = this.options.time,
+                isAuthorizedUser = this.options.user != null,
                 fromRestaurants = this.options.fromRestaurants;
 
             var restaurant = this.model;
             var bookView = new BookView({ model: restaurant });
-            //var exclusiveEatsOfferView = new ExclusiveEatsOfferView;
+
+            if (isAuthorizedUser) {
+                var exclusiveEatsOfferView = new ExclusiveEatsOfferView({ model: restaurant });
+            }
+
             var imagesView = new ImagesView({ model: restaurant });
             var mainView = new MainView({ model: restaurant });
             var mapView = new MapView({ model: restaurant });
@@ -62,10 +67,11 @@ function (Marionette, _, contentHtml, KeyValue, BookView, ExclusiveEatsOfferView
             else fullOverview = null;            
 
             this.imgBox.show(imagesView);
-            this.bookBox.show(bookView);
-            //this.exclusiveEatsOffer.show(exclusiveEatsOfferView);
+            this.bookBox.show(bookView);            
             this.mainBox.show(mainView);
             this.mapBox.show(mapView);
+
+            if (exclusiveEatsOfferView != null) this.exclusiveEatsOffer.show(exclusiveEatsOfferView);
 
             if (highlightsView != null) this.highlightsBox.show(highlightsView);
             else this.highlightsBox.close();

@@ -6,8 +6,7 @@ define([
     'views/shared/404',
     'views/shared/loading',
     'modules/helper',
-    'modules/restaurant/exclusiveEats',
-    'modules/restaurant/completeReservation',    
+    'modules/restaurant/exclusiveEats',    
     'modules/messages',
     'controllers/restaurants',
     'controllers/metros',
@@ -53,16 +52,14 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             'restaurants/:num/book-it(/meal/:meal)': 'restauranBookItShort',
             'restaurants/:num/party/:num/date/:num/time/:num/book-it(/meal/:meal)': 'restauranBookIt',
             'restaurants/:num/party/:num/date/:num/time/:num/book-it/modify/:code(/meal/:meal)': 'restauranBookItEdit',
-            //'restaurants/:num/exclusive-eats': 'restaurantExclusiveEats',
+            'restaurants/:num/exclusive-eats/:id': 'restaurantExclusiveEats',
             //'restaurants/:num/exclusive-eats-faq': 'restaurantExclusiveEatsFaq',
             'restaurants/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num(/meal/:meal)': 'completeReservation',
             'restaurants/:num/party/:num/date/:num/time/:num/:from/complete-reservation/:num/modify/:code(/meal/:meal)': 'completeReservationEdit',
             //'restaurants/:num/:num/party/:num/date/:num/time/:num/:from/confirmed-reservation/:num/:num': 'reservationConfirmed',
             'restaurants/:num/confirmed-reservation/:num': 'reservationConfirmed',
-            //'restaurants/:num/:num/complete-reservation/:num': 'completeReservation',
-            //'restaurants/:num/reservation-card-info': 'reservationCardInfo',
-            //'restaurants/:num/reservation-confirmed': 'reservationConfirmed',
-            //'restaurants/:num/reservation-canceled': 'reservationCanceled',
+            //'restaurants/:num/:num/complete-reservation/:num': 'completeReservation',            
+            //'restaurants/:num/reservation-confirmed': 'reservationConfirmed',            
             'profile': 'profile',
             'profile/edit(?:url)': 'profileEdit',
             'profile/reservations': 'profileReservations',
@@ -230,25 +227,26 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
             this.getController('controllers/restaurant').bookIt(id, party, date, time, mealId, code, fromRestaurants);
         },
 
-        restaurantExclusiveEats: function (num) {
-            this.setup();
+        restaurantExclusiveEats: function (restaurantId, id) {
+            this.getController('controllers/restaurant').exclusiveEats(restaurantId, id);
+            //this.setup();
 
-            var module = require('modules/restaurant/exclusiveEats');
+            //var module = require('modules/restaurant/exclusiveEats');
 
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
+            //module.topBarBlock = new module.TopBarView({ model: module.topBar });
 
-            module.aboutView = new module.AboutView;
-            module.bookView = new module.BookView;
-            module.selectView = new module.SelectView;
+            //module.aboutView = new module.AboutView;
+            //module.bookView = new module.BookView;
+            //module.selectView = new module.SelectView;
 
-            module.contentLayout = new module.ContentLayout;
+            //module.contentLayout = new module.ContentLayout;
 
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
+            //app.topBar.show(module.topBarBlock);
+            //app.content.show(module.contentLayout);
 
-            module.contentLayout.about.show(module.aboutView);
-            module.contentLayout.select.show(module.selectView);
-            module.contentLayout.book.show(module.bookView);
+            //module.contentLayout.about.show(module.aboutView);
+            //module.contentLayout.select.show(module.selectView);
+            //module.contentLayout.book.show(module.bookView);
         },
 
         restaurantExclusiveEatsFaq: function (num) {
@@ -273,32 +271,6 @@ function (app, Marionette, FooterView, ErrorView, NotFoundView, LoadingView, Hel
 
         reservationConfirmed: function (restaurantId, code) {
             this.getController('controllers/reservations').reservationConfirmed(restaurantId, code);
-        },
-
-        reservationCardInfo: function (num) {
-            this.setup();
-
-            var module = require('modules/restaurant/completeReservation');
-
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-            module.contentLayout = new module.CardInfoView;
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
-        },
-
-        reservationCanceled: function (num) {
-            this.setup();
-
-            var module = require('modules/restaurant/completeReservation');
-
-            module.topBarBlock = new module.TopBarView({ model: module.topBar });
-
-            module.contentLayout = new module.CanceledView;
-
-            app.topBar.show(module.topBarBlock);
-            app.content.show(module.contentLayout);
         },
 
         profile: function () {
